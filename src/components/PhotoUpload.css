@@ -1,0 +1,225 @@
+.photo-upload {
+  padding: var(--space-12) 0;
+}
+
+.photo-upload__header {
+  text-align: center;
+  margin-bottom: var(--space-10);
+}
+
+.photo-upload__label {
+  display: inline-block;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--color-jade);
+  background: rgba(26, 138, 110, 0.1);
+  padding: var(--space-1) var(--space-4);
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(26, 138, 110, 0.2);
+  margin-bottom: var(--space-4);
+}
+
+.photo-upload__title {
+  font-size: var(--font-size-3xl);
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: var(--space-3);
+}
+
+.photo-upload__subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+}
+
+.photo-upload__content {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-8);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Upload Zone */
+.upload-zone {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-10);
+  cursor: pointer;
+  border: 2px dashed rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  transition: all var(--transition-base);
+  min-height: 240px;
+  text-align: center;
+}
+
+.upload-zone:hover {
+  border-color: var(--color-gold);
+  background: rgba(212, 160, 23, 0.05);
+}
+
+.upload-zone--drag {
+  border-color: var(--color-gold);
+  background: rgba(212, 160, 23, 0.1);
+  transform: scale(1.02);
+}
+
+.upload-zone__icon {
+  font-size: 3rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+.upload-zone__text {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+}
+
+.upload-zone__link {
+  color: var(--color-gold);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: rgba(212, 160, 23, 0.3);
+}
+
+.upload-zone__hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.upload-zone__preview {
+  position: relative;
+  width: 100%;
+}
+
+.upload-zone__preview img {
+  width: 100%;
+  max-height: 250px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+}
+
+.upload-zone__change {
+  position: absolute;
+  bottom: var(--space-2);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  color: white;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background var(--transition-fast);
+}
+
+.upload-zone__change:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+/* Divider */
+.photo-upload__divider {
+  display: flex;
+  align-items: center;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  writing-mode: vertical-lr;
+}
+
+.photo-upload__divider span {
+  padding: var(--space-2) 0;
+}
+
+/* Avatar Grid */
+.avatar-grid {
+  flex: 0 0 200px;
+}
+
+.avatar-grid__label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-4);
+  text-align: center;
+}
+
+.avatar-grid__items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.avatar-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  text-align: left;
+}
+
+.avatar-item__emoji {
+  font-size: 1.8rem;
+}
+
+.avatar-item__label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.avatar-item--active {
+  border-color: var(--color-jade);
+  box-shadow: 0 0 20px var(--color-jade-glow);
+}
+
+/* Generate Action */
+.photo-upload__action {
+  text-align: center;
+  margin-top: var(--space-10);
+}
+
+.generate-btn {
+  min-width: 280px;
+}
+
+.generate-hint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: var(--space-3);
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@media (max-width: 640px) {
+  .photo-upload__content {
+    flex-direction: column;
+  }
+
+  .photo-upload__divider {
+    writing-mode: horizontal-tb;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .avatar-grid {
+    flex: none;
+  }
+
+  .avatar-grid__items {
+    flex-direction: row;
+    justify-content: center;
+  }
+}

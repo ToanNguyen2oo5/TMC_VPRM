@@ -1,0 +1,184 @@
+.lookbook-export {
+  padding: var(--space-6) 0;
+  border-top: 1px solid var(--color-border);
+  margin-top: var(--space-6);
+}
+
+.lookbook-export__header {
+  margin-bottom: var(--space-4);
+  text-align: center;
+}
+
+.lookbook-export__label {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-gold);
+  margin-bottom: var(--space-2);
+}
+
+.lookbook-export__title {
+  font-size: 1.45rem;
+  font-family: var(--font-serif);
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+/* Lookbook Poster Card */
+.lookbook-card-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4) 0;
+}
+
+.lookbook-card {
+  width: 360px;
+  max-width: 100%;
+  background: #14100D;
+  border: 1.5px solid var(--color-gold);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.7), 0 0 25px rgba(200, 161, 90, 0.2);
+}
+
+.lookbook-card__bg {
+  display: none;
+}
+
+.lookbook-card__image {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: #0E0A08;
+}
+
+.lookbook-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.lookbook-card__info {
+  padding: 1rem 1.25rem;
+}
+
+.lookbook-card__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.lookbook-card__logo-img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--color-gold);
+}
+
+.lookbook-card__brand-text {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-gold);
+  letter-spacing: 0.5px;
+}
+
+.lookbook-card__name {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  color: #FFFFFF;
+  margin: 0 0 4px 0;
+}
+
+.lookbook-card__region {
+  font-size: 0.85rem; /* 13.6px */
+  color: var(--color-gold);
+  margin-bottom: 8px;
+}
+
+.lookbook-card__colors {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.lookbook-card__color {
+  font-size: 0.78rem;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #F7F3EC;
+}
+
+.lookbook-card__desc {
+  font-size: 0.85rem; /* ~13.6px */
+  color: #D1C7BD;
+  line-height: 1.5;
+  margin: 0 0 10px 0;
+}
+
+/* Meta Box for spots and rental */
+.lookbook-card__meta-box {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(200, 161, 90, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.meta-heading {
+  font-size: 0.82rem; /* 13px */
+  color: var(--color-gold);
+  display: block;
+}
+
+.meta-text {
+  font-size: 0.82rem; /* 13px */
+  color: #F0ECE4;
+  line-height: 1.35;
+  display: block;
+}
+
+.meta-rental {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.meta-price {
+  font-size: 0.85rem; /* 13.6px */
+  font-weight: 700;
+  color: #4CAF50;
+}
+
+.meta-note {
+  font-size: 0.74rem;
+  color: rgba(240, 236, 228, 0.6);
+}
+
+.lookbook-card__watermark {
+  padding: 6px 12px;
+  text-align: center;
+  font-size: 0.75rem;
+  color: rgba(200, 161, 90, 0.65);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0D0A08;
+}
+
+.lookbook-export__actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}

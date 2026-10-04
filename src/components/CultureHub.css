@@ -1,0 +1,227 @@
+.culture-hub {
+  padding: 2rem 0 4rem;
+}
+
+.hub-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  margin-bottom: 2.5rem;
+}
+
+.hub-tab-btn {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: #cbd5e0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.hub-tab-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.hub-tab-btn--active {
+  background: #B22222 !important;
+  color: #fff !important;
+  border-color: #DAA520 !important;
+  box-shadow: 0 4px 12px rgba(178, 34, 34, 0.4);
+}
+
+/* Timeline */
+.timeline-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.timeline-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 0.5rem;
+}
+
+.marker-icon {
+  font-size: 1.6rem;
+  background: rgba(26, 22, 34, 0.9);
+  border: 2px solid #DAA520;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  box-shadow: 0 0 15px rgba(218, 165, 32, 0.3);
+}
+
+.marker-line {
+  width: 2px;
+  flex: 1;
+  min-height: 100px;
+  background: linear-gradient(to bottom, #DAA520, rgba(218, 165, 32, 0.1));
+  margin-top: 0.5rem;
+}
+
+.timeline-item:last-child .marker-line {
+  display: none;
+}
+
+.timeline-card {
+  flex: 1;
+  padding: 1.5rem;
+  border: 1px solid rgba(218, 165, 32, 0.2);
+}
+
+.timeline-era {
+  display: inline-block;
+  font-size: 0.8rem;
+  padding: 0.2rem 0.6rem;
+  background: rgba(218, 165, 32, 0.15);
+  color: #DAA520;
+  border-radius: 4px;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.timeline-title {
+  font-size: 1.3rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  color: #fff;
+  margin-bottom: 0.75rem;
+}
+
+.timeline-desc {
+  font-size: 0.95rem;
+  color: #cbd5e0;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.timeline-costumes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.costume-pill {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.6rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  color: #DAA520;
+}
+
+/* Guide Dos and Don'ts */
+.guide-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.guide-col {
+  padding: 1.75rem;
+}
+
+.dos-col {
+  border: 1px solid rgba(72, 187, 120, 0.3);
+  background: rgba(72, 187, 120, 0.04);
+}
+
+.donts-col {
+  border: 1px solid rgba(229, 62, 62, 0.3);
+  background: rgba(229, 62, 62, 0.04);
+}
+
+.guide-title {
+  font-size: 1.25rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dos-title {
+  color: #68d391;
+}
+
+.donts-title {
+  color: #fc8181;
+}
+
+.guide-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.guide-item h4 {
+  font-size: 0.95rem;
+  color: #fff;
+  margin-bottom: 0.3rem;
+}
+
+.guide-item p {
+  font-size: 0.9rem;
+  color: #cbd5e0;
+  line-height: 1.5;
+}
+
+/* References */
+.references-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.reference-card {
+  padding: 1.5rem;
+  border: 1px solid rgba(218, 165, 32, 0.2);
+}
+
+.book-icon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.book-title {
+  font-size: 1.2rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  color: #DAA520;
+  margin-bottom: 0.3rem;
+}
+
+.book-author {
+  font-size: 0.85rem;
+  color: #a0aec0;
+  margin-bottom: 0.75rem;
+  font-style: italic;
+}
+
+.book-desc {
+  font-size: 0.9rem;
+  color: #cbd5e0;
+  line-height: 1.5;
+}

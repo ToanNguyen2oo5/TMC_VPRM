@@ -1,0 +1,394 @@
+/* CultureCard — Thẻ văn hóa di sản sang trọng, hiện đại */
+.culture-card {
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-xl);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.culture-card:hover,
+.culture-card--expanded {
+  border-color: var(--color-border-hover);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.38);
+  background: rgba(30, 26, 24, 0.75);
+}
+
+[data-theme="light"] .culture-card {
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 10px 30px rgba(70, 50, 40, 0.08);
+}
+
+[data-theme="light"] .culture-card:hover,
+[data-theme="light"] .culture-card--expanded {
+  background: #FFFFFF;
+  box-shadow: 0 16px 40px rgba(70, 50, 40, 0.14);
+}
+
+.culture-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+[data-theme="light"] .culture-card__header {
+  border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+
+.culture-card__title-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.culture-card__badges {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.culture-card__title {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--color-text-primary);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.culture-card__gender-tag {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  padding: 3px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+.badge-bac {
+  background: rgba(43, 58, 85, 0.25);
+  border-color: rgba(90, 130, 190, 0.4);
+  color: #8bb4e8;
+}
+
+.badge-trung {
+  background: rgba(122, 31, 43, 0.25);
+  border-color: rgba(200, 70, 90, 0.4);
+  color: #e58291;
+}
+
+.badge-nam {
+  background: rgba(160, 120, 40, 0.25);
+  border-color: rgba(218, 165, 32, 0.45);
+  color: var(--color-gold);
+}
+
+.badge-era {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-muted);
+}
+
+/* Bảng điểm phong cách */
+.culture-card__scores {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="light"] .culture-card__scores {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+.culture-card__scores-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.scores-subtitle {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-gold);
+  font-weight: 600;
+}
+
+.score-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.score-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.score-num {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  font-feature-settings: 'tnum' 1;
+}
+
+.score-bar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+[data-theme="light"] .score-bar {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.score-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.score-fill--authentic {
+  background: linear-gradient(90deg, #992222, #D4AF37);
+}
+
+.score-fill--remix {
+  background: linear-gradient(90deg, #5B7298, #C96B78);
+}
+
+.score-fill--harmony {
+  background: linear-gradient(90deg, #4A7A5E, #8FB339);
+}
+
+/* Tóm tắt nhanh */
+.culture-card__summary {
+  padding: 0 2px;
+}
+
+.culture-card__intro-text {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* Chi tiết sâu (mở rộng khi hover hoặc bật toggle) */
+.culture-card__details-drawer {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+}
+
+.culture-card__details-drawer.is-open {
+  max-height: 700px;
+  opacity: 1;
+  padding-top: var(--space-3);
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="light"] .culture-card__details-drawer.is-open {
+  border-top-color: rgba(0, 0, 0, 0.08);
+}
+
+.culture-card__deep-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.culture-card__info-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.culture-card__section-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  color: var(--color-gold);
+  margin: 0;
+}
+
+.culture-card__text {
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.culture-card__funfact-box {
+  padding: var(--space-3);
+  background: rgba(218, 165, 32, 0.07);
+  border-left: 3px solid var(--color-gold);
+  border-radius: var(--radius-sm);
+}
+
+/* Meta grid (Màu sắc, Phụ kiện, Chất liệu) */
+.culture-card__meta-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+  background: rgba(0, 0, 0, 0.15);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+}
+
+[data-theme="light"] .culture-card__meta-grid {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.culture-card__meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.meta-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.meta-val {
+  font-size: 0.84rem;
+  color: var(--color-text-secondary);
+}
+
+.culture-card__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.meta-chip {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+}
+
+[data-theme="light"] .meta-chip {
+  background: #F0EDE6;
+}
+
+/* Source */
+.culture-card__source {
+  padding-top: var(--space-2);
+}
+
+.culture-card__source-text {
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+  margin: 2px 0 0;
+}
+
+/* Toggle button */
+.culture-card__toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 2px;
+}
+
+.culture-card__toggle-btn:hover {
+  background: rgba(218, 165, 32, 0.12);
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+}
+
+.toggle-arrow {
+  display: inline-block;
+  transition: transform 0.3s ease;
+  font-size: 0.85rem;
+}
+
+.toggle-arrow.is-expanded {
+  transform: rotate(180deg);
+}
+
+/* Skeletons */
+.culture-card__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.skeleton {
+  display: block;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 70%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}

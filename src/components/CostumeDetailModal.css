@@ -1,0 +1,235 @@
+/* Costume Cultural Detail Modal */
+.costume-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 8, 7, 0.85);
+  backdrop-filter: blur(12px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.costume-modal-card {
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  background: var(--color-bg-secondary, #1F1916);
+  border: 1.5px solid var(--color-gold);
+  border-radius: var(--radius-xl, 20px);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(200, 161, 90, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+[data-theme="light"] .costume-modal-card {
+  background: #FBF7F0;
+  border-color: #C8A15A;
+  box-shadow: 0 25px 60px rgba(70, 50, 40, 0.25);
+}
+
+.costume-modal-header {
+  padding: 1.5rem 1.75rem 1rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.costume-modal-title {
+  font-family: var(--font-serif);
+  font-size: 1.55rem;
+  color: var(--color-text-primary);
+  margin: 0.35rem 0 0.4rem;
+}
+
+.costume-modal-era {
+  font-size: 0.875rem; /* 14px */
+  color: var(--color-gold);
+  font-weight: 500;
+}
+
+.costume-modal-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.costume-modal-close {
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 1.35rem;
+  cursor: pointer;
+  padding: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.costume-modal-close:hover {
+  color: var(--color-text-primary);
+}
+
+.costume-modal-body {
+  padding: 1.5rem 1.75rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+}
+
+.costume-modal-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.costume-modal-section-title {
+  font-size: 0.9rem; /* 14.4px */
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-gold);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.costume-modal-text {
+  font-size: 0.95rem; /* 15.2px */
+  line-height: 1.65;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.verified-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.82rem; /* 13px */
+  font-weight: 700;
+  color: #3F7D58;
+  background: rgba(63, 125, 88, 0.14);
+  border: 1px solid rgba(63, 125, 88, 0.4);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+}
+
+[data-theme="light"] .verified-pill {
+  color: #2E5A27;
+}
+
+/* Extra grid: Photo spots & Rental estimate */
+.costume-modal-extra-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  background: rgba(200, 161, 90, 0.06);
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(200, 161, 90, 0.2);
+}
+
+@media (min-width: 600px) {
+  .costume-modal-extra-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.photo-spots-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.photo-spot-chip {
+  font-size: 0.85rem; /* ~13.6px */
+  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+}
+
+.costume-modal-caption {
+  font-size: 0.82rem; /* 13px */
+  color: var(--color-text-muted);
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+/* Source Accordion Section */
+.source-accordion-section {
+  border-top: 1px solid var(--color-border);
+  padding-top: 1rem;
+}
+
+.source-toggle-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  min-height: 44px; /* Touch target minimum */
+  padding: 8px 12px;
+  background: rgba(200, 161, 90, 0.08);
+  border: 1px solid rgba(200, 161, 90, 0.3);
+  border-radius: var(--radius-md);
+  color: var(--color-gold);
+  font-size: 0.88rem; /* 14px */
+  font-weight: 700;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.source-toggle-btn:hover {
+  background: rgba(200, 161, 90, 0.15);
+}
+
+.source-accordion-body {
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  margin-top: -2px;
+  border: 1px solid rgba(200, 161, 90, 0.2);
+  border-top: none;
+}
+
+.source-text {
+  font-style: italic;
+  color: #E2D9CC;
+  font-size: 0.875rem; /* 14px */
+  margin-bottom: 6px;
+}
+
+[data-theme="light"] .source-text {
+  color: #3D2D24;
+}
+
+.source-disclaimer {
+  font-size: 0.82rem; /* 13px */
+  color: var(--color-text-muted);
+  display: block;
+}
+
+/* Footer */
+.costume-modal-footer {
+  padding: 1rem 1.75rem;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.modal-action-btn {
+  min-height: 44px; /* Touch target */
+}

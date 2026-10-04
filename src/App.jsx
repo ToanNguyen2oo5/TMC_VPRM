@@ -1,0 +1,1088 @@
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import SceneSelector from './components/SceneSelector';
+import OutfitSuggestions from './components/OutfitSuggestions';
+import OutfitCustomizer from './components/OutfitCustomizer';
+import TurntableViewer from './components/TurntableViewer';
+import CultureCard from './components/CultureCard';
+import MismatchWarning from './components/MismatchWarning';
+import LookbookExport from './components/LookbookExport';
+import ExploreCostumes from './components/ExploreCostumes';
+import OutfitComparison from './components/OutfitComparison';
+import LookbookGallery from './components/LookbookGallery';
+import CultureHub from './components/CultureHub';
+import { filterOutfits, getAllOutfits } from './services/cultureData';
+import { generateOutfitImage } from './services/geminiImageService';
+import { evaluateCulturalWarnings } from './services/culturalWarningService';
+import VietnamMap from './components/VietnamMap';
+import ChatBot from './components/ChatBot';
+import LotusPetals from './components/LotusPetals';
+import LottieIcon from './components/LottieIcon';
+import AppLogo, { LOGO_VARIANTS } from './components/AppLogo';
+import MusicPlayer from './components/MusicPlayer';
+import OnboardingModal from './components/OnboardingModal';
+import StickyStepper from './components/StickyStepper';
+import { lotusBloomAnimation, lanternAnimation } from './assets/lottieAnimations';
+import { useTheme } from './hooks/useTheme';
+import { useTranslation } from './services/i18n.jsx';
+import './App.css';
+
+
+const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true';
+
+// 4 Thẻ lối tắt theo sự kiện trên trang chủ
+const EVENT_SHORTCUTS = [
+  { id: 'tet', title: 'Tết Nguyên Đán', icon: '🏮', desc: 'Đoàn viên & sắc đỏ son may mắn, hỷ khí rước tài lộc' },
+  { id: 'tot-nghiep', title: 'Lễ tốt nghiệp', icon: '🎓', desc: 'Dấu mốc trưởng thành, nghiêm trang và tự hào tà áo tấc' },
+  { id: 'dam-cuoi', title: 'Đám cưới / Hỷ sự', icon: '💒', desc: 'Ngày trọng đại lứa đôi, vương giả Nhật Bình & Ngũ thân' },
+  { id: 'ky-yeu', title: 'Chụp kỷ yếu / Lễ hội', icon: '📸', desc: 'Lưu giữ thanh xuân rực rỡ, tinh nghịch và tươi trẻ' }
+];
+
+// Dải khám phá theo vùng miền
+const REGIONAL_STRIPS = [
+  { id: 'bac', name: 'Bắc Bộ', emoji: '🏔️', desc: 'Cái nôi văn hiến Thăng Long & Hội Lim' },
+  { id: 'trung', name: 'Trung Bộ', emoji: '🌊', desc: 'Di sản Cố đô Huế & Triều Nguyễn' },
+  { id: 'nam', name: 'Nam Bộ', emoji: '🌴', desc: 'Sông nước Cửu Long & Áo bà ba hào sảng' },
+  { id: 'taynguyen', name: 'Tây Nguyên & Dân tộc', emoji: '🌲', desc: 'Sắc thổ cẩm rực rỡ & Đại ngàn' }
+];
+
+// Mẹo văn hóa trong ngày (Daily Heritage Tips)
+const DAILY_TIPS = [
+  {
+    title: 'Ý nghĩa 5 nút cài áo ngũ thân',
+    desc: 'Năm hạt nút cài áo tượng trưng cho Ngũ thường Nho giáo: Nhân, Lễ, Nghĩa, Trí, Tín — nền tảng đạo đức cốt lõi của người Việt xưa.',
+    source: 'Trần Quang Đức, "Ngàn năm áo mũ"'
+  },
+  {
+    title: 'Viền ngũ hành trên áo Nhật Bình',
+    desc: 'Dải hoa văn viền cổ áo kết hợp 5 sắc tượng trưng cho ngũ hành tương sinh: Kim, Mộc, Thủy, Hỏa, Thổ mang lại sự trường tồn, cát tường cho bậc mẫu nghi thiên hạ.',
+    source: 'Khâm định Đại Nam hội điển sự lệ'
+  },
+  {
+    title: 'Chiếc nón quai thao & tơ tằm Kinh Bắc',
+    desc: 'Nón ba tầm dẹp lọng tròn trịa, quai thao bằng tơ tằm thắt nút duyên dáng, đi cùng yếm đào thắm sắc tôn vinh nét e ấp tình tứ của liền chị Quan họ.',
+    source: 'Đoàn Thị Tình, "Trang phục Việt Nam"'
+  },
+  {
+    title: 'Khăn rằn thủy chung sông nước phương Nam',
+    desc: 'Họa tiết sọc ô ca-rô hai màu đen trắng của chiếc khăn rằn Nam Bộ tượng trưng cho nghĩa tình trước sau như một của người dân miệt vườn châu thổ.',
+    source: 'Bảo tàng Phụ nữ Nam Bộ'
+  },
+  {
+    title: 'Quy cách vạt chéo Hữu Nhậm Đại Việt',
+    desc: 'Cổ phục Đại Việt thời Lý - Trần - Lê luôn có vạt áo bên trái đè lên vạt bên phải (hữu nhậm), thể hiện sự hòa hợp âm dương giữa con người và đất trời.',
+    source: 'Viện Khảo cổ học Việt Nam'
+  }
+];
+
+// Map scene IDs to search terms matching trangphuc.json
+const SCENE_MAP = {
+  'tet': 'Tết',
+  'tot-nghiep': 'lễ tốt nghiệp',
+  'dam-cuoi': 'đám cưới',
+  'ky-yeu': 'kỷ yếu',
+  'le-hoi': 'lễ hội',
+  'dao-pho': 'dạo phố',
+  'chup-anh-di-san': 'chụp ảnh di sản',
+};
+
+const REGION_MAP = {
+  'all': null,
+  'bac': 'Bắc',
+  'trung': 'Trung',
+  'nam': 'Nam',
+};
+
+export default function App() {
+  const { theme, toggleTheme } = useTheme();
+  const { lang, toggleLang, t } = useTranslation();
+  const [petalsEnabled, setPetalsEnabled] = useState(() => {
+    return localStorage.getItem('vp_petals') !== 'false';
+  });
+
+  const handleTogglePetals = () => {
+    setPetalsEnabled(prev => {
+      const next = !prev;
+      localStorage.setItem('vp_petals', String(next));
+      return next;
+    });
+  };
+
+  // Navigation: 'home' | 'mixer' | 'explore' | 'compare' | 'lookbook' | 'culture'
+  const [activeTab, setActiveTab] = useState('home');
+
+  // Logo Variant: 'emblem' | 'crest'
+  const [logoVariant, setLogoVariant] = useState(() => {
+    return localStorage.getItem('vp_logo_variant') || 'emblem';
+  });
+
+  const handleToggleLogoVariant = (variant) => {
+    setLogoVariant(variant);
+    localStorage.setItem('vp_logo_variant', variant);
+    showToast(`⚜️ Đã chuyển sang biểu tượng: ${variant === 'crest' ? 'Ấn Triện Hoàng Gia' : 'Sen Vàng & Giao Lĩnh Tân Thời'}`);
+  };
+
+  // Mixer Flow State
+  const [selectedScene, setSelectedScene] = useState(null);
+  const [selectedRegion, setSelectedRegion] = useState('all');
+  const [selectedOutfit, setSelectedOutfit] = useState(null);
+  const [customizationData, setCustomizationData] = useState(null);
+  const [turntableImages, setTurntableImages] = useState(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generateProgress, setGenerateProgress] = useState(null);
+  const [cultureInfo, setCultureInfo] = useState(null);
+  const [mismatchWarnings, setMismatchWarnings] = useState([]);
+  const [error, setError] = useState(null);
+  const [toastMessage, setToastMessage] = useState(null);
+  const [angleMode, setAngleMode] = useState('single');
+  const [isGeneratingRemaining, setIsGeneratingRemaining] = useState(false);
+  const [remainingProgress, setRemainingProgress] = useState(null);
+
+  // Weather & Style selection for Step 1
+  const [selectedWeather, setSelectedWeather] = useState('warm');
+  const [selectedStyle, setSelectedStyle] = useState('classic');
+
+  // Daily Cultural Tips & Onboarding Modal state
+  const [tipIndex, setTipIndex] = useState(0);
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(() => !localStorage.getItem('vpr_onboarded'));
+
+  const handleCloseOnboarding = () => {
+    setIsOnboardingOpen(false);
+    localStorage.setItem('vpr_onboarded', 'true');
+  };
+
+  const handleNextTip = () => {
+    setTipIndex(prev => (prev + 1) % DAILY_TIPS.length);
+  };
+
+  const handleQuickEventSelect = (sceneId) => {
+    setSelectedScene(sceneId);
+    setSelectedRegion('all');
+    setActiveTab('mixer');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const ev = EVENT_SHORTCUTS.find(s => s.id === sceneId);
+    showToast(`🎯 Đã chọn sự kiện: ${ev?.title || sceneId}! Hãy chọn bộ trang phục phù hợp bên dưới.`);
+  };
+
+  // App-wide state: Compared outfits & Saved Lookbooks
+  const [comparedOutfits, setComparedOutfits] = useState([]);
+  const [savedLookbooks, setSavedLookbooks] = useState(() => {
+    try {
+      const saved = localStorage.getItem('viet_phuc_lookbook');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Sync savedLookbooks to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('viet_phuc_lookbook', JSON.stringify(savedLookbooks));
+    } catch (e) {
+      console.warn('Lỗi lưu lookbook vào localStorage:', e);
+    }
+  }, [savedLookbooks]);
+
+  // Toast auto-hide
+  useEffect(() => {
+    if (toastMessage) {
+      const timer = setTimeout(() => setToastMessage(null), 3500);
+      return () => clearTimeout(timer);
+    }
+  }, [toastMessage]);
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+  };
+
+  // Parse URL share parameters (Priority 5)
+  useEffect(() => {
+    try {
+      if (typeof window === 'undefined') return;
+      const searchParams = new URLSearchParams(window.location.search);
+      const sharedOutfitId = searchParams.get('outfit');
+      if (sharedOutfitId) {
+        const found = getAllOutfits().find(o => o.id === sharedOutfitId);
+        if (found) {
+          const sharedScene = searchParams.get('scene') || 'tet';
+          const primary = searchParams.get('primary') || '#A4262C';
+          const secondary = searchParams.get('secondary') || '#C8A15A';
+          const accent = searchParams.get('accent') || '#FBF7F0';
+          const accParam = searchParams.get('acc');
+          const accList = accParam ? accParam.split(',') : [];
+
+          setSelectedOutfit(found);
+          setSelectedScene(sharedScene);
+          setCustomizationData({
+            colors: { primary, secondary, accent },
+            accessories: accList,
+            customizations: { fit: 'Vừa vặn', length: 'Dài (chấm gót)' }
+          });
+          setActiveTab('mixer');
+          showToast(`✨ Đã mở bộ phối được chia sẻ: ${found.ten}!`);
+        }
+      }
+    } catch (e) {
+      console.warn('Lỗi đọc tham số URL chia sẻ:', e);
+    }
+  }, []);
+
+  // Compute active mixer step for Sticky Stepper (Priority 4)
+  const currentMixerStep = useMemo(() => {
+    if (turntableImages) return 4;
+    if (selectedOutfit) return 3;
+    if (selectedScene) return 2;
+    return 1;
+  }, [turntableImages, selectedOutfit, selectedScene]);
+
+  const mixerStepTitle = useMemo(() => {
+    switch (currentMixerStep) {
+      case 1: return t('step_scene');
+      case 2: return t('step_outfit');
+      case 3: return t('step_custom');
+      case 4: return t('step_preview');
+      default: return t('nav_mixer');
+    }
+  }, [currentMixerStep, t]);
+
+  // Refs for scrolling in mixer
+  const outfitRef = useRef(null);
+  const uploadRef = useRef(null);
+  const resultRef = useRef(null);
+
+  // Get filtered outfits for mixer
+  const filteredOutfits = selectedScene
+    ? filterOutfits({
+        scene: SCENE_MAP[selectedScene],
+        region: REGION_MAP[selectedRegion],
+      })
+    : getAllOutfits().slice(0, 4);
+
+  // Handle scene selection
+  const handleSceneSelect = useCallback((sceneId) => {
+    setSelectedScene(sceneId);
+    setSelectedOutfit(null);
+    setTurntableImages(null);
+    setError(null);
+    setTimeout(() => {
+      outfitRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }, []);
+
+  // Handle region filter
+  const handleRegionSelect = useCallback((regionId) => {
+    setSelectedRegion(regionId);
+  }, []);
+
+  // Handle outfit selection
+  const handleOutfitSelect = useCallback((outfit) => {
+    setSelectedOutfit(outfit);
+    setTurntableImages(null);
+    setError(null);
+
+    // Evaluate cultural warnings
+    const warnings = evaluateCulturalWarnings({
+      outfit,
+      event: selectedScene,
+      accessories: [],
+      colors: {}
+    });
+    setMismatchWarnings(warnings);
+
+    setTimeout(() => {
+      uploadRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }, [selectedScene]);
+
+  // Handle customize and generate
+  const handleCustomizeAndGenerate = useCallback(async (data) => {
+    if (!selectedOutfit) return;
+
+    const chosenAngleMode = data.angleMode || 'single';
+    setAngleMode(chosenAngleMode);
+    setCustomizationData(data);
+    setIsGenerating(true);
+    setIsGeneratingRemaining(false);
+    setRemainingProgress(null);
+    setError(null);
+    setTurntableImages(null);
+
+    const isSingle = chosenAngleMode === 'single';
+    setGenerateProgress({ current: 0, total: isSingle ? 1 : 4 });
+
+    // Check cultural warnings with selected colors & accessories
+    const warnings = evaluateCulturalWarnings({
+      outfit: selectedOutfit,
+      event: selectedScene,
+      accessories: data.accessories || [],
+      colors: data.colors || {}
+    });
+    setMismatchWarnings(warnings);
+
+    try {
+      setGenerateProgress({ current: 1, total: isSingle ? 1 : 4 });
+      const outfitCustomPayload = {
+        ...data.customizations,
+        colors: data.colors,
+        accessories: data.accessories
+      };
+
+      const frontImage = await generateOutfitImage(
+        data.userPhoto,
+        selectedOutfit,
+        0,
+        null,
+        outfitCustomPayload
+      );
+      
+      setTurntableImages([frontImage]);
+      setIsGenerating(false);
+
+      setTimeout(() => {
+        resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
+
+      // Background loading for other angles (90, 180, 270) ONLY IF multi angle mode
+      if (!isSingle) {
+        setIsGeneratingRemaining(true);
+        const angles = [90, 180, 270];
+        let step = 1;
+        for (const angle of angles) {
+          try {
+            step++;
+            setRemainingProgress({ current: step, total: 4, angle });
+            await new Promise(r => setTimeout(r, 6000));
+            const img = await generateOutfitImage(
+              data.userPhoto,
+              selectedOutfit,
+              angle,
+              frontImage,
+              outfitCustomPayload
+            );
+            setTurntableImages(prev => {
+               if (!prev) return [img];
+               return [...prev, img];
+            });
+          } catch (e) {
+            console.warn('Background gen failed for angle', angle);
+          }
+        }
+        setIsGeneratingRemaining(false);
+        setRemainingProgress(null);
+      }
+    } catch (err) {
+      console.error('Lỗi sinh ảnh:', err);
+      setError(err.message || 'Đã xảy ra lỗi khi tạo ảnh. Vui lòng thử lại.');
+      setIsGenerating(false);
+      setIsGeneratingRemaining(false);
+    } finally {
+      setGenerateProgress(null);
+    }
+  }, [selectedOutfit, selectedScene]);
+
+  // Handle generating remaining 3 angles if user started with 1 angle
+  const handleGenerateRemainingAngles = useCallback(async () => {
+    if (!turntableImages || turntableImages.length === 0 || !selectedOutfit || isGeneratingRemaining) return;
+
+    setIsGeneratingRemaining(true);
+    setAngleMode('multi');
+    setError(null);
+
+    const frontImage = turntableImages[0];
+    const outfitCustomPayload = customizationData ? {
+      ...customizationData.customizations,
+      colors: customizationData.colors,
+      accessories: customizationData.accessories
+    } : {};
+
+    const allAngles = [90, 180, 270];
+    const alreadyCount = turntableImages.length;
+    const anglesToGenerate = allAngles.slice(alreadyCount - 1);
+    let step = alreadyCount;
+
+    try {
+      for (const angle of anglesToGenerate) {
+        step++;
+        setRemainingProgress({ current: step, total: 4, angle });
+        await new Promise(r => setTimeout(r, 4000));
+        const img = await generateOutfitImage(
+          customizationData?.userPhoto,
+          selectedOutfit,
+          angle,
+          frontImage,
+          outfitCustomPayload
+        );
+        setTurntableImages(prev => {
+          if (!prev) return [img];
+          return [...prev, img];
+        });
+      }
+      showToast('🎉 Đã tạo thành công đủ 4 góc xoay 360°!');
+    } catch (err) {
+      console.error('Lỗi tạo thêm góc xoay:', err);
+      showToast('⚠️ Không thể tạo thêm một số góc: ' + (err.message || 'Lỗi kết nối'));
+    } finally {
+      setIsGeneratingRemaining(false);
+      setRemainingProgress(null);
+    }
+  }, [turntableImages, selectedOutfit, customizationData, isGeneratingRemaining]);
+
+  // Reset mixer flow
+  const handleReset = useCallback(() => {
+    setSelectedScene(null);
+    setSelectedRegion('all');
+    setSelectedOutfit(null);
+    setCustomizationData(null);
+    setTurntableImages(null);
+    setIsGenerating(false);
+    setIsGeneratingRemaining(false);
+    setRemainingProgress(null);
+    setGenerateProgress(null);
+    setCultureInfo(null);
+    setMismatchWarnings([]);
+    setError(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  // Save current outfit combo to Lookbook
+  const handleSaveToLookbook = () => {
+    if (!selectedOutfit) return;
+    const newEntry = {
+      id: 'look_' + Date.now(),
+      outfitName: selectedOutfit.ten,
+      outfit: selectedOutfit,
+      scene: SCENE_MAP[selectedScene] || 'Tự do',
+      region: selectedOutfit.vung_mien,
+      colors: customizationData?.colors || { primary: '#B22222', secondary: '#DAA520', accent: '#FAF9F6' },
+      accessories: customizationData?.accessories || [],
+      evalScores: customizationData?.evalScores || { totalScore: 92 },
+      image: turntableImages ? turntableImages[0] : selectedOutfit.anh_dai_dien,
+      createdAt: new Date().toISOString(),
+      likes: 1
+    };
+
+    setSavedLookbooks(prev => [newEntry, ...prev]);
+    showToast('💖 Đã lưu set đồ thành công vào Lookbook của bạn!');
+  };
+
+  // Add current outfit combo to Comparison list
+  const handleAddToCompare = () => {
+    if (!selectedOutfit) return;
+    if (comparedOutfits.length >= 3) {
+      showToast('⚠️ Bạn chỉ có thể so sánh tối đa 3 bộ cùng lúc. Hãy xóa bớt 1 bộ trong tab So sánh nhé!');
+      return;
+    }
+
+    const exists = comparedOutfits.some(item => item.outfit.id === selectedOutfit.id);
+    if (exists) {
+      showToast('ℹ️ Bộ trang phục này đã có trong danh sách so sánh.');
+      return;
+    }
+
+    const newCompareItem = {
+      id: 'comp_' + Date.now(),
+      outfit: selectedOutfit,
+      event: SCENE_MAP[selectedScene] || 'Tự do',
+      colors: customizationData?.colors || { primary: '#B22222', secondary: '#DAA520', accent: '#FAF9F6' },
+      accessories: customizationData?.accessories || [],
+      evalScores: customizationData?.evalScores || { harmonyScore: 90, culturalFit: 95, genZScore: 88, totalScore: 91 },
+      warnings: mismatchWarnings,
+      image: turntableImages ? turntableImages[0] : selectedOutfit.anh_dai_dien
+    };
+
+    setComparedOutfits(prev => [...prev, newCompareItem]);
+    showToast('⚖️ Đã thêm vào danh sách So sánh phương án!');
+  };
+
+  // Handle selection from Explore or Lookbook -> load into mixer
+  const handleSelectFromOtherViews = (outfitItem) => {
+    const targetOutfit = outfitItem.outfit || outfitItem;
+    setSelectedOutfit(targetOutfit);
+    setSelectedScene('tet');
+    setActiveTab('mixer');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    showToast(`👗 Đã chọn ${targetOutfit.ten}! Hãy tùy chỉnh màu sắc và phụ kiện.`);
+  };
+
+  return (
+    <div className="app">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="toast-notification animate-bounce-in">
+          {toastMessage}
+        </div>
+      )}
+
+      {/* TOP NAVIGATION BAR */}
+      <nav className="top-navbar glass-panel">
+        <div className="container navbar-container">
+          <div className="nav-brand" onClick={() => setActiveTab('home')} title="Bấm để xem chi tiết Logo & Nhận diện thương hiệu">
+            <AppLogo size="sm" variant={logoVariant} interactive={true} />
+            <span className="brand-name">Việt Phục <span className="text-gradient">Remix</span></span>
+          </div>
+
+          <div className="nav-links">
+            <button 
+              className={`nav-btn ${activeTab === 'home' ? 'nav-btn--active' : ''}`}
+              onClick={() => setActiveTab('home')}
+            >
+              {t('nav_home')}
+            </button>
+            <button 
+              className={`nav-btn ${activeTab === 'mixer' ? 'nav-btn--active' : ''}`}
+              onClick={() => setActiveTab('mixer')}
+            >
+              {t('nav_mixer')}
+            </button>
+            <button 
+              className={`nav-btn ${activeTab === 'explore' ? 'nav-btn--active' : ''}`}
+              onClick={() => setActiveTab('explore')}
+            >
+              {t('nav_explore')}
+            </button>
+            <button 
+              className={`nav-btn ${activeTab === 'compare' ? 'nav-btn--active' : ''}`}
+              onClick={() => setActiveTab('compare')}
+            >
+              {t('nav_compare')}
+              {comparedOutfits.length > 0 && (
+                <span className="nav-badge">{comparedOutfits.length}</span>
+              )}
+            </button>
+            <button 
+              className={`nav-btn ${activeTab === 'lookbook' ? 'nav-btn--active' : ''}`}
+              onClick={() => setActiveTab('lookbook')}
+            >
+              {t('nav_lookbook')}
+              {savedLookbooks.length > 0 && (
+                <span className="nav-badge">{savedLookbooks.length}</span>
+              )}
+            </button>
+            <button 
+              className={`nav-btn ${activeTab === 'culture' ? 'nav-btn--active' : ''}`}
+              onClick={() => setActiveTab('culture')}
+            >
+              {t('nav_culture')}
+            </button>
+          </div>
+
+          {/* Quick Controls: Music, Petals, Language, Theme */}
+          <div className="nav-controls">
+            <MusicPlayer />
+            <button
+              type="button"
+              className={`control-btn ${petalsEnabled ? 'control-btn--active' : ''}`}
+              onClick={handleTogglePetals}
+              title={petalsEnabled ? t('nav_petals_on') : t('nav_petals_off')}
+            >
+              <span>🌸</span>
+              <span className="control-btn-label">{t('nav_petals_short')}</span>
+            </button>
+            <button
+              type="button"
+              className="control-btn control-btn--lang"
+              onClick={() => {
+                toggleLang();
+                showToast(lang === 'vi' ? '🇬🇧 Switched to English' : '🇻🇳 Đã chuyển sang Tiếng Việt');
+              }}
+              title={t('lang_switch_tooltip')}
+              aria-label="Switch language"
+            >
+              <span>{lang === 'vi' ? '🇻🇳' : '🇬🇧'}</span>
+              <span>{lang.toUpperCase()}</span>
+            </button>
+            <button
+              type="button"
+              className="control-btn"
+              onClick={toggleTheme}
+              title={theme === 'dark' ? 'Chế độ Giấy dó (Sáng)' : 'Chế độ Sơn mài (Tối)'}
+            >
+              <span>{theme === 'dark' ? '🌙' : '☀️'}</span>
+              <span className="control-btn-label">{theme === 'dark' ? t('theme_dark') : t('theme_light')}</span>
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* VIEW 1: HOME */}
+      {activeTab === 'home' && (
+        <div className="home-view">
+          {/* Hero Section */}
+          <header className="hero">
+            <div className="hero__bg" />
+            <div className="container hero__content">
+              <div className="hero__logo-center animate-fade-in-up" style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.25rem' }}>
+                <AppLogo size="hero" variant={logoVariant} interactive={true} showBadge={true} />
+              </div>
+              <p className="hero__badge">
+                {t('hero_badge')}
+              </p>
+              <h1 className="hero__title">
+                {t('hero_title_1')}<span className="text-gradient">{t('hero_title_2')}</span>
+              </h1>
+              <p className="hero__desc">
+                {t('hero_desc')}
+              </p>
+              <div className="hero__actions">
+                <button 
+                  className="btn btn-primary btn-lg"
+                  onClick={() => setActiveTab('mixer')}
+                >
+                  {t('hero_btn_mix')}
+                </button>
+                <button 
+                  className="btn btn-secondary btn-lg"
+                  onClick={() => setActiveTab('lookbook')}
+                >
+                  {t('hero_btn_lookbook')}
+                </button>
+                <button 
+                  className="btn btn-secondary btn-lg"
+                  onClick={() => {
+                    const musicBtn = document.querySelector('.music-toggle-btn');
+                    if (musicBtn) musicBtn.click();
+                  }}
+                  title={lang === 'en' ? 'Play Vietnamese Court Music' : 'Bật/Tắt Nhã Nhạc Cung Đình Việt Nam'}
+                >
+                  {t('hero_btn_music')}
+                </button>
+                <button 
+                  className="btn btn-ghost btn-lg"
+                  onClick={() => setIsOnboardingOpen(true)}
+                  title={lang === 'en' ? 'View 3-step guide' : 'Xem hướng dẫn 3 bước'}
+                >
+                  {t('hero_btn_guide')}
+                </button>
+              </div>
+            </div>
+          </header>
+
+          {/* 1. BỐN THẺ LỐI TẮT THEO SỰ KIỆN */}
+          <section className="container event-shortcuts-section animate-fade-in-up">
+            <div className="section-header text-center" style={{ marginBottom: '1.25rem' }}>
+              <span className="section-badge">{t('event_shortcuts_badge')}</span>
+              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.5rem', margin: '0.25rem 0' }}>
+                {t('event_shortcuts_title')}<span className="text-gradient">{t('event_shortcuts_question')}</span>
+              </h3>
+            </div>
+            <div className="event-shortcuts-grid">
+              {EVENT_SHORTCUTS.map(sc => {
+                const scTitle = sc.id === 'tet' ? t('event_tet_title') :
+                                sc.id === 'tot-nghiep' ? t('event_grad_title') :
+                                sc.id === 'dam-cuoi' ? t('event_wedding_title') :
+                                t('event_yearbook_title');
+                const scDesc = sc.id === 'tet' ? t('event_tet_desc') :
+                               sc.id === 'tot-nghiep' ? t('event_grad_desc') :
+                               sc.id === 'dam-cuoi' ? t('event_wedding_desc') :
+                               t('event_yearbook_desc');
+                return (
+                  <button
+                    key={sc.id}
+                    type="button"
+                    className="event-shortcut-card glass-panel"
+                    onClick={() => handleQuickEventSelect(sc.id)}
+                  >
+                    <span className="shortcut-icon">{sc.icon}</span>
+                    <div className="shortcut-text">
+                      <h4>{scTitle}</h4>
+                      <p>{scDesc}</p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* 2. DẢI KHÁM PHÁ THEO VÙNG MIỀN */}
+          <section className="container regional-explore-strip animate-fade-in-up">
+            <div className="section-header text-center" style={{ marginBottom: '0.75rem' }}>
+              <span className="section-badge">{t('regional_badge')}</span>
+              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.35rem', margin: '0.2rem 0' }}>
+                {t('regional_title')}<span className="text-gradient">{t('regional_title_highlight')}</span>
+              </h3>
+            </div>
+            <div className="regional-strip-grid">
+              {REGIONAL_STRIPS.map(reg => {
+                const regName = reg.id === 'bac' ? t('reg_bac') :
+                                reg.id === 'trung' ? t('reg_trung') :
+                                reg.id === 'nam' ? t('reg_nam') :
+                                t('reg_highlands');
+                const regDesc = reg.id === 'bac' ? t('reg_bac_desc') :
+                                reg.id === 'trung' ? t('reg_trung_desc') :
+                                reg.id === 'nam' ? t('reg_nam_desc') :
+                                t('reg_highlands_desc');
+                return (
+                  <button
+                    key={reg.id}
+                    type="button"
+                    className="regional-strip-card glass-panel"
+                    onClick={() => {
+                      setSelectedRegion(reg.id);
+                      setActiveTab('mixer');
+                      showToast(`📍 ${lang === 'en' ? 'Filtered by region: ' : 'Đã lọc trang phục vùng: '}${regName}`);
+                    }}
+                  >
+                    <span className="regional-strip-emoji">{reg.emoji}</span>
+                    <div>
+                      <span className="regional-strip-title">{regName}</span>
+                      <span className="regional-strip-desc">{regDesc}</span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* 3. PHẦN MẸO VĂN HÓA TRONG NGÀY (DAILY HERITAGE TIP) */}
+          <section className="container daily-tip-container animate-fade-in-up">
+            <div className="daily-tip-card glass-panel">
+              <div className="daily-tip-content">
+                <span className="daily-tip-badge">
+                  <span>💡</span> {t('daily_tip_badge')}
+                </span>
+                <h4 className="daily-tip-title">{DAILY_TIPS[tipIndex].title}</h4>
+                <p className="daily-tip-desc">{DAILY_TIPS[tipIndex].desc}</p>
+                <small className="daily-tip-source">{t('daily_tip_source')}: {DAILY_TIPS[tipIndex].source}</small>
+              </div>
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                onClick={handleNextTip}
+                title={lang === 'en' ? 'Explore next cultural tip' : 'Khám phá mẹo văn hóa tiếp theo'}
+              >
+                {t('daily_tip_next')}
+              </button>
+            </div>
+          </section>
+
+          {/* Bản đồ di sản 3 miền Bắc - Trung - Nam */}
+          <div className="container" style={{ margin: '2.5rem auto 1.5rem' }}>
+            <VietnamMap onSelectOutfitForMixer={handleSelectFromOtherViews} />
+          </div>
+
+          {/* Logo & Brand Identity Showcase Banner */}
+          <section className="container" style={{ margin: '1.5rem auto' }}>
+            <div className="glass-panel animate-fade-in-up" style={{ padding: '1.75rem', borderRadius: '16px', border: '1px solid rgba(212, 160, 23, 0.3)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+                  <AppLogo size="lg" variant={logoVariant} interactive={true} />
+                  <div>
+                    <span className="section-badge" style={{ marginBottom: '0.25rem', display: 'inline-block' }}>Nhận diện thương hiệu chính thức</span>
+                    <h3 style={{ fontSize: '1.35rem', margin: '0.2rem 0', fontFamily: 'var(--font-serif)' }}>
+                      Logo <span className="text-gradient">Việt Phục Remix</span>
+                    </h3>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', maxWidth: '540px' }}>
+                      {LOGO_VARIANTS[logoVariant]?.name}: {LOGO_VARIANTS[logoVariant]?.description}
+                    </p>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  <button
+                    className={`btn btn-sm ${logoVariant === 'emblem' ? 'btn-primary' : 'btn-secondary'}`}
+                    onClick={() => handleToggleLogoVariant('emblem')}
+                  >
+                    🪷 Biểu tượng Sen Vàng
+                  </button>
+                  <button
+                    className={`btn btn-sm ${logoVariant === 'crest' ? 'btn-primary' : 'btn-secondary'}`}
+                    onClick={() => handleToggleLogoVariant('crest')}
+                  >
+                    👑 Ấn triện Cung đình
+                  </button>
+                  <a
+                    href={LOGO_VARIANTS[logoVariant]?.src}
+                    download={`viet-phuc-remix-logo-${logoVariant}.jpg`}
+                    className="btn btn-secondary btn-sm"
+                    style={{ textDecoration: 'none' }}
+                  >
+                    ⬇ Tải Logo HD
+                  </a>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Highlights Section */}
+          <section className="container home-highlights">
+            <div className="section-header text-center">
+              <span className="section-badge">Bộ sưu tập tiêu biểu</span>
+              <h2 className="section-title">Trang phục <span className="text-gradient">nổi bật</span></h2>
+              <p className="section-subtitle">Chiêm ngưỡng những tinh hoa trang phục qua các triều đại lịch sử</p>
+            </div>
+
+            <div className="highlights-grid">
+              {getAllOutfits().slice(0, 4).map((outfit, i) => (
+                <div key={outfit.id} className="highlight-card glass-card animate-fade-in-up" style={{ animationDelay: `${i * 100}ms` }}>
+                  <div className="highlight-card__header">
+                    <span className="costume-tag tag-region">{outfit.vung_mien}</span>
+                    <span className="highlight-era">{outfit.era}</span>
+                  </div>
+                  <h3 className="highlight-title">{outfit.ten}</h3>
+                  <p className="highlight-desc">{outfit.mo_ta_ngan}</p>
+                  <div className="highlight-actions">
+                    <button 
+                      className="btn btn-primary btn-sm btn-block"
+                      onClick={() => handleSelectFromOtherViews(outfit)}
+                    >
+                      ✨ Thử phối bộ này
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="home-banner-hub glass-panel animate-fade-in-up">
+              <div className="banner-text">
+                <h3>📖 Bạn có biết ý nghĩa của 5 nút cài áo ngũ thân?</h3>
+                <p>Năm hạt nút tượng trưng cho Ngũ thường của Nho giáo: Nhân, Lễ, Nghĩa, Trí, Tín — nền tảng đạo đức của người Việt xưa.</p>
+              </div>
+              <button className="btn btn-secondary" onClick={() => setActiveTab('culture')}>
+                Tìm hiểu thêm ở Văn hóa ➔
+              </button>
+            </div>
+
+            {/* Banner Tư Vấn AI Cổ Phục */}
+            <div className="home-banner-hub glass-panel animate-fade-in-up" style={{ marginTop: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+                <img
+                  src="/src/assets/images/ai_stylist_avatar_1791041447024.jpg"
+                  alt="Cố Vấn AI"
+                  style={{
+                    width: '64px',
+                    height: '64px',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    border: '2px solid var(--color-gold)',
+                    boxShadow: '0 0 15px rgba(212, 160, 23, 0.4)',
+                    flexShrink: 0
+                  }}
+                  referrerPolicy="no-referrer"
+                />
+                <div className="banner-text">
+                  <h3>💬 Cố Vấn Việt Phục AI: Tư vấn chọn & phối trang phục</h3>
+                  <p>Hỏi đáp trực tiếp về lễ phục ngày cưới, kỷ yếu, sự kiện, quy tắc phối màu ngũ hành và phụ kiện cung đình truyền thống.</p>
+                </div>
+              </div>
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  const fab = document.querySelector('.chatbot-fab');
+                  if (fab) fab.click();
+                }}
+              >
+                ✨ Mở Cửa Sổ Tư Vấn AI
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+
+      {/* VIEW 2: MIX & MATCH (PHỐI ĐỒ 5 BƯỚC) */}
+      {activeTab === 'mixer' && (
+        <main className="container main-content">
+          {/* Sticky Stepper (Priority 4) */}
+          <StickyStepper currentStep={currentMixerStep} stepTitle={mixerStepTitle} />
+
+          {/* Step 1: Scene Selection */}
+          <SceneSelector
+            onSceneSelect={handleSceneSelect}
+            onRegionSelect={handleRegionSelect}
+            selectedScene={selectedScene}
+            selectedRegion={selectedRegion}
+            selectedWeather={selectedWeather}
+            onWeatherSelect={setSelectedWeather}
+            selectedStyle={selectedStyle}
+            onStyleSelect={setSelectedStyle}
+          />
+
+          {/* Step 2: Outfit Suggestions */}
+          <div ref={outfitRef}>
+            <OutfitSuggestions
+              outfits={filteredOutfits}
+              onSelect={handleOutfitSelect}
+              selectedId={selectedOutfit?.id}
+              selectedScene={selectedScene}
+            />
+          </div>
+
+          {/* Cultural Warnings Banner */}
+          <MismatchWarning
+            warnings={mismatchWarnings}
+            onDismiss={() => setMismatchWarnings([])}
+          />
+
+          {/* Step 3 & 4: Customizer (Colors + Accessories + Fit + Avatar) */}
+          {selectedOutfit && (
+            <div ref={uploadRef}>
+              <OutfitCustomizer
+                selectedOutfit={selectedOutfit}
+                selectedScene={selectedScene}
+                onCustomizeAndGenerate={handleCustomizeAndGenerate}
+                isGenerating={isGenerating}
+              />
+            </div>
+          )}
+
+          {/* Error message */}
+          {error && (
+            <div className="error-banner animate-fade-in" id="error-banner">
+              <span className="error-banner__icon">❌</span>
+              <div className="error-banner__content">
+                <strong>Đã xảy ra lỗi</strong>
+                <p>{error}</p>
+              </div>
+              <button
+                className="btn btn-ghost"
+                onClick={() => setError(null)}
+              >
+                ✕
+              </button>
+            </div>
+          )}
+
+          {/* Step 5: Results Section — Viewer + Culture Card + Multi-actions */}
+          <div ref={resultRef}>
+            {(isGenerating || turntableImages) && (
+              <div className="result-container animate-fade-in">
+                <div className="result-split-layout">
+                  <div className="result-viewer">
+                    <TurntableViewer
+                      images={turntableImages}
+                      isLoading={isGenerating}
+                      progress={generateProgress}
+                      angleMode={angleMode}
+                      isGeneratingRemaining={isGeneratingRemaining}
+                      remainingProgress={remainingProgress}
+                      onGenerateRemaining={handleGenerateRemainingAngles}
+                    />
+                  </div>
+
+                  <div className="result-sidebar">
+                    {turntableImages && selectedOutfit && (
+                      <>
+                        <CultureCard
+                          outfit={selectedOutfit}
+                          useDemoData={DEMO_MODE}
+                          customizations={customizationData?.customizations}
+                        />
+
+                        {/* Thanh công cụ hành động nhanh */}
+                        <div className="result-actions-panel glass-panel">
+                          <button 
+                            className="btn btn-primary btn-block"
+                            onClick={handleSaveToLookbook}
+                          >
+                            💖 Lưu vào Lookbook cá nhân
+                          </button>
+                          <button 
+                            className="btn btn-secondary btn-block"
+                            onClick={handleAddToCompare}
+                          >
+                            ⚖️ Thêm vào danh sách So sánh ({comparedOutfits.length}/3)
+                          </button>
+                        </div>
+
+                        <LookbookExport
+                          outfit={selectedOutfit}
+                          imageBase64={turntableImages[0]}
+                          cultureInfo={cultureInfo}
+                          colors={customizationData?.colors}
+                          accessories={customizationData?.accessories}
+                          scene={SCENE_MAP[selectedScene]}
+                          onToast={showToast}
+                        />
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Reset button */}
+                <div className="reset-section text-center">
+                  <button
+                    className="btn btn-secondary btn-lg"
+                    onClick={handleReset}
+                    id="reset-btn"
+                  >
+                    🔄 Phối bộ khác
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </main>
+      )}
+
+      {/* VIEW 3: EXPLORE COSTUMES */}
+      {activeTab === 'explore' && (
+        <div className="container">
+          <ExploreCostumes onSelectForMixer={handleSelectFromOtherViews} />
+        </div>
+      )}
+
+      {/* VIEW 4: COMPARE OUTFITS */}
+      {activeTab === 'compare' && (
+        <div className="container">
+          <OutfitComparison
+            comparedOutfits={comparedOutfits}
+            onRemoveOutfit={(id) => setComparedOutfits(prev => prev.filter((_, idx) => idx !== id && _.id !== id))}
+            onSelectOutfit={handleSelectFromOtherViews}
+          />
+        </div>
+      )}
+
+      {/* VIEW 5: LOOKBOOK GALLERY */}
+      {activeTab === 'lookbook' && (
+        <div className="container">
+          <LookbookGallery
+            savedOutfits={savedLookbooks}
+            onRemoveFromLookbook={(id) => setSavedLookbooks(prev => prev.filter(item => item.id !== id))}
+            onSelectOutfit={handleSelectFromOtherViews}
+          />
+        </div>
+      )}
+
+      {/* VIEW 6: CULTURE HUB */}
+      {activeTab === 'culture' && (
+        <div className="container">
+          <CultureHub />
+        </div>
+      )}
+
+      {/* Global Footer */}
+      <footer className="footer">
+        <div className="container footer__content">
+          <div className="footer__brand" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+            <LottieIcon animationData={lanternAnimation} size={28} />
+            <span className="footer__name">Việt Phục Remix</span>
+          </div>
+          <p className="footer__tagline">
+            Tôn vinh vẻ đẹp trang phục truyền thống Việt Nam qua lăng kính thời trang sáng tạo Gen Z
+          </p>
+          <div className="footer__meta">
+            <span>Powered by Gemini AI</span>
+            <span>•</span>
+            <span>AI Arena Vietnam 2026</span>
+            <span>•</span>
+            <span onClick={() => setActiveTab('culture')} style={{ cursor: 'pointer', textDecoration: 'underline' }}>
+              Nguồn tư liệu di sản
+            </span>
+            <span>•</span>
+            <span onClick={() => setIsOnboardingOpen(true)} style={{ cursor: 'pointer', textDecoration: 'underline', color: 'var(--color-gold)' }}>
+              Hướng dẫn sử dụng
+            </span>
+          </div>
+        </div>
+      </footer>
+
+      {/* Hiệu ứng cánh sen rơi phủ khắp giao diện */}
+      <LotusPetals enabled={petalsEnabled} />
+
+      {/* Cố vấn Việt Phục AI Chatbot */}
+      <ChatBot />
+
+      {/* Onboarding Modal 3 bước ngắn */}
+      <OnboardingModal isOpen={isOnboardingOpen} onClose={handleCloseOnboarding} />
+    </div>
+  );
+}

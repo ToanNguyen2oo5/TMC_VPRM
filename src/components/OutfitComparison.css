@@ -1,0 +1,260 @@
+.comparison-section {
+  padding: 2rem 0 4rem;
+}
+
+.empty-compare {
+  padding: 3rem;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.empty-compare .empty-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.empty-compare h3 {
+  font-size: 1.3rem;
+  color: #DAA520;
+  margin-bottom: 0.5rem;
+}
+
+.empty-compare p {
+  color: #a0aec0;
+  font-size: 0.95rem;
+}
+
+.comparison-table-wrapper {
+  padding: 1.5rem;
+  overflow-x: auto;
+}
+
+.comparison-grid {
+  display: grid;
+  gap: 1.5rem;
+  min-width: 600px;
+}
+
+.compare-card {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  background: rgba(26, 22, 34, 0.7);
+  border: 1px solid rgba(218, 165, 32, 0.2);
+  border-radius: 14px;
+}
+
+.compare-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.set-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #DAA520;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.remove-btn {
+  background: transparent;
+  border: none;
+  color: #a0aec0;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.remove-btn:hover {
+  color: #e53e3e;
+}
+
+.compare-card__image-box {
+  width: 100%;
+  height: 280px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.compare-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.compare-placeholder {
+  text-align: center;
+}
+
+.compare-placeholder span {
+  font-size: 3rem;
+  display: block;
+}
+
+.compare-placeholder p {
+  font-size: 0.9rem;
+  color: #cbd5e0;
+}
+
+.compare-card__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.outfit-name {
+  font-size: 1.25rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  color: #DAA520;
+  margin-bottom: 0.35rem;
+}
+
+.meta-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.meta-badge {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #cbd5e0;
+}
+
+.compare-section-row {
+  margin-bottom: 0.75rem;
+}
+
+.row-title {
+  display: block;
+  font-size: 0.8rem;
+  color: #a0aec0;
+  margin-bottom: 0.35rem;
+}
+
+.color-swatches {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.acc-names {
+  font-size: 0.85rem;
+  color: #e2e8f0;
+  line-height: 1.4;
+}
+
+.scores-box {
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  padding: 0.85rem;
+  margin: 1rem 0;
+}
+
+.score-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #cbd5e0;
+  margin-top: 0.5rem;
+}
+
+.score-item:first-child {
+  margin-top: 0;
+}
+
+.score-val {
+  font-weight: 700;
+  color: #DAA520;
+}
+
+.score-bar-bg {
+  width: 100%;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 0.2rem;
+}
+
+.score-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.fill-color {
+  background: #3182ce;
+}
+
+.fill-culture {
+  background: #38a169;
+}
+
+.fill-genz {
+  background: #d69e2e;
+}
+
+.total-score-badge {
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #edf2f7;
+}
+
+.total-score-badge strong {
+  font-size: 1.1rem;
+  color: #DAA520;
+}
+
+.compare-warning-box {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  padding: 0.65rem;
+  background: rgba(229, 62, 62, 0.15);
+  border: 1px solid rgba(229, 62, 62, 0.3);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  color: #feb2b2;
+  margin-bottom: 1rem;
+}
+
+.compare-safe-box {
+  padding: 0.65rem;
+  background: rgba(72, 187, 120, 0.1);
+  border: 1px solid rgba(72, 187, 120, 0.25);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  color: #9ae6b4;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.compare-action-btn {
+  margin-top: auto;
+}
+
+.btn-block {
+  width: 100%;
+}

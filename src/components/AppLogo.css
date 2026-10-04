@@ -1,0 +1,215 @@
+.app-logo-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: 50%;
+  padding: 2px;
+  background: linear-gradient(135deg, rgba(212, 160, 23, 0.8), rgba(192, 57, 43, 0.7), rgba(26, 138, 110, 0.5));
+  box-shadow: 0 0 16px rgba(212, 160, 23, 0.25), 0 2px 8px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.app-logo-wrapper:hover {
+  transform: scale(1.06) rotate(2deg);
+  box-shadow: 0 0 24px rgba(212, 160, 23, 0.5), 0 4px 16px rgba(192, 57, 43, 0.35);
+}
+
+.app-logo-wrapper--xs {
+  width: 32px;
+  height: 32px;
+}
+
+.app-logo-wrapper--sm {
+  width: 40px;
+  height: 40px;
+}
+
+.app-logo-wrapper--md {
+  width: 56px;
+  height: 56px;
+}
+
+.app-logo-wrapper--lg {
+  width: 88px;
+  height: 88px;
+}
+
+.app-logo-wrapper--xl {
+  width: 140px;
+  height: 140px;
+  padding: 4px;
+}
+
+.app-logo-wrapper--hero {
+  width: 110px;
+  height: 110px;
+  padding: 3px;
+}
+
+.app-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+  background: #12121e;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.app-logo-badge {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: #c0392b;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 10px;
+  border: 1px solid #d4a017;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+/* Modal for Logo Details & Brand Book */
+.logo-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.logo-modal-card {
+  max-width: 680px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #141420;
+  border: 1px solid rgba(212, 160, 23, 0.4);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(212, 160, 23, 0.2);
+  color: #f0ece4;
+  position: relative;
+}
+
+[data-theme="light"] .logo-modal-card {
+  background: #fdfbf7;
+  color: #251d18;
+  border-color: rgba(201, 161, 90, 0.4);
+}
+
+.logo-modal-close {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: inherit;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+}
+
+.logo-modal-close:hover {
+  background: #c0392b;
+  color: #fff;
+  border-color: #c0392b;
+}
+
+.logo-preview-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin: 1.5rem 0;
+  flex-wrap: wrap;
+}
+
+.logo-choice-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  border-radius: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  min-width: 170px;
+}
+
+.logo-choice-box:hover {
+  border-color: rgba(212, 160, 23, 0.5);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.logo-choice-box.active {
+  border-color: #d4a017;
+  background: rgba(212, 160, 23, 0.1);
+  box-shadow: 0 0 20px rgba(212, 160, 23, 0.2);
+}
+
+.logo-choice-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.logo-philosophy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.logo-philosophy-item {
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.logo-philosophy-item h4 {
+  font-size: 0.95rem;
+  color: #d4a017;
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.logo-philosophy-item p {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: rgba(240, 236, 228, 0.75);
+}
+
+[data-theme="light"] .logo-philosophy-item p {
+  color: rgba(37, 29, 24, 0.8);
+}
+
+.logo-actions-bar {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}

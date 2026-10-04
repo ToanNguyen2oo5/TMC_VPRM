@@ -1,0 +1,122 @@
+/* Sticky Stepper Styling */
+.sticky-stepper-container {
+  position: sticky;
+  top: 60px; /* Right beneath the navbar */
+  z-index: 100;
+  padding: 0.6rem 1rem;
+  margin-bottom: 1.5rem;
+  transition: all 0.25s ease;
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: rgba(20, 16, 14, 0.85);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="light"] .sticky-stepper-container {
+  background: rgba(251, 247, 240, 0.9);
+  box-shadow: 0 4px 16px rgba(70, 50, 40, 0.12);
+}
+
+.sticky-stepper-container--collapsed {
+  padding: 0.4rem 0.85rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  border-color: rgba(200, 161, 90, 0.4);
+}
+
+/* Expanded View */
+.stepper-expanded {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stepper-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stepper-current-badge {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-gold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stepper-percent {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.stepper-bar-track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+[data-theme="light"] .stepper-bar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.stepper-bar-progress {
+  height: 100%;
+  background: linear-gradient(90deg, #A4262C, #C8A15A);
+  border-radius: var(--radius-full);
+  transition: width 0.35s ease;
+}
+
+.stepper-steps-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+.step-label--active {
+  color: var(--color-gold);
+  font-weight: 700;
+}
+
+/* Collapsed Pill View */
+.stepper-collapsed-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.collapsed-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-gold);
+}
+
+.collapsed-progress-ring {
+  width: 120px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.collapsed-progress-fill {
+  height: 100%;
+  background: var(--color-gold);
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .sticky-stepper-container {
+    top: 54px;
+    padding-top: calc(0.4rem + env(safe-area-inset-top, 0px));
+  }
+}

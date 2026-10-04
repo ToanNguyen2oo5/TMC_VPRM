@@ -1,0 +1,183 @@
+[
+  {
+    "id": "ao_dai_hue",
+    "category": "ao_dai",
+    "vung_mien": "Cả ba miền",
+    "era": "Triều Nguyễn đến nay",
+    "do_kho": "Dễ phối",
+    "ten": "Áo dài truyền thống",
+    "mo_ta_ngan": "Biểu tượng vẻ đẹp trang phục Việt Nam với thân áo ôm thanh thoát, hai tà dài thướt tha chạm mu bàn chân.",
+    "mau_dac_trung": ["tím Huế", "trắng ngà", "xanh ngọc bích", "đỏ thắm"],
+    "chat_lieu": "Lụa tơ tằm, voan, gấm hoa",
+    "phu_kien_di_kem": ["nón bài thơ", "khăn vành dây", "guốc mộc sơn", "kiềng bạc"],
+    "boi_canh_phu_hop": ["Tết", "lễ hội", "chụp ảnh di sản", "đám hỏi", "kỷ yếu", "lễ tốt nghiệp"],
+    "gioi_tinh": "cả hai",
+    "y_nghia": "Áo dài truyền thống là kết tinh thẩm mỹ dân tộc Việt Nam, tôn vinh nét đẹp đoan trang, thanh nhã. Cấu trúc hai tà áo trước sau xẻ tà cao đến eo kết hợp cùng quần lụa dài mang lại phong thái thướt tha, mềm mại và trang trọng trong mọi sự kiện lịch sử và đời sống.",
+    "nguon_tham_khao": "Trần Đình Sơn, 'Áo dài Việt Nam', NXB Văn hoá Nghệ thuật; Bảo tàng Áo dài TP.HCM; Bảo tàng Phụ nữ Việt Nam",
+    "anh_dai_dien": "/generated/ao_dai_hue_0deg.png",
+    "canh_bao_phoi": [
+      {
+        "type": "caution",
+        "tranh_ket_hop_voi": ["ao_ba_ba_nam_bo"],
+        "ly_do": "Khăn vành dây và nón bài thơ cung đình không nên phối lẫn với trang phục mộc mạc Nam Bộ",
+        "suggestion": "Nên dùng nón lá hoặc guốc mộc thanh lịch để giữ nét tao nhã."
+      },
+      {
+        "type": "info",
+        "tranh_ket_hop_voi": [],
+        "ly_do": "Khi phối áo dài trắng cho nam giới dịp đời thường, cần lưu ý vì sắc trắng nam thường dành cho chú rể hoặc nghi lễ trang nghiêm.",
+        "suggestion": "Có thể thử tông xanh thẫm hoặc be cho phong cách nam giới nhẹ nhàng hơn."
+      }
+    ]
+  },
+  {
+    "id": "ao_dai_cach_tan",
+    "category": "hien_dai",
+    "vung_mien": "Cả ba miền",
+    "era": "Đương đại (Thế kỷ 21)",
+    "do_kho": "Dễ phối",
+    "ten": "Áo dài cách tân hiện đại",
+    "mo_ta_ngan": "Biến tấu năng động của áo dài với phom dáng tà ngắn, cổ áo thoáng đạt, phong cách trẻ trung Gen Z.",
+    "mau_dac_trung": ["pastel hồng", "be", "trắng kem", "đen classic", "xanh cobalt"],
+    "chat_lieu": "Taffeta, organza, lụa pha tơ, cotton lụa",
+    "phu_kien_di_kem": ["túi clutch", "giày mules", "vòng ngọc trai", "kính mắt thời trang"],
+    "boi_canh_phu_hop": ["kỷ yếu", "đám cưới", "dạo phố", "Tết", "lễ tốt nghiệp", "hàng ngày"],
+    "gioi_tinh": "cả hai",
+    "y_nghia": "Áo dài cách tân là sự tiếp nối sáng tạo của thế hệ trẻ với di sản. Tà áo được điều chỉnh độ dài vừa phải để linh hoạt trong nhịp sống đô thị hiện đại nhưng vẫn giữ vẹn nguyên đường xẻ eo và tinh thần thanh lịch thuần Việt.",
+    "nguon_tham_khao": "Tạp chí Đẹp, chuyên đề 'Áo dài đương đại', 2022; Lưu trữ Tuần lễ Thời trang Việt Nam",
+    "anh_dai_dien": "/generated/ao_dai_cach_tan_0deg.png",
+    "canh_bao_phoi": [
+      {
+        "type": "caution",
+        "tranh_ket_hop_voi": [],
+        "ly_do": "Tránh cách tân quá đà làm mất đường xẻ tà đặc trưng của áo dài thành váy đầm Tây âu",
+        "suggestion": "Giữ đường xẻ eo tinh tế và phối cùng quần suông hoặc váy midi xếp ly nhẹ."
+      }
+    ]
+  },
+  {
+    "id": "ao_tu_than",
+    "category": "ao_tu_than",
+    "vung_mien": "Bắc",
+    "era": "Thế kỷ 12 – đầu thế kỷ 20",
+    "do_kho": "Trung bình",
+    "ten": "Áo tứ thân Kinh Bắc",
+    "mo_ta_ngan": "Trang phục dân gian kinh điển của phụ nữ Bắc Bộ với 4 vạt áo bay bổng, yếm đào và nón quai thao.",
+    "mau_dac_trung": ["nâu non", "đỏ thắm", "vàng mỡ gà", "đen"],
+    "chat_lieu": "Vải the, đũi, lụa Hà Đông thô mộc",
+    "phu_kien_di_kem": ["nón quai thao", "yếm đào", "thắt lưng bao xanh", "dép cong", "khăn mỏ quạ"],
+    "boi_canh_phu_hop": ["lễ hội", "hội Lim", "chụp ảnh truyền thống", "kỷ yếu", "Tết", "biểu diễn"],
+    "gioi_tinh": "nữ",
+    "y_nghia": "Áo tứ thân là biểu tượng phụ nữ đồng bằng sông Hồng. Bốn vạt áo tượng trưng cho tứ thân phụ mẫu (cha mẹ hai bên). Dải thắt lưng xanh tượng trưng cho tình cảm gia đình gắn kết. Đi cùng yếm đào rực rỡ và nón quai thao tròn đầy tạo nên vẻ đẹp duyên dáng của liền chị quan họ.",
+    "nguon_tham_khao": "Đoàn Thị Tình, 'Trang phục Việt Nam', NXB Mỹ thuật, 2006; Viện Nghiên cứu Văn hóa Dân gian",
+    "anh_dai_dien": "/generated/ao_tu_than_0deg.png",
+    "canh_bao_phoi": [
+      {
+        "type": "warning",
+        "tranh_ket_hop_voi": ["ao_ba_ba_nam_bo"],
+        "ly_do": "Khăn rằn Nam Bộ khi phối với Áo tứ thân Kinh Bắc gây xung đột sâu sắc giữa phong cách sông nước miền Nam và văn hóa Quan họ Bắc Bộ.",
+        "suggestion": "Hãy dùng khăn mỏ quạ đen hoặc nón quai thao tròn đầy đậm chất Bắc Bộ thuần túy."
+      }
+    ]
+  },
+  {
+    "id": "ao_ngu_than_ao_tac",
+    "category": "ao_ngu_than",
+    "vung_mien": "Cả ba miền",
+    "era": "Thời Nguyễn (1744 - 1945)",
+    "do_kho": "Trung bình",
+    "ten": "Áo ngũ thân / Áo tấc",
+    "mo_ta_ngan": "Lễ phục truyền thống tôn nghiêm của cả nam và nữ với tay thụng dài (áo tấc) hoặc tay chẽn, cài 5 khuy ngũ thường.",
+    "mau_dac_trung": ["xanh thẫm", "nâu gụ", "vàng hoàng gia", "trắng ngà"],
+    "chat_lieu": "Vải gấm hoa chìm, the lụa, lụa tơ tằm Vạn Phúc",
+    "phu_kien_di_kem": ["khăn đóng", "khăn xếp", "chuỗi hạt bồ đề", "quạt giấy lụa", "guốc mộc"],
+    "boi_canh_phu_hop": ["lễ hội", "Tết", "đám cưới", "chụp ảnh di sản", "lễ tốt nghiệp"],
+    "gioi_tinh": "cả hai",
+    "y_nghia": "Áo ngũ thân lập lĩnh là quốc phục thời Nguyễn do chúa Nguyễn Phúc Khoát định hình và vua Minh Mạng chuẩn hóa. Năm thân áo tượng trưng cho tứ thân phụ mẫu che chở cho một thân con cái ở trong; 5 hạt nút tượng trưng cho ngũ thường: Nhân, Lễ, Nghĩa, Trí, Tín.",
+    "nguon_tham_khao": "Trần Quang Đức, 'Ngàn năm áo mũ', NXB Thế giới, 2013; Vũ Phỉ, 'Cổ phục triều Nguyễn', 2018",
+    "anh_dai_dien": "/generated/ao_the_khan_xep_0deg.png",
+    "canh_bao_phoi": [
+      {
+        "type": "caution",
+        "tranh_ket_hop_voi": ["ao_ba_ba_nam_bo"],
+        "ly_do": "Áo tấc là lễ phục mang tính trang trọng cung đình/nghi lễ, không nên kết hợp với phụ kiện đời thường bình dân.",
+        "suggestion": "Nên phối cùng khăn đóng và quạt giấy để giữ khí chất thanh nhã của bậc Nho nhã."
+      }
+    ]
+  },
+  {
+    "id": "ao_nhat_binh",
+    "category": "cung_dinh",
+    "vung_mien": "Trung",
+    "era": "Triều Nguyễn (1802 - 1945)",
+    "do_kho": "Nâng cao",
+    "ten": "Áo Nhật Bình cung đình",
+    "mo_ta_ngan": "Lễ phục cung đình quý phái bậc nhất của Hoàng hậu, Công chúa và mệnh phụ triều Nguyễn với cổ áo hình chữ nhật viền ngũ hành.",
+    "mau_dac_trung": ["đỏ son", "vàng hoàng gia", "xanh ngọc bích", "tím Huế"],
+    "chat_lieu": "Gấm đoạn dệt kim tuyến, lụa bát sắc thêu tay phượng vũ",
+    "phu_kien_di_kem": ["khăn vành dây vàng kim", "hài thêu phượng", "quạt lụa thêu", "trâm cài hoa sen"],
+    "boi_canh_phu_hop": ["đám cưới", "chụp ảnh di sản", "lễ hội", "biểu diễn nghệ thuật"],
+    "gioi_tinh": "nữ",
+    "y_nghia": "Áo Nhật Bình có cổ áo hình chữ nhật đặc trưng trước ngực, viền dải hoa văn ngũ sắc tượng trưng cho ngũ hành tương sinh. Đây là trang phục đỉnh cao của mỹ thuật thêu tay cung đình Huế, thể hiện phẩm giá quý phái, quyền uy và đoan trang của phụ nữ chốn hoàng tộc.",
+    "nguon_tham_khao": "Khâm định Đại Nam hội điển sự lệ; Bảo tàng Cổ vật Cung đình Huế; Trung tâm Bảo tồn Di tích Cố đô Huế",
+    "anh_dai_dien": "/generated/ao_nhat_binh_0deg.png",
+    "canh_bao_phoi": [
+      {
+        "type": "warning",
+        "tranh_ket_hop_voi": [],
+        "ly_do": "Áo Nhật Bình là lễ phục cung đình trang trọng bậc nhất, việc mặc cho hoạt động dạo phố hàng ngày hoặc đi dép tông/sneakers sẽ làm mất đi tính trang nghiêm.",
+        "suggestion": "Dành áo Nhật Bình cho dịp chụp ảnh di sản hoặc lễ cưới trọng đại. Nếu đi dạo phố, hãy chọn Áo dài cách tân nhẹ nhàng."
+      }
+    ]
+  },
+  {
+    "id": "ao_ba_ba_nam_bo",
+    "category": "ao_ba_ba",
+    "vung_mien": "Nam",
+    "era": "Thế kỷ 19 đến nay",
+    "do_kho": "Dễ phối",
+    "ten": "Áo bà ba Nam Bộ",
+    "mo_ta_ngan": "Trang phục bình dị, mộc mạc và phóng khoáng gắn liền với nét đẹp phù sa sông nước miền Tây Nam Bộ.",
+    "mau_dac_trung": ["đen", "trắng", "nâu đất", "xanh lá đậm"],
+    "chat_lieu": "Vải bà ba, lụa tơ tằm nhẹ, kate mịn, vải đũi",
+    "phu_kien_di_kem": ["khăn rằn Nam Bộ", "nón lá", "guốc mộc", "giỏ cói"],
+    "boi_canh_phu_hop": ["Tết", "lễ hội", "dạo phố", "chụp ảnh truyền thống", "hàng ngày"],
+    "gioi_tinh": "cả hai",
+    "y_nghia": "Áo bà ba tôn vinh sự chất phác, hào sảng và đôn hậu của con người phương Nam. Áo có thân xẻ tà hai bên hông tạo sự thoáng mát linh hoạt, kết hợp cùng chiếc khăn rằn đen trắng kẻ sọc ca-rô biểu tượng cho tình nghĩa thủy chung son sắt.",
+    "nguon_tham_khao": "Nguyễn Thị Minh Thái, 'Văn hóa trang phục Nam Bộ', NXB Tổng hợp TP.HCM; Bảo tàng Phụ nữ Nam Bộ",
+    "anh_dai_dien": "/generated/ao_ba_ba_nam_bo_0deg.png",
+    "canh_bao_phoi": [
+      {
+        "type": "caution",
+        "tranh_ket_hop_voi": ["ao_dai_hue", "ao_nhat_binh"],
+        "ly_do": "Áo bà ba mang tính dân dã đời thường, không phù hợp khi gắn các phụ kiện xa hoa triều đình như khăn vành dây hay hài thêu kim tuyến.",
+        "suggestion": "Nên phối cùng nón lá và khăn rằn để tôn vinh sự mộc mạc thanh lịch đúng tinh thần Nam Bộ."
+      }
+    ]
+  },
+  {
+    "id": "ao_giao_linh",
+    "category": "ao_giao_linh",
+    "vung_mien": "Bắc",
+    "era": "Thời Lý – Trần – Lê (Thế kỷ 11 – 18)",
+    "do_kho": "Trung bình",
+    "ten": "Áo giao lĩnh cổ truyền",
+    "mo_ta_ngan": "Trang phục cổ đại của Đại Việt với cổ áo vạt chéo giao nhau trước ngực, tay áo rộng thướt tha mang đậm nét cổ kính.",
+    "mau_dac_trung": ["đỏ thắm", "xanh thẫm", "trắng ngà", "vàng đồng"],
+    "chat_lieu": "Vải the, vải đũi dệt sợi tự nhiên, lụa cổ",
+    "phu_kien_di_kem": ["thắt lưng lụa thả tà", "quạt giấy cổ", "hài cong", "trâm cài tóc gỗ"],
+    "boi_canh_phu_hop": ["lễ hội", "chụp ảnh di sản", "biểu diễn nghệ thuật", "kỷ yếu cổ phục"],
+    "gioi_tinh": "cả hai",
+    "y_nghia": "Áo giao lĩnh (áo cổ chéo) là một trong những dạng trang phục cổ xưa nhất của người Việt, từng là thường phục và lễ phục phổ biến qua các triều đại Lý, Trần, Lê sơ. Tà áo giao thoa uyển chuyển thể hiện nhân sinh quan hòa hợp giữa đất trời và con người.",
+    "nguon_tham_khao": "Trần Quang Đức, 'Ngàn năm áo mũ', NXB Thế giới, 2013; Viện Khảo cổ học Việt Nam",
+    "anh_dai_dien": "/generated/ao_giao_linh_0deg.png",
+    "canh_bao_phoi": [
+      {
+        "type": "warning",
+        "tranh_ket_hop_voi": [],
+        "ly_do": "Tránh nhầm lẫn cấu trúc vạt chéo của Áo giao lĩnh Việt Nam sang Hán phục hay Kimono.",
+        "suggestion": "Giữ đúng chi tiết nếp vạt cổ áo theo phong cách Đại Việt thời Lê, phối cùng thắt lưng vải mềm."
+      }
+    ]
+  }
+]

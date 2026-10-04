@@ -1,0 +1,231 @@
+.lookbook-gallery-section {
+  padding: 2rem 0 4rem;
+}
+
+.lookbook-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  margin-bottom: 2.5rem;
+}
+
+.lookbook-tab-btn {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: #cbd5e0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.lookbook-tab-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.lookbook-tab-btn--active {
+  background: #B22222 !important;
+  color: #fff !important;
+  border-color: #DAA520 !important;
+  box-shadow: 0 4px 12px rgba(178, 34, 34, 0.4);
+}
+
+.lookbook-empty {
+  padding: 3rem 1.5rem;
+  max-width: 500px;
+  margin: 2rem auto;
+}
+
+.lookbook-empty .empty-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.lookbook-empty h3 {
+  font-size: 1.3rem;
+  color: #DAA520;
+  margin-bottom: 0.5rem;
+}
+
+.lookbook-empty p {
+  color: #a0aec0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.lookbook-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.75rem;
+}
+
+.lookbook-card {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(218, 165, 32, 0.2);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.lookbook-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(218, 165, 32, 0.45);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+}
+
+.lookbook-card__media {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  background: rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.lookbook-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.lookbook-card:hover .lookbook-img {
+  transform: scale(1.03);
+}
+
+.lookbook-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1rem;
+}
+
+.lookbook-placeholder span {
+  font-size: 3.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.lookbook-badge-score {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: #DAA520;
+  font-weight: 700;
+  border: 1px solid rgba(218, 165, 32, 0.3);
+}
+
+.like-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  padding: 0.25rem 0.65rem;
+  color: #fff;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.like-btn:hover {
+  background: rgba(229, 62, 62, 0.8);
+  border-color: #e53e3e;
+}
+
+.like-btn--active {
+  background: rgba(229, 62, 62, 0.9);
+  border-color: #e53e3e;
+}
+
+.lookbook-card__content {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.lookbook-tags {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.tag-scene, .tag-region {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #cbd5e0;
+}
+
+.lookbook-title {
+  font-size: 1.15rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  color: #DAA520;
+  margin-bottom: 0.75rem;
+}
+
+.lookbook-colors {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.colors-label, .acc-label {
+  font-size: 0.75rem;
+  color: #a0aec0;
+}
+
+.lookbook-colors .dots {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.lookbook-colors .dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.lookbook-accessories {
+  margin-bottom: 1rem;
+}
+
+.acc-text {
+  font-size: 0.8rem;
+  color: #e2e8f0;
+  line-height: 1.4;
+  margin-top: 0.2rem;
+}
+
+.lookbook-card__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.text-danger {
+  color: #fc8181 !important;
+}
+
+.text-danger:hover {
+  background: rgba(229, 62, 62, 0.15) !important;
+}

@@ -1,0 +1,318 @@
+/* ============================================================
+   HERITAGE CINEMATIC BACKGROUND — VIETNAM LANDSCAPE & ROWING BOAT
+   Hùng vĩ núi non Tràng An, đàn cò bay lả & người chèo thuyền trên sông
+   ============================================================ */
+
+.heritage-cinematic-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* 1. Base Mountain Backdrop Layer */
+.cinematic-mountain-layer {
+  position: absolute;
+  inset: -5% -5% -5% -5%;
+  width: 110%;
+  height: 110%;
+  background-size: cover;
+  background-position: center 30%;
+  opacity: 0.28;
+  filter: contrast(1.15) saturate(1.1);
+  transform: translate3d(0, 0, 0);
+  animation: mountainKenBurns 45s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+  transition: opacity 0.5s ease;
+}
+
+[data-theme="light"] .cinematic-mountain-layer {
+  opacity: 0.22;
+  filter: contrast(1.05) saturate(1.2) brightness(1.05);
+}
+
+@keyframes mountainKenBurns {
+  0% {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: scale(1.06) translate3d(-1%, -1%, 0);
+  }
+  100% {
+    transform: scale(1.03) translate3d(1%, 0.5%, 0);
+  }
+}
+
+/* Atmospheric Vignette & Contrast Overlay */
+.cinematic-overlay-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 90% 80% at 50% 30%,
+    rgba(28, 25, 23, 0.45) 0%,
+    rgba(28, 25, 23, 0.85) 60%,
+    rgba(28, 25, 23, 0.98) 100%
+  );
+  mix-blend-mode: multiply;
+}
+
+[data-theme="light"] .cinematic-overlay-vignette {
+  background: radial-gradient(
+    ellipse 90% 80% at 50% 30%,
+    rgba(253, 251, 247, 0.5) 0%,
+    rgba(253, 251, 247, 0.85) 65%,
+    rgba(253, 251, 247, 0.97) 100%
+  );
+}
+
+/* 2. Drifting Mist & Fog Layers */
+.cinematic-mist-layer {
+  position: absolute;
+  width: 250%;
+  height: 350px;
+  bottom: 12%;
+  left: -50%;
+  background: radial-gradient(
+    ellipse 60% 40% at 50% 50%,
+    rgba(212, 160, 23, 0.08) 0%,
+    rgba(247, 243, 236, 0.05) 45%,
+    transparent 80%
+  );
+  filter: blur(28px);
+  animation: driftMist 38s linear infinite;
+  will-change: transform;
+}
+
+.cinematic-mist-layer--high {
+  bottom: 35%;
+  height: 220px;
+  animation: driftMistReverse 52s linear infinite;
+  opacity: 0.7;
+}
+
+@keyframes driftMist {
+  0% { transform: translate3d(-20%, 0, 0); }
+  50% { transform: translate3d(10%, -15px, 0); }
+  100% { transform: translate3d(-20%, 0, 0); }
+}
+
+@keyframes driftMistReverse {
+  0% { transform: translate3d(15%, 0, 0); }
+  50% { transform: translate3d(-15%, 12px, 0); }
+  100% { transform: translate3d(15%, 0, 0); }
+}
+
+/* 3. Flying Crane Flock (Đàn Chim Hạc / Cò Bay Lả) */
+.cinematic-birds-flock {
+  position: absolute;
+  top: 14%;
+  left: -10%;
+  width: 140px;
+  height: 70px;
+  opacity: 0.55;
+  animation: flockFlyAcross 48s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+  will-change: transform;
+}
+
+@keyframes flockFlyAcross {
+  0% {
+    transform: translate3d(-80px, 30px, 0) scale(0.65);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.65;
+  }
+  90% {
+    opacity: 0.65;
+  }
+  100% {
+    transform: translate3d(120vw, -70px, 0) scale(0.9);
+    opacity: 0;
+  }
+}
+
+.flock-bird {
+  position: absolute;
+  fill: var(--color-gold);
+  filter: drop-shadow(0 0 3px rgba(212, 160, 23, 0.4));
+  animation: birdFlap 1.8s ease-in-out infinite alternate;
+}
+
+.flock-bird:nth-child(1) { top: 0; left: 60px; transform: scale(1); animation-delay: 0s; }
+.flock-bird:nth-child(2) { top: 18px; left: 35px; transform: scale(0.85); animation-delay: 0.25s; }
+.flock-bird:nth-child(3) { top: 22px; left: 95px; transform: scale(0.88); animation-delay: 0.4s; }
+.flock-bird:nth-child(4) { top: 38px; left: 10px; transform: scale(0.72); animation-delay: 0.6s; }
+.flock-bird:nth-child(5) { top: 42px; left: 125px; transform: scale(0.75); animation-delay: 0.35s; }
+
+@keyframes birdFlap {
+  0% { transform: translateY(0) scaleY(1); }
+  50% { transform: translateY(-4px) scaleY(0.75); }
+  100% { transform: translateY(0) scaleY(1); }
+}
+
+/* 4. The Traditional Rowing Boat & Rower (Thuyền Tam Bản & Người Chèo Thuyền) */
+.cinematic-boat-track {
+  position: absolute;
+  bottom: 8%;
+  left: -280px;
+  width: 260px;
+  height: 120px;
+  animation: boatJourney 42s linear infinite;
+  will-change: transform;
+  z-index: 2;
+}
+
+@keyframes boatJourney {
+  0% {
+    transform: translate3d(-100px, 0, 0);
+    opacity: 0;
+  }
+  6% {
+    opacity: 0.85;
+  }
+  92% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(calc(100vw + 350px), -15px, 0);
+    opacity: 0;
+  }
+}
+
+.cinematic-boat-hull {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  animation: boatRocking 3.8s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes boatRocking {
+  0% {
+    transform: rotate(-1.5deg) translateY(-3px);
+  }
+  50% {
+    transform: rotate(0.8deg) translateY(2px);
+  }
+  100% {
+    transform: rotate(-1deg) translateY(-2px);
+  }
+}
+
+.cinematic-boat-image {
+  width: 220px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 50%;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 50%, transparent 95%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 50%, transparent 95%);
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.8)) brightness(0.95);
+  display: block;
+}
+
+[data-theme="light"] .cinematic-boat-image {
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25)) contrast(1.1);
+}
+
+/* Water Ripple Circles Behind the Boat */
+.boat-wake-ripple {
+  position: absolute;
+  bottom: 18px;
+  left: 30px;
+  width: 80px;
+  height: 14px;
+  border: 1px solid rgba(212, 160, 23, 0.35);
+  border-radius: 50%;
+  animation: rippleSpread 2.8s ease-out infinite;
+  opacity: 0;
+}
+
+.boat-wake-ripple:nth-child(2) {
+  left: 60px;
+  animation-delay: 1.4s;
+}
+
+@keyframes rippleSpread {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+/* 5. Floating Lotus Flower Lanterns (Hoa Đăng Trôi Sông) */
+.cinematic-lantern {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
+  animation: lanternBob 4s ease-in-out infinite alternate;
+}
+
+.lantern-glow {
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(circle, #fde047 10%, #f59e0b 50%, rgba(220, 38, 38, 0) 70%);
+  border-radius: 50%;
+  filter: drop-shadow(0 0 8px #f59e0b) drop-shadow(0 0 16px rgba(239, 68, 68, 0.6));
+  animation: flameFlicker 1.6s ease-in-out infinite alternate;
+}
+
+.lantern-reflection {
+  width: 20px;
+  height: 6px;
+  background: rgba(245, 158, 11, 0.3);
+  border-radius: 50%;
+  margin-top: 2px;
+  filter: blur(2px);
+}
+
+@keyframes lanternBob {
+  0% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-7px) rotate(2deg); }
+  100% { transform: translateY(0) rotate(-3deg); }
+}
+
+@keyframes flameFlicker {
+  0% { transform: scale(0.9); opacity: 0.85; }
+  100% { transform: scale(1.15); opacity: 1; }
+}
+
+.lantern-1 { bottom: 12%; left: 18%; animation-delay: 0s; }
+.lantern-2 { bottom: 6%; left: 42%; animation-delay: 1.2s; }
+.lantern-3 { bottom: 15%; left: 74%; animation-delay: 0.6s; }
+.lantern-4 { bottom: 9%; left: 88%; animation-delay: 2.1s; }
+
+/* 6. Glowing Fireflies / Golden Stardust */
+.cinematic-firefly {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: #fde047;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #fde047, 0 0 12px #f59e0b;
+  animation: fireflyFloat 14s linear infinite;
+  opacity: 0;
+}
+
+@keyframes fireflyFloat {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.85;
+  }
+  80% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(60px, -180px, 0);
+    opacity: 0;
+  }
+}
