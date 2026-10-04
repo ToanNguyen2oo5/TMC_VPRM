@@ -447,3 +447,14 @@
   filter: brightness(1.1);
   transform: translateY(-1px);
 }
+
+@media (max-width: 768px) {
+  .chatbot-wrapper {
+    bottom: 72px;
+    right: 14px;
+  }
+  .chatbot-fab {
+    width: 52px;
+    height: 52px;
+  }
+}

@@ -11,7 +11,7 @@ const TRANSLATIONS = {
     nav_explore: 'Bảo tàng số',
     nav_compare: 'So sánh',
     nav_lookbook: 'Lookbook',
-    nav_culture: 'Cẩm nang',
+    nav_culture: 'Tips Lên Đồ',
     nav_music_play: '🎵 Bật Nhạc',
     nav_music_playing: 'Lanterns on River',
     nav_music_toggle: 'Bật/Tắt Nhạc Nền',

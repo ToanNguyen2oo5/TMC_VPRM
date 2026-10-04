@@ -32,13 +32,17 @@ export default function TurntableViewer({
   isGeneratingRemaining = false,
   remainingProgress = null,
   onGenerateRemaining = null,
-  selectedOutfit = null
+  selectedOutfit = null,
+  customizationData = null
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [preloaded, setPreloaded] = useState({});
   const [currentStageIdx, setCurrentStageIdx] = useState(0);
   const [currentTriviaIdx, setCurrentTriviaIdx] = useState(0);
+
+  const isUsingSampleAvatar = !customizationData?.userPhoto;
+  const avatarName = customizationData?.avatarLabel || (isUsingSampleAvatar ? 'Nữ mẫu 1' : 'ảnh của bạn');
 
   const containerRef = useRef(null);
   const dragStartX = useRef(0);
@@ -152,7 +156,14 @@ export default function TurntableViewer({
 
   // Sensory Cultural Loading Screen
   if (isLoading) {
-    const stage = CULTURAL_STAGES[currentStageIdx];
+    const baseStage = CULTURAL_STAGES[currentStageIdx];
+    const stage = baseStage.id === 3 ? {
+      ...baseStage,
+      title: isUsingSampleAvatar ? `Gemini AI tạo mockup trên ${avatarName}` : 'Gemini AI may đo & ướm tà',
+      desc: isUsingSampleAvatar
+        ? `Dựng nếp áo và tỷ lệ chuẩn mực trên nhân vật mẫu ${avatarName}`
+        : 'Bóc tách vóc dáng và dựng dáng áo chuẩn tỷ lệ trên ảnh chân dung của bạn'
+    } : baseStage;
     const trivia = FOLK_TRIVIA[currentTriviaIdx];
 
     return (
@@ -163,7 +174,9 @@ export default function TurntableViewer({
             Hành Trình <span className="text-gradient">Ướm Việt Phục Số</span>
           </h2>
           <p className="turntable__subtitle">
-            Hệ thống đang kết hợp Google Gemini 1.5 với điển chế cổ phục để ướm thử trang phục lên vóc dáng của bạn
+            {isUsingSampleAvatar
+              ? `Hệ thống đang kết hợp Google Gemini AI với điển chế cổ phục để tạo mockup trên ${avatarName}`
+              : 'Hệ thống đang kết hợp Google Gemini AI với điển chế cổ phục để ướm thử trang phục lên ảnh chân dung của bạn'}
           </p>
         </div>
 
@@ -233,26 +246,6 @@ export default function TurntableViewer({
         )}
       </div>
 
-      {/* Persona Badge: Danh xưng Cổ phong Gen Z */}
-      {costumeMeta && (
-        <div className="persona-badge-banner glass-panel animate-fade-in-up">
-          <div className="persona-badge-header">
-            <div className="persona-title-group">
-              <span className="persona-crown">👑</span>
-              <div>
-                <span className="persona-tag">Danh xưng AI phong tặng:</span>
-                <h3 className="persona-name">{costumeMeta.personaTitle}</h3>
-              </div>
-            </div>
-            <span className="persona-authenticity-pill">{costumeMeta.authenticityTag}</span>
-          </div>
-          <p className="persona-praise">"{costumeMeta.funPraise}"</p>
-          <div className="persona-meta-chips">
-            <span className="persona-chip">🔮 {costumeMeta.element}</span>
-            <span className="persona-chip">🏷️ Thuê tham khảo: {costumeMeta.rentalEstimate}</span>
-          </div>
-        </div>
-      )}
 
       <div
         className={`turntable__frame ${isDragging ? 'is-dragging' : ''}`}
@@ -266,6 +259,11 @@ export default function TurntableViewer({
         onTouchEnd={handlePointerUp}
         style={{ cursor: images.length > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
       >
+        <div className="ai-mockup-tag">
+          <span className="ai-tag-dot" />
+          <span>Minh họa AI • {isUsingSampleAvatar ? `Mockup ${avatarName}` : 'Ảnh thử đồ cá nhân'}</span>
+        </div>
+
         <div className="turntable__image-wrapper" ref={wrapperRef}>
           {imgSrc ? (
             <img

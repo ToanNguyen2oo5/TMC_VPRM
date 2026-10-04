@@ -19,10 +19,10 @@ import LotusPetals from './components/LotusPetals';
 import LottieIcon from './components/LottieIcon';
 import AppLogo from './components/AppLogo';
 import MusicPlayer from './components/MusicPlayer';
-import { musicEngine } from './services/musicEngine';
 import OnboardingModal from './components/OnboardingModal';
 import RentalModal from './components/RentalModal';
 import StickyStepper from './components/StickyStepper';
+import MobileBottomNav from './components/MobileBottomNav';
 import { lanternAnimation } from './assets/lottieAnimations';
 import { useTheme } from './hooks/useTheme';
 import { useTranslation } from './services/i18n.jsx';
@@ -138,15 +138,6 @@ export default function App() {
   const [selectedStyle, setSelectedStyle] = useState('classic');
   const [realtimeWeather, setRealtimeWeather] = useState(null);
 
-  // Background Music state subscription
-  const [isMusicPlaying, setIsMusicPlaying] = useState(() => musicEngine.getState().isPlaying);
-  useEffect(() => {
-    const unsub = musicEngine.subscribe((state) => {
-      setIsMusicPlaying(state.isPlaying);
-    });
-    return () => unsub();
-  }, []);
-
   // Daily Cultural Tips & Onboarding Modal state
   const [tipIndex, setTipIndex] = useState(0);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(() => !localStorage.getItem('vpr_onboarded'));
@@ -234,6 +225,16 @@ export default function App() {
     }
   }, []);
 
+  // Priority 4: Weather banner logic (Gen Z refinement)
+  const [showWeatherBanner, setShowWeatherBanner] = useState(false);
+  useEffect(() => {
+    // Simulate fetching weather
+    setTimeout(() => {
+      setRealtimeWeather({ temp: 15, condition: 'rainy', text: 'Hà Nội đang 15°C 🌧️' });
+      setShowWeatherBanner(true);
+    }, 1500);
+  }, []);
+
   // Compute active mixer step for Sticky Stepper (Priority 4)
   const currentMixerStep = useMemo(() => {
     if (turntableImages) return 4;
@@ -296,10 +297,40 @@ export default function App() {
     });
     setMismatchWarnings(warnings);
 
+    const hasMajorWarning = warnings.some(w => w.type === 'warning');
+    if (hasMajorWarning) {
+      setTimeout(() => {
+        const warnEl = document.getElementById('mismatch-warning');
+        if (warnEl) {
+          warnEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 150);
+      showToast(`⚠️ ${warnings[0].title || 'Có lưu ý văn hóa khi chọn trang phục này!'}`);
+    } else {
+      setTimeout(() => {
+        uploadRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [selectedScene]);
+
+  // Handle quick switch to recommended outfit from warning banner
+  const handleSwitchOutfit = useCallback((outfitId) => {
+    const all = getAllOutfits();
+    const target = all.find(o => o.id === outfitId);
+    if (target) {
+      handleOutfitSelect(target);
+      showToast(`✨ Đã đổi sang ${target.ten}!`);
+    }
+  }, [handleOutfitSelect]);
+
+  // Handle continuing despite cultural warning
+  const handleContinueWithWarning = useCallback(() => {
+    setMismatchWarnings([]);
     setTimeout(() => {
       uploadRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
-  }, [selectedScene]);
+    showToast('✨ Tiếp tục phối đồ theo phong cách tự do của bạn!');
+  }, []);
 
   // Handle customize and generate
   const handleCustomizeAndGenerate = useCallback(async (data) => {
@@ -501,6 +532,37 @@ export default function App() {
     showToast('⚖️ Đã thêm vào danh sách So sánh phương án!');
   };
 
+  // Nạp 2 phương án mẫu để so sánh ngay lập tức
+  const handleLoadSampleOutfits = useCallback(() => {
+    const all = getAllOutfits();
+    const aoDaiCachTan = all.find(o => o.id === 'ao_dai_cach_tan');
+    const aoTac = all.find(o => o.id === 'ao_ngu_than_ao_tac');
+    if (!aoDaiCachTan || !aoTac) return;
+
+    const sample1 = {
+      id: 'sample_compare_1',
+      outfit: aoDaiCachTan,
+      image: '/generated/ao_dai_cach_tan_0deg.png',
+      event: 'Kỷ yếu & Dạo phố',
+      colors: { primary: '#E8A598', secondary: '#F5E6D3', accent: '#D4AF37' },
+      accessories: ['Túi clutch', 'Giày mules hiện đại'],
+      evalScores: { harmonyScore: 92, culturalScore: 88, genZScore: 96, totalScore: 92 }
+    };
+
+    const sample2 = {
+      id: 'sample_compare_2',
+      outfit: aoTac,
+      image: '/generated/ao_the_khan_xep_0deg.png',
+      event: 'Lễ tốt nghiệp & Kỷ yếu trang nghiêm',
+      colors: { primary: '#1B365D', secondary: '#FAF9F6', accent: '#C5A059' },
+      accessories: ['Khăn đóng truyền thống', 'Quạt lụa'],
+      evalScores: { harmonyScore: 96, culturalScore: 98, genZScore: 84, totalScore: 93 }
+    };
+
+    setComparedOutfits([sample1, sample2]);
+    showToast('⚖️ Đã nạp 2 phương án so sánh mẫu: Áo dài cách tân vs Áo tấc!');
+  }, []);
+
   // Handle selection from Explore or Lookbook -> load into mixer
   const handleSelectFromOtherViews = (outfitItem) => {
     const targetOutfit = outfitItem.outfit || outfitItem;
@@ -618,6 +680,12 @@ export default function App() {
           <header className="hero">
             <div className="hero__bg" />
             <div className="container hero__content">
+              {showWeatherBanner && realtimeWeather && (
+                <div className="weather-banner glass-panel animate-fade-in" style={{ padding: '8px 16px', borderRadius: '30px', marginBottom: '1.5rem', display: 'inline-flex', alignItems: 'center', gap: '10px', border: '1px solid var(--color-gold)', background: 'rgba(200, 161, 90, 0.15)' }}>
+                  <span style={{ fontSize: '0.9rem', color: 'var(--color-text-primary)' }}>{realtimeWeather.text} Remix một bộ Áo Tấc ấm áp đi dạo phố không?</span>
+                  <button onClick={() => { handleQuickEventSelect('dao-pho'); }} style={{ background: 'var(--color-gold)', color: '#000', border: 'none', borderRadius: '15px', padding: '4px 12px', fontSize: '0.8rem', fontWeight: 'bold', cursor: 'pointer' }}>Thử ngay</button>
+                </div>
+              )}
               <div className="hero__logo-center animate-fade-in-up" style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.25rem' }}>
                 <AppLogo size="hero" variant={logoVariant} showBadge={true} />
               </div>
@@ -639,8 +707,10 @@ export default function App() {
                 <button 
                   className="btn btn-primary btn-lg"
                   onClick={() => setActiveTab('mixer')}
+                  id="hero-start-cta"
+                  style={{ minWidth: '180px', fontSize: '1.05rem', boxShadow: '0 4px 20px rgba(218, 165, 32, 0.4)' }}
                 >
-                  {t('hero_btn_mix')}
+                  ✨ {t('hero_btn_mix')}
                 </button>
                 <button 
                   className="btn btn-secondary btn-lg"
@@ -648,23 +718,15 @@ export default function App() {
                 >
                   {t('hero_btn_lookbook')}
                 </button>
+              </div>
+              <div className="hero__sublink-row" style={{ marginTop: '0.85rem' }}>
                 <button 
-                  className={`btn ${isMusicPlaying ? 'btn-primary' : 'btn-secondary'} btn-lg`}
-                  onClick={() => {
-                    musicEngine.toggle();
-                  }}
-                  title={isMusicPlaying ? (lang === 'en' ? 'Click to Mute / Pause BGM' : 'Bấm để Tắt nhạc nền (Lanterns on the River)') : (lang === 'en' ? 'Click to Play BGM (Lanterns on the River)' : 'Bấm để Bật nhạc nền (Lanterns on the River)')}
-                >
-                  {isMusicPlaying
-                    ? (lang === 'en' ? '⏸ Pause BGM' : '⏸ Tắt Nhạc Nền')
-                    : (lang === 'en' ? '🎶 Play BGM' : '🎶 Bật Nhạc Nền')}
-                </button>
-                <button 
-                  className="btn btn-ghost btn-lg"
+                  type="button"
+                  className="btn-text-link"
                   onClick={() => setIsOnboardingOpen(true)}
-                  title={lang === 'en' ? 'View 3-step guide' : 'Xem hướng dẫn 3 bước'}
+                  style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.7)', fontSize: '0.82rem', cursor: 'pointer', textDecoration: 'underline' }}
                 >
-                  {t('hero_btn_guide')}
+                  📖 {t('hero_btn_guide')} (3 bước)
                 </button>
               </div>
             </div>
@@ -903,6 +965,8 @@ export default function App() {
           <MismatchWarning
             warnings={mismatchWarnings}
             onDismiss={() => setMismatchWarnings([])}
+            onSwitchOutfit={handleSwitchOutfit}
+            onContinue={handleContinueWithWarning}
           />
 
           {/* Step 3 & 4: Customizer (Colors + Accessories + Fit + Avatar) */}
@@ -922,12 +986,34 @@ export default function App() {
             <div className="error-banner animate-fade-in" id="error-banner">
               <span className="error-banner__icon">❌</span>
               <div className="error-banner__content">
-                <strong>Đã xảy ra lỗi</strong>
+                <strong>Đã xảy ra lỗi kết nối hoặc tạo ảnh</strong>
                 <p>{error}</p>
+                <div style={{ marginTop: '8px', display: 'flex', gap: '8px' }}>
+                  {customizationData && (
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-sm"
+                      onClick={() => {
+                        setError(null);
+                        handleCustomizeAndGenerate(customizationData);
+                      }}
+                    >
+                      🔄 Thử lại thao tác
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => setError(null)}
+                  >
+                    Bỏ qua
+                  </button>
+                </div>
               </div>
               <button
                 className="btn btn-ghost"
                 onClick={() => setError(null)}
+                aria-label="Đóng thông báo lỗi"
               >
                 ✕
               </button>
@@ -949,58 +1035,64 @@ export default function App() {
                       remainingProgress={remainingProgress}
                       onGenerateRemaining={handleGenerateRemainingAngles}
                       selectedOutfit={selectedOutfit}
+                      customizationData={customizationData}
                     />
+                    
+                    {/* Thanh công cụ hành động nhanh chuyển sang dưới ảnh (cột trái) */}
+                    {turntableImages && selectedOutfit && (
+                      <div className="result-actions-panel glass-panel" style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        <button 
+                          className="btn btn-primary btn-block"
+                          onClick={handleSaveToLookbook}
+                        >
+                          💖 Lưu vào Lookbook cá nhân
+                        </button>
+                        <button 
+                          className="btn btn-secondary btn-block"
+                          onClick={handleAddToCompare}
+                        >
+                          ⚖️ Thêm vào danh sách So sánh ({comparedOutfits.length}/3)
+                        </button>
+                        <button 
+                          className="btn btn-primary btn-block"
+                          style={{ 
+                            background: 'linear-gradient(135deg, #b8860b 0%, #8b0000 100%)', 
+                            borderColor: '#ffd700',
+                            boxShadow: '0 4px 15px rgba(218, 165, 32, 0.35)'
+                          }}
+                          onClick={() => setIsRentalModalOpen(true)}
+                        >
+                          👘 Tìm tiệm thuê & Dự toán kỷ yếu
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   <div className="result-sidebar">
                     {turntableImages && selectedOutfit && (
-                      <>
-                        <CultureCard
-                          outfit={selectedOutfit}
-                          useDemoData={DEMO_MODE}
-                          customizations={customizationData?.customizations}
-                        />
-
-                        {/* Thanh công cụ hành động nhanh */}
-                        <div className="result-actions-panel glass-panel">
-                          <button 
-                            className="btn btn-primary btn-block"
-                            onClick={handleSaveToLookbook}
-                          >
-                            💖 Lưu vào Lookbook cá nhân
-                          </button>
-                          <button 
-                            className="btn btn-secondary btn-block"
-                            onClick={handleAddToCompare}
-                          >
-                            ⚖️ Thêm vào danh sách So sánh ({comparedOutfits.length}/3)
-                          </button>
-                          <button 
-                            className="btn btn-primary btn-block"
-                            style={{ 
-                              background: 'linear-gradient(135deg, #b8860b 0%, #8b0000 100%)', 
-                              borderColor: '#ffd700',
-                              boxShadow: '0 4px 15px rgba(218, 165, 32, 0.35)'
-                            }}
-                            onClick={() => setIsRentalModalOpen(true)}
-                          >
-                            👘 Tìm tiệm thuê & Dự toán kỷ yếu
-                          </button>
-                        </div>
-
-                        <LookbookExport
-                          outfit={selectedOutfit}
-                          imageBase64={turntableImages[0]}
-                          cultureInfo={cultureInfo}
-                          colors={customizationData?.colors}
-                          accessories={customizationData?.accessories}
-                          scene={SCENE_MAP[selectedScene]}
-                          onToast={showToast}
-                        />
-                      </>
+                      <CultureCard
+                        outfit={selectedOutfit}
+                        useDemoData={DEMO_MODE}
+                        customizations={customizationData?.customizations}
+                      />
                     )}
                   </div>
                 </div>
+
+                {/* Chuyển khu vực Lookbook Export xuống Full-width bên dưới layout cột */}
+                {turntableImages && selectedOutfit && (
+                  <div style={{ marginTop: '2rem' }}>
+                    <LookbookExport
+                      outfit={selectedOutfit}
+                      imageBase64={turntableImages[0]}
+                      cultureInfo={cultureInfo}
+                      colors={customizationData?.colors}
+                      accessories={customizationData?.accessories}
+                      scene={SCENE_MAP[selectedScene]}
+                      onToast={showToast}
+                    />
+                  </div>
+                )}
 
                 {/* Reset button */}
                 <div className="reset-section text-center">
@@ -1032,6 +1124,7 @@ export default function App() {
             comparedOutfits={comparedOutfits}
             onRemoveOutfit={(id) => setComparedOutfits(prev => prev.filter((_, idx) => idx !== id && _.id !== id))}
             onSelectOutfit={handleSelectFromOtherViews}
+            onLoadSampleOutfits={handleLoadSampleOutfits}
           />
         </div>
       )}
@@ -1079,6 +1172,17 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* Thanh điều hướng dưới đáy trên mobile (<= 768px) */}
+      <MobileBottomNav
+        activeTab={activeTab}
+        onTabChange={(tab) => {
+          setActiveTab(tab);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        compareCount={comparedOutfits.length}
+        lookbookCount={savedLookbooks.length}
+      />
 
       {/* Hiệu ứng cánh sen rơi phủ khắp giao diện */}
       <LotusPetals enabled={petalsEnabled} />

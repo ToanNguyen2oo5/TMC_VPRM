@@ -17,9 +17,11 @@ export function evaluateCulturalWarnings({ outfit, event, accessories = [], colo
     warnings.push({
       id: 'rule_01',
       type: 'warning',
-      title: 'Trang phục cung đình trong bối cảnh đời thường',
-      message: 'Áo Nhật Bình là lễ phục cung đình trang trọng của Hoàng tộc triều Nguyễn, thường dùng trong đại lễ hoặc hôn lễ.',
-      suggestion: 'Nếu muốn phong cách thanh nhã hàng ngày, bạn hãy thử Áo dài cách tân hoặc Áo dài truyền thống nhẹ nhàng.',
+      title: 'Khoan bạn ơi, hơi cấn rồi! 😅',
+      message: 'Áo Nhật Bình là "đồ hiệu" siêu VIP của Hoàng tộc triều Nguyễn đó. Lên đồ lộng lẫy thế này mà chỉ đi dạo phố thì hơi "ô dề" nha.',
+      suggestion: 'Thử chuyển sang Áo dài cách tân xem, vừa xinh xẻo lại cực kỳ năng động hợp vibe dạo phố.',
+      recommendedOutfitId: 'ao_dai_cach_tan',
+      recommendedOutfitName: 'Áo dài cách tân hiện đại',
       reference: 'Khâm định Đại Nam hội điển sự lệ; Bảo tàng Cổ vật Cung đình Huế'
     });
   }
@@ -30,9 +32,9 @@ export function evaluateCulturalWarnings({ outfit, event, accessories = [], colo
     warnings.push({
       id: 'rule_02',
       type: 'caution',
-      title: 'Pha trộn đặc trưng vùng miền (Bắc Bộ & Nam Bộ)',
-      message: 'Khăn rằn là biểu tượng mộc mạc sông nước Nam Bộ, khi kết hợp với Áo tứ thân Kinh Bắc sẽ làm mờ nhạt bản sắc riêng của văn hóa Quan họ.',
-      suggestion: 'Hãy cân nhắc dùng khăn mỏ quạ hoặc nón quai thao để giữ nét Kinh Bắc thuần túy.',
+      title: 'Pha trộn hệ đa vũ trụ Bắc - Nam? 🤔',
+      message: 'Khăn rằn là signature của miền Tây sông nước, vác lên phối với Áo tứ thân liền chị Quan họ thì nhìn hơi bị "lạc trôi" bản sắc đó.',
+      suggestion: 'Về đúng hệ Kinh Bắc với khăn mỏ quạ hoặc nón quai thao nha, đảm bảo chuẩn bài!',
       reference: 'Đoàn Thị Tình, "Trang phục Việt Nam", NXB Mỹ thuật'
     });
   }
@@ -43,9 +45,9 @@ export function evaluateCulturalWarnings({ outfit, event, accessories = [], colo
     warnings.push({
       id: 'rule_02b',
       type: 'caution',
-      title: 'Xung đột phong cách Cung đình & Dân dã',
-      message: 'Áo bà ba mang tính mộc mạc, gần gũi với đời sống sông nước, không phù hợp khi đội khăn vành dây quý tộc chốn hoàng cung.',
-      suggestion: 'Nên phối cùng nón lá hoặc khăn rằn Nam Bộ giản dị mà thanh lịch.',
+      title: 'Cú twist phong cách: Cung đình mix Dân dã 🧐',
+      message: 'Áo bà ba mang vibe mộc mạc chân chất, tự nhiên úp cái khăn vành dây quý tộc lên đầu nhìn nó cứ bị "chống đánh xuôi, kèn thổi ngược" sao á.',
+      suggestion: 'Thay bằng nón lá hoặc khăn rằn đi, đơn giản mà slay cực kỳ!',
       reference: 'Bảo tàng Phụ nữ Nam Bộ'
     });
   }
@@ -59,9 +61,9 @@ export function evaluateCulturalWarnings({ outfit, event, accessories = [], colo
     warnings.push({
       id: 'rule_04',
       type: 'warning',
-      title: 'Tổ hợp màu kiêng kỵ trong dịp Tết / Hỷ sự',
-      message: 'Tổ hợp Đen - Trắng thuần túy trong mỹ tục cổ truyền Việt Nam thường gắn liền với việc trang nghiêm hoặc tang lễ, tránh dùng đơn điệu ngày đầu xuân.',
-      suggestion: 'Nên chọn điểm xuyết sắc Đỏ son (may mắn) hoặc Vàng hoàng gia (phú quý) để mang lại năng lượng tích cực.',
+      title: 'Red flag màu sắc ngày hỷ sự! 🚩',
+      message: 'Full cây Trắng - Đen vào dịp Tết hay cưới hỏi là tối kỵ theo văn hóa xưa á. Nhìn trang nghiêm quá lại tưởng đang đi sự kiện... buồn.',
+      suggestion: 'Chấm thêm miếng đỏ son cho hên, hoặc vàng hoàng gia cho phú quý, nạp năng lượng tích cực liền!',
       reference: 'Phong tục tập quán dân gian Việt Nam; NXB Văn hóa Dân tộc'
     });
   }
@@ -71,9 +73,9 @@ export function evaluateCulturalWarnings({ outfit, event, accessories = [], colo
     warnings.push({
       id: 'rule_05',
       type: 'info',
-      title: 'Lưu ý về màu sắc áo dài nam',
-      message: 'Áo dài trắng trơn cho nam giới truyền thống thường xuất hiện ở lễ cưới (chú rể) hoặc nghi thức trang trọng.',
-      suggestion: 'Với sự kiện dạo phố thoải mái, bạn có thể chọn tông màu xanh thẫm, nâu gụ hoặc ghi xám để tạo vẻ gần gũi.',
+      title: 'Mẹo nhỏ phối màu cho nam thần 💡',
+      message: 'Áo dài trắng trơn cho nam thường được xem là outfit chú rể. Mặc dạo phố dễ bị hiểu lầm là chú rể đi lạc đó nha.',
+      suggestion: 'Thử chuyển sang hệ màu trầm như Xanh navy rêu phong, hoặc Nâu gụ xem, vừa ngầu vừa cuốn hút.',
       fixAction: { type: 'color', primary: '#1B365D' },
       reference: 'Trần Quang Đức, "Ngàn năm áo mũ"'
     });
@@ -85,9 +87,9 @@ export function evaluateCulturalWarnings({ outfit, event, accessories = [], colo
     warnings.push({
       id: 'rule_06',
       type: 'caution',
-      title: 'Pha trộn lễ phục triều Nguyễn với phụ kiện dân gian Kinh Bắc',
-      message: 'Áo tấc triều Nguyễn chuẩn mực thường đi cùng khăn đóng hoặc khăn xếp. Nón quai thao là nét đặc trưng riêng của Áo tứ thân liền chị Quan họ.',
-      suggestion: 'Thay nón quai thao bằng khăn đóng hoặc quạt lụa để giữ phong thái tề chỉnh của bậc danh gia vọng tộc.',
+      title: 'Check var phụ kiện xíu nè! 🔍',
+      message: 'Áo tấc triều Nguyễn là đồ đi nét của bậc danh gia vọng tộc, mix với nón quai thao liền chị Quan họ thì nó lại thành 1 rổ "cảm lạnh".',
+      suggestion: 'Thay sang khăn đóng nam hoặc quạt lụa là tự động hóa thân thành tổng tài triều Nguyễn liền!',
       fixAction: { type: 'replace_accessory', remove: 'non_quai_thao', add: 'khan_dong_nam' },
       reference: 'Vũ Phỉ, "Cổ phục triều Nguyễn", 2018'
     });
@@ -99,9 +101,9 @@ export function evaluateCulturalWarnings({ outfit, event, accessories = [], colo
     warnings.push({
       id: 'rule_07',
       type: 'info',
-      title: 'Chất liệu vải trong ngày đại hỷ',
-      message: 'Vải đũi thô mang nét mộc mạc thôn dã, trong ngày cưới truyền thống các gia đình thường chuộng lụa tơ tằm hoặc gấm thêu hoa chìm để tôn vẻ vinh hoa.',
-      suggestion: 'Cân nhắc chất liệu gấm dệt hoa văn chữ Thọ hoặc lụa Vạn Phúc để thêm phần rạng rỡ, tôn nghiêm.',
+      title: 'Chọn vải đi quẩy lễ cưới ✨',
+      message: 'Vải đũi thô tuy mát nhưng hơi "thôn dã", mặc đi ăn cưới dễ bị chìm nghỉm giữa dàn lụa là gấm vóc.',
+      suggestion: 'Quất ngay lụa tơ tằm hoặc gấm dệt hoa văn để giao diện luôn phát sáng, 10 điểm sang chảnh!',
       fixAction: { type: 'material', material: 'Gấm dệt tơ sen' },
       reference: 'Mỹ tục gia đình và hôn lễ truyền thống Việt Nam'
     });
@@ -112,9 +114,9 @@ export function evaluateCulturalWarnings({ outfit, event, accessories = [], colo
     warnings.push({
       id: 'rule_08',
       type: 'info',
-      title: 'Quy cách vạt chéo Hữu Nhậm của Áo Giao Lĩnh Đại Việt',
-      message: 'Theo cổ chế Đại Việt thời Lý - Trần - Lê, vạt áo bên trái luôn vắt sang bên phải (Hữu nhậm). Tuyệt đối tránh vắt ngược vạt phải sang trái vì đây là cách mặc cho người quá cố.',
-      suggestion: 'Giữ cấu trúc vạt chéo hữu nhậm chuẩn mực và kết hợp thắt lưng lụa mềm thả dài trước thân áo.',
+      title: 'Fact thú vị về Áo Giao Lĩnh 📜',
+      message: 'Ngày xưa các cụ Đại Việt quy định vạt áo bên trái luôn vắt sang phải (gọi là Hữu Nhậm). Đừng vắt ngược lại nha, thế là thành phong cách... cõi âm đó.',
+      suggestion: 'Cứ giữ chuẩn form Hữu Nhậm, thêm cái thắt lưng lụa thả dài phía trước là tự động có cốt cách cổ phong ngay.',
       reference: 'Trần Quang Đức, "Ngàn năm áo mũ", NXB Thế giới'
     });
   }

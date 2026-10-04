@@ -28,10 +28,12 @@
 
 /* Template Selector Bar */
 .template-selector-bar {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 0.6rem;
-  margin: 1.25rem 0 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.8rem;
+  margin: 1.25rem auto 1.5rem;
+  max-width: 700px;
 }
 
 .template-tab-btn {

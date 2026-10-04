@@ -133,8 +133,14 @@ export default function OutfitCustomizer({
 
   const handleFinishAndGenerate = () => {
     const selectedAccObjects = ACCESSORIES.filter(a => selectedAccessories.includes(a.id));
+    const avatarObj = SAMPLE_AVATARS.find(a => a.id === selectedAvatar);
+    const avatarLabel = userPhoto ? 'Ảnh chân dung của bạn' : (avatarObj?.label || 'Nữ mẫu 1');
+
     onCustomizeAndGenerate({
       userPhoto,
+      selectedAvatar,
+      avatarLabel,
+      isUsingSampleAvatar: !userPhoto,
       customizations: { fit, length, collar, sleeve, height, material },
       colors: {
         primary: primaryColor,
@@ -418,7 +424,26 @@ export default function OutfitCustomizer({
               <p className="heritage-summary-text">
                 {selectedOutfit.y_nghia}
               </p>
-              {selectedOutfit.nguon_tham_khao && (
+              {selectedOutfit.citations && selectedOutfit.citations.length > 0 ? (
+                <div style={{ marginTop: '0.6rem', display: 'flex', flexDirection: 'column', gap: '4px', borderTop: '1px dashed rgba(218,165,32,0.25)', paddingTop: '6px' }}>
+                  <small style={{ color: 'var(--color-gold)', fontWeight: 700 }}>📚 Tư liệu khảo chứng:</small>
+                  {selectedOutfit.citations.map((cite, i) => (
+                    <div key={i} style={{ fontSize: '0.76rem', color: 'rgba(255,255,255,0.75)' }}>
+                      • <strong>{cite.sourceName}</strong> {cite.author && `— ${cite.author}`} {cite.pages && `(${cite.pages})`}
+                      {cite.url && (
+                        <a
+                          href={cite.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: '#DAA520', marginLeft: '6px', textDecoration: 'underline' }}
+                        >
+                          [Tra cứu ↗]
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : selectedOutfit.nguon_tham_khao && (
                 <small className="heritage-source-text">
                   Nguồn: {selectedOutfit.nguon_tham_khao}
                 </small>

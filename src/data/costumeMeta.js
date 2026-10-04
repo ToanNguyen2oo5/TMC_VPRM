@@ -30,7 +30,8 @@ export const COSTUME_META = {
     rentalNote: 'Giá tham khảo, thay đổi theo chất liệu ren/lụa & kiểu dáng cách tân.',
     personaTitle: 'Đương Đại Nữ Sĩ',
     personaSubtitle: 'Giao thoa thanh lịch giữa di sản ngàn năm và nhịp thở phố thị',
-    funPraise: 'Phối đồ chất lừ không góc chết! Vừa giữ trọn form dáng duyên dáng vừa thoải mái sải bước dạo phố, chụp 100 tấm thì 101 tấm lên xu hướng TikTok ngay lập tức! 📸🔥',
+    expertAdvice: 'Năng động để chụp kỷ yếu và dạo phố; vẫn giữ tà áo và bảng màu gợi ý.',
+    funPraise: 'Năng động để chụp kỷ yếu và dạo phố; vẫn giữ tà áo và bảng màu gợi ý. Tà áo bay bổng rực rỡ trong từng khoảnh khắc thanh xuân! 📸✨',
     element: 'Kim (Trắng / Hồng Pastel / Vàng Nhạt)',
     authenticityTag: 'Cách Tân Đương Đại'
   },

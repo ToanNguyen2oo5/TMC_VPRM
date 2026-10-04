@@ -403,7 +403,7 @@ export default function LookbookExport({
             disabled={isExporting}
             id="share-lookbook"
           >
-            📤 Chia sẻ
+            📤 Sống ảo lên MXH
           </button>
         )}
       </div>

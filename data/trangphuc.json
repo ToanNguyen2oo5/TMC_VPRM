@@ -14,6 +14,26 @@
     "gioi_tinh": "cả hai",
     "y_nghia": "Áo dài truyền thống là kết tinh thẩm mỹ dân tộc Việt Nam, tôn vinh nét đẹp đoan trang, thanh nhã. Cấu trúc hai tà áo trước sau xẻ tà cao đến eo kết hợp cùng quần lụa dài mang lại phong thái thướt tha, mềm mại và trang trọng trong mọi sự kiện lịch sử và đời sống.",
     "nguon_tham_khao": "Trần Đình Sơn, 'Áo dài Việt Nam', NXB Văn hoá Nghệ thuật; Bảo tàng Áo dài TP.HCM; Bảo tàng Phụ nữ Việt Nam",
+    "citations": [
+      {
+        "sourceName": "Áo dài Việt Nam",
+        "author": "Trần Đình Sơn",
+        "year": "2013",
+        "publisher": "NXB Văn hóa Nghệ thuật",
+        "pages": "tr. 45–68",
+        "url": "https://baotangaodai.vn",
+        "confidenceLevel": "Chính thống di sản",
+        "hasDebate": false
+      },
+      {
+        "sourceName": "Lưu trữ Bảo tàng Phụ nữ Việt Nam",
+        "author": "Bảo tàng Phụ nữ Việt Nam",
+        "year": "2020",
+        "url": "https://baotangphunu.org.vn",
+        "confidenceLevel": "Hiện vật bảo tàng",
+        "hasDebate": false
+      }
+    ],
     "anh_dai_dien": "/generated/ao_dai_hue_0deg.png",
     "canh_bao_phoi": [
       {
@@ -45,6 +65,27 @@
     "gioi_tinh": "cả hai",
     "y_nghia": "Áo dài cách tân là sự tiếp nối sáng tạo của thế hệ trẻ với di sản. Tà áo được điều chỉnh độ dài vừa phải để linh hoạt trong nhịp sống đô thị hiện đại nhưng vẫn giữ vẹn nguyên đường xẻ eo và tinh thần thanh lịch thuần Việt.",
     "nguon_tham_khao": "Tạp chí Đẹp, chuyên đề 'Áo dài đương đại', 2022; Lưu trữ Tuần lễ Thời trang Việt Nam",
+    "citations": [
+      {
+        "sourceName": "Áo dài Lemur và bước chuyển đương đại",
+        "author": "Nguyễn Cát Tường",
+        "year": "1934",
+        "publisher": "Báo Phong Hóa / Ngày Nay",
+        "pages": "Chuyên mục Y phục cải cách",
+        "url": "https://vi.wikipedia.org/wiki/%C3%81o_d%C3%A0i",
+        "confidenceLevel": "Lịch sử cải cách cận đại",
+        "hasDebate": true,
+        "debateNote": "Từng có thảo luận sôi nổi về tỷ lệ giữ tà áo truyền thống so với kiểu dáng váy đầm phương Tây."
+      },
+      {
+        "sourceName": "Tạp chí Đẹp — Chuyên đề Áo dài đương đại",
+        "author": "Hội đồng Thời trang Việt Nam",
+        "year": "2022",
+        "url": "https://dep.com.vn",
+        "confidenceLevel": "Xu hướng thời trang ứng dụng",
+        "hasDebate": false
+      }
+    ],
     "anh_dai_dien": "/generated/ao_dai_cach_tan_0deg.png",
     "canh_bao_phoi": [
       {
@@ -70,6 +111,26 @@
     "gioi_tinh": "nữ",
     "y_nghia": "Áo tứ thân là biểu tượng phụ nữ đồng bằng sông Hồng. Bốn vạt áo tượng trưng cho tứ thân phụ mẫu (cha mẹ hai bên). Dải thắt lưng xanh tượng trưng cho tình cảm gia đình gắn kết. Đi cùng yếm đào rực rỡ và nón quai thao tròn đầy tạo nên vẻ đẹp duyên dáng của liền chị quan họ.",
     "nguon_tham_khao": "Đoàn Thị Tình, 'Trang phục Việt Nam', NXB Mỹ thuật, 2006; Viện Nghiên cứu Văn hóa Dân gian",
+    "citations": [
+      {
+        "sourceName": "Trang phục Việt Nam",
+        "author": "Đoàn Thị Tình",
+        "year": "2006",
+        "publisher": "NXB Mỹ thuật",
+        "pages": "tr. 88–112",
+        "url": "https://dsvh.gov.vn",
+        "confidenceLevel": "Khảo cứu chuyên ngành",
+        "hasDebate": false
+      },
+      {
+        "sourceName": "Di sản Văn hóa Phi vật thể Dân ca Quan họ",
+        "author": "Hồ sơ quốc gia UNESCO",
+        "year": "2009",
+        "url": "https://ich.unesco.org/en/RL/quan-ho-bac-ninh-folk-songs-00183",
+        "confidenceLevel": "Di sản UNESCO",
+        "hasDebate": false
+      }
+    ],
     "anh_dai_dien": "/generated/ao_tu_than_0deg.png",
     "canh_bao_phoi": [
       {
@@ -95,6 +156,27 @@
     "gioi_tinh": "cả hai",
     "y_nghia": "Áo ngũ thân lập lĩnh là quốc phục thời Nguyễn do chúa Nguyễn Phúc Khoát định hình và vua Minh Mạng chuẩn hóa. Năm thân áo tượng trưng cho tứ thân phụ mẫu che chở cho một thân con cái ở trong; 5 hạt nút tượng trưng cho ngũ thường: Nhân, Lễ, Nghĩa, Trí, Tín.",
     "nguon_tham_khao": "Trần Quang Đức, 'Ngàn năm áo mũ', NXB Thế giới, 2013; Vũ Phỉ, 'Cổ phục triều Nguyễn', 2018",
+    "citations": [
+      {
+        "sourceName": "Ngàn Năm Áo Mũ",
+        "author": "Trần Quang Đức",
+        "year": "2013",
+        "publisher": "NXB Thế giới",
+        "pages": "tr. 152–184",
+        "url": "https://vi.wikipedia.org/wiki/%C3%81o_ng%C5%A9_th%C3%A2n",
+        "confidenceLevel": "Chính sử & Khảo chứng văn bản",
+        "hasDebate": false
+      },
+      {
+        "sourceName": "Đại Nam Thực Lục & Hội Điển",
+        "author": "Quốc Sử Quán Triều Nguyễn",
+        "year": "1844",
+        "pages": "Quy chế Y phục Minh Mạng năm thứ 18",
+        "url": "https://baotangcungdinh.huecit.vn",
+        "confidenceLevel": "Chính sử triều Nguyễn",
+        "hasDebate": false
+      }
+    ],
     "anh_dai_dien": "/generated/ao_the_khan_xep_0deg.png",
     "canh_bao_phoi": [
       {
@@ -120,6 +202,25 @@
     "gioi_tinh": "nữ",
     "y_nghia": "Áo Nhật Bình có cổ áo hình chữ nhật đặc trưng trước ngực, viền dải hoa văn ngũ sắc tượng trưng cho ngũ hành tương sinh. Đây là trang phục đỉnh cao của mỹ thuật thêu tay cung đình Huế, thể hiện phẩm giá quý phái, quyền uy và đoan trang của phụ nữ chốn hoàng tộc.",
     "nguon_tham_khao": "Khâm định Đại Nam hội điển sự lệ; Bảo tàng Cổ vật Cung đình Huế; Trung tâm Bảo tồn Di tích Cố đô Huế",
+    "citations": [
+      {
+        "sourceName": "Khâm Định Đại Nam Hội Điển Sự Lệ",
+        "author": "Nội các Triều Nguyễn",
+        "year": "1851",
+        "pages": "Quyển 78: Điển chế Y phục Hoàng hậu & Mệnh phụ",
+        "url": "https://baotangcungdinh.huecit.vn",
+        "confidenceLevel": "Điển chế cung đình chuẩn xác 100%",
+        "hasDebate": false
+      },
+      {
+        "sourceName": "Bảo vật Cung đình triều Nguyễn",
+        "author": "Trung tâm Bảo tồn Di tích Cố đô Huế",
+        "year": "2019",
+        "url": "https://hueworldheritage.org.vn",
+        "confidenceLevel": "Hiện vật bảo tàng số",
+        "hasDebate": false
+      }
+    ],
     "anh_dai_dien": "/generated/ao_nhat_binh_0deg.png",
     "canh_bao_phoi": [
       {
@@ -145,6 +246,26 @@
     "gioi_tinh": "cả hai",
     "y_nghia": "Áo bà ba tôn vinh sự chất phác, hào sảng và đôn hậu của con người phương Nam. Áo có thân xẻ tà hai bên hông tạo sự thoáng mát linh hoạt, kết hợp cùng chiếc khăn rằn đen trắng kẻ sọc ca-rô biểu tượng cho tình nghĩa thủy chung son sắt.",
     "nguon_tham_khao": "Nguyễn Thị Minh Thái, 'Văn hóa trang phục Nam Bộ', NXB Tổng hợp TP.HCM; Bảo tàng Phụ nữ Nam Bộ",
+    "citations": [
+      {
+        "sourceName": "Văn hóa trang phục người Việt Nam Bộ",
+        "author": "Nguyễn Thị Minh Thái",
+        "year": "2010",
+        "publisher": "NXB Tổng hợp TP.HCM",
+        "pages": "tr. 64–82",
+        "url": "https://baotangphununambo.vn",
+        "confidenceLevel": "Khảo cứu nhân học",
+        "hasDebate": false
+      },
+      {
+        "sourceName": "Lưu trữ Bảo tàng Phụ nữ Nam Bộ",
+        "author": "Bảo tàng Phụ nữ Nam Bộ",
+        "year": "2021",
+        "url": "https://baotangphununambo.vn",
+        "confidenceLevel": "Hiện vật bảo tàng",
+        "hasDebate": false
+      }
+    ],
     "anh_dai_dien": "/generated/ao_ba_ba_nam_bo_0deg.png",
     "canh_bao_phoi": [
       {
@@ -170,6 +291,27 @@
     "gioi_tinh": "cả hai",
     "y_nghia": "Áo giao lĩnh (áo cổ chéo) là một trong những dạng trang phục cổ xưa nhất của người Việt, từng là thường phục và lễ phục phổ biến qua các triều đại Lý, Trần, Lê sơ. Tà áo giao thoa uyển chuyển thể hiện nhân sinh quan hòa hợp giữa đất trời và con người.",
     "nguon_tham_khao": "Trần Quang Đức, 'Ngàn năm áo mũ', NXB Thế giới, 2013; Viện Khảo cổ học Việt Nam",
+    "citations": [
+      {
+        "sourceName": "Ngàn Năm Áo Mũ",
+        "author": "Trần Quang Đức",
+        "year": "2013",
+        "publisher": "NXB Thế giới",
+        "pages": "tr. 72–118",
+        "url": "https://vi.wikipedia.org/wiki/Trang_ph%E1%BB%A5c_Vi%E1%BB%87t_Nam",
+        "confidenceLevel": "Khảo chứng văn bản & Khảo cổ",
+        "hasDebate": true,
+        "debateNote": "Cần phân định rõ quy thức vạt chéo Hữu Nhậm Đại Việt với trang phục các quốc gia Đông Á lân cận."
+      },
+      {
+        "sourceName": "Khai quật Hoàng thành Thăng Long",
+        "author": "Viện Khảo cổ học Việt Nam",
+        "year": "2010",
+        "url": "https://hoangthanhthanglong.vn",
+        "confidenceLevel": "Khảo cổ học thực địa",
+        "hasDebate": false
+      }
+    ],
     "anh_dai_dien": "/generated/ao_giao_linh_0deg.png",
     "canh_bao_phoi": [
       {

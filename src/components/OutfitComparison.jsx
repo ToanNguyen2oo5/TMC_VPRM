@@ -1,6 +1,12 @@
+import { resolveImageSrc } from '../utils/imageHelper';
 import './OutfitComparison.css';
 
-export default function OutfitComparison({ comparedOutfits = [], onRemoveOutfit, onSelectOutfit }) {
+export default function OutfitComparison({ 
+  comparedOutfits = [], 
+  onRemoveOutfit, 
+  onSelectOutfit,
+  onLoadSampleOutfits 
+}) {
   if (!comparedOutfits || comparedOutfits.length === 0) {
     return (
       <section className="comparison-section" id="comparison-section">
@@ -10,7 +16,7 @@ export default function OutfitComparison({ comparedOutfits = [], onRemoveOutfit,
             So sánh <span className="text-gradient">Side-by-Side</span>
           </h2>
           <p className="section-subtitle">
-            Chưa có bộ phối đồ nào được thêm vào danh sách so sánh. Hãy phối đồ và bấm "Thêm vào so sánh" nhé!
+            Chưa có bộ phối đồ nào được thêm vào danh sách so sánh. Bạn có thể phối đồ hoặc nạp nhanh 2 phương án mẫu bên dưới!
           </p>
         </div>
 
@@ -18,6 +24,17 @@ export default function OutfitComparison({ comparedOutfits = [], onRemoveOutfit,
           <span className="empty-icon">⚖️</span>
           <h3>Danh sách so sánh đang trống</h3>
           <p>Bạn có thể so sánh tối đa 3 bộ phối đồ cạnh nhau để tìm ra set đồ ưng ý nhất cho sự kiện của mình.</p>
+          {onLoadSampleOutfits && (
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={onLoadSampleOutfits}
+              id="load-sample-compare-btn"
+              style={{ marginTop: '1rem', boxShadow: '0 4px 15px rgba(218, 165, 32, 0.4)' }}
+            >
+              ✨ Nạp 2 phương án mẫu để so sánh ngay
+            </button>
+          )}
         </div>
       </section>
     );
@@ -59,11 +76,16 @@ export default function OutfitComparison({ comparedOutfits = [], onRemoveOutfit,
                 </div>
 
                 <div className="compare-card__image-box">
-                  {item.image ? (
+                  {item.image || outfit?.anh_dai_dien ? (
                     <img 
-                      src={item.image.startsWith('http') || item.image.startsWith('data:') ? item.image : `data:image/png;base64,${item.image}`} 
+                      src={resolveImageSrc(item.image || outfit?.anh_dai_dien)} 
                       alt={outfit.ten} 
                       className="compare-img"
+                      onError={(e) => {
+                        if (outfit?.anh_dai_dien && e.currentTarget.src !== outfit.anh_dai_dien) {
+                          e.currentTarget.src = resolveImageSrc(outfit.anh_dai_dien);
+                        }
+                      }}
                     />
                   ) : (
                     <div className="compare-placeholder">

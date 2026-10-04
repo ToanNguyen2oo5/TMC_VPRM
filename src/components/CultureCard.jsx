@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { generateCultureDescription } from '../services/geminiTextService';
+import { COSTUME_META } from '../data/costumeMeta';
 import './CultureCard.css';
 
 export default function CultureCard({ outfit, customizations, useDemoData = false }) {
@@ -44,6 +45,7 @@ export default function CultureCard({ outfit, customizations, useDemoData = fals
 
   if (!outfit) return null;
 
+  const costumeMeta = COSTUME_META[outfit.id];
   const regionBadge = getRegionClass(outfit.vung_mien);
 
   // Tính điểm phong cách
@@ -81,6 +83,41 @@ export default function CultureCard({ outfit, customizations, useDemoData = fals
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+      {/* Persona Badge: Danh xưng Cổ phong Gen Z */}
+      {costumeMeta && (
+        <div className="persona-badge-banner" style={{ marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '1rem' }}>
+          <div className="persona-badge-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div className="persona-title-group" style={{ display: 'flex', gap: '0.5rem' }}>
+              <span className="persona-crown">👑</span>
+              <div>
+                <span className="persona-tag" style={{ fontSize: '0.75rem', color: '#DAA520', textTransform: 'uppercase', letterSpacing: '1px' }}>Danh xưng AI phong tặng:</span>
+                <h3 className="persona-name" style={{ fontSize: '1.25rem', margin: 0 }}>{costumeMeta.personaTitle}</h3>
+              </div>
+            </div>
+            <span className="persona-authenticity-pill" style={{ background: '#8b0000', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem' }}>{costumeMeta.authenticityTag}</span>
+          </div>
+          
+          <div className="persona-stages" style={{ marginTop: '1rem' }}>
+            <div style={{ marginBottom: '0.75rem' }}>
+              <span style={{ display: 'inline-block', background: '#DAA520', color: '#000', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold', marginBottom: '4px' }}>GIAI ĐOẠN 1/4</span>
+              <div style={{ fontWeight: 'bold' }}>Tuyển chọn tơ lụa di sản</div>
+              <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>Lụa Vạn Phúc & gấm tơ tằm theo điển chế triều đại</div>
+            </div>
+            <div style={{ marginBottom: '0.75rem' }}>
+              <span style={{ display: 'inline-block', background: '#DAA520', color: '#000', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold', marginBottom: '4px' }}>GIAI ĐOẠN 2/4</span>
+              <div style={{ fontWeight: 'bold' }}>Hòa sắc Ngũ Hành tương sinh</div>
+              <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>Cân bằng Kim - Mộc - Thủy - Hỏa - Thổ mang lại cát tường</div>
+            </div>
+          </div>
+          
+          <p className="persona-praise" style={{ fontStyle: 'italic', fontSize: '0.9rem', marginTop: '1rem' }}>"{costumeMeta.funPraise}"</p>
+          <div className="persona-meta-chips" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '1rem' }}>
+            <span className="persona-chip" style={{ fontSize: '0.8rem', background: 'rgba(255,255,255,0.1)', padding: '4px 8px', borderRadius: '4px' }}>🔮 {costumeMeta.element}</span>
+            <span className="persona-chip" style={{ fontSize: '0.8rem', background: 'rgba(255,255,255,0.1)', padding: '4px 8px', borderRadius: '4px' }}>🏷️ Thuê tham khảo: {costumeMeta.rentalEstimate}</span>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="culture-card__header">
         <div className="culture-card__title-row">
@@ -201,13 +238,54 @@ export default function CultureCard({ outfit, customizations, useDemoData = fals
               )}
             </div>
 
-            {/* Nguồn tư liệu */}
-            {outfit.nguon_tham_khao && (
+            {/* Nguồn tư liệu & Trích dẫn kiểm chứng */}
+            {outfit.citations && outfit.citations.length > 0 ? (
+              <div className="culture-card__citations-section">
+                <span className="meta-label" style={{ display: 'block', marginBottom: '6px' }}>
+                  📚 Nguồn kiểm chứng & Mức tin cậy:
+                </span>
+                <div className="citations-list">
+                  {outfit.citations.map((cite, idx) => (
+                    <div key={idx} className="citation-badge-item">
+                      <div className="citation-header-row">
+                        <strong className="citation-source-name">{cite.sourceName}</strong>
+                        {cite.confidenceLevel && (
+                          <span className="citation-confidence-tag">
+                            ✓ {cite.confidenceLevel}
+                          </span>
+                        )}
+                      </div>
+                      <div className="citation-sub-info">
+                        {cite.author && <span>{cite.author}</span>}
+                        {cite.year && <span>({cite.year})</span>}
+                        {cite.pages && <span>• {cite.pages}</span>}
+                      </div>
+                      {cite.hasDebate && cite.debateNote && (
+                        <p className="citation-debate-callout">
+                          ⚖️ <em>{cite.debateNote}</em>
+                        </p>
+                      )}
+                      {cite.url && (
+                        <a
+                          href={cite.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="citation-ext-link"
+                          title="Mở cổng di sản số / tài liệu kiểm chứng"
+                        >
+                          🔗 Tra cứu nguồn di sản ↗
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : outfit.nguon_tham_khao ? (
               <div className="culture-card__source">
                 <span className="meta-label">Tư liệu tham khảo:</span>
                 <p className="culture-card__source-text">{outfit.nguon_tham_khao}</p>
               </div>
-            )}
+            ) : null}
           </div>
         )}
       </div>

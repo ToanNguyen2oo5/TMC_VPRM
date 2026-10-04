@@ -482,3 +482,39 @@
   }
 }
 
+/* AI Mockup Tag */
+.ai-mockup-tag {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 15;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(20, 16, 13, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(218, 165, 32, 0.4);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #ffd700;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+}
+
+.ai-tag-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2ecc71;
+  box-shadow: 0 0 6px #2ecc71;
+}
+
+[data-theme="light"] .ai-mockup-tag {
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(218, 165, 32, 0.5);
+  color: #8B6914;
+}
+

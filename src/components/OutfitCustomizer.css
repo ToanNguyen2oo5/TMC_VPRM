@@ -1080,3 +1080,20 @@
   justify-content: center;
   padding: 1rem;
 }
+
+/* Accessibility Touch Targets for Mobile (Gen Z refinement) */
+@media (max-width: 768px) {
+  .color-wheel {
+    width: 44px;
+    height: 44px; /* Tăng từ 20px lên 44px */
+  }
+  .picker-input-wrap {
+    padding: 6px 8px; /* Tăng vùng đệm */
+  }
+  .material-item-btn {
+    padding: 14px 16px; /* Tăng vùng đệm */
+  }
+  .acc-card-btn {
+    padding: 12px 14px;
+  }
+}

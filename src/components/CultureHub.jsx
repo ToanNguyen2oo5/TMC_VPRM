@@ -129,7 +129,7 @@ export default function CultureHub() {
           className={`hub-tab-btn ${activeTab === 'guide' ? 'hub-tab-btn--active' : ''}`}
           onClick={() => setActiveTab('guide')}
         >
-          🧭 Cẩm nang Nên & Không nên
+          🧭 Tips Lên Đồ Nên & Không nên
         </button>
         <button 
           className={`hub-tab-btn ${activeTab === 'references' ? 'hub-tab-btn--active' : ''}`}

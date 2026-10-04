@@ -478,3 +478,61 @@
 .weather-sim-toggle:hover {
   opacity: 1;
 }
+
+/* Progressive Disclosure Styling */
+.progressive-hint-box {
+  background: rgba(28, 25, 23, 0.65);
+  border: 1px dashed rgba(218, 165, 32, 0.4);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(8px);
+}
+
+[data-theme="light"] .progressive-hint-box {
+  background: rgba(249, 246, 240, 0.8);
+  border-color: rgba(218, 165, 32, 0.45);
+}
+
+[data-theme="light"] .progressive-hint-box p {
+  color: #2D2420 !important;
+}
+
+.progressive-active-bar {
+  border: 1px solid rgba(218, 165, 32, 0.35);
+  border-radius: var(--radius-md);
+  background: rgba(218, 165, 32, 0.08);
+}
+
+[data-theme="light"] .progressive-active-bar {
+  background: rgba(218, 165, 32, 0.12);
+  border-color: rgba(218, 165, 32, 0.4);
+}
+
+.progressive-toggle-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(218, 165, 32, 0.4);
+  color: var(--color-gold);
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.progressive-toggle-btn:hover {
+  background: rgba(218, 165, 32, 0.2);
+  border-color: var(--color-gold);
+  transform: translateY(-1px);
+}
+
+[data-theme="light"] .progressive-toggle-btn {
+  background: rgba(37, 29, 24, 0.06);
+  color: #8B6914;
+}
+
+.progressive-expanded-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}

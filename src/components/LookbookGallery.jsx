@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { resolveImageSrc } from '../utils/imageHelper';
 import './LookbookGallery.css';
 
 const DEFAULT_TRENDING_LOOKS = [
@@ -119,7 +120,7 @@ export default function LookbookGallery({ savedOutfits = [], onRemoveFromLookboo
                 </div>
                 {item.image && (
                   <img 
-                    src={item.image.startsWith('http') || item.image.startsWith('data:') || item.image.startsWith('/generated') ? item.image : `data:image/png;base64,${item.image}`} 
+                    src={resolveImageSrc(item.image)} 
                     alt={item.outfitName || item.outfit?.ten}
                     className="lookbook-img"
                     loading="lazy"

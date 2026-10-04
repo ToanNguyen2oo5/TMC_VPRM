@@ -92,6 +92,14 @@ export default function SceneSelector({
   const [liveWeather, setLiveWeather] = useState(null);
   const [isWeatherLoading, setIsWeatherLoading] = useState(true);
   const [isManualWeather, setIsManualWeather] = useState(false);
+  const [isCustomExpanded, setIsCustomExpanded] = useState(false);
+
+  // Auto-expand advanced filters once a scene is selected
+  useEffect(() => {
+    if (selectedScene) {
+      setIsCustomExpanded(true);
+    }
+  }, [selectedScene]);
 
   // Sync region selection if already set
   useEffect(() => {
@@ -190,8 +198,44 @@ export default function SceneSelector({
         </div>
       </div>
 
-      {/* 2. THỜI TIẾT REAL-TIME & PHONG CÁCH (2 CỘT) */}
-      <div className="selector-sub-grid animate-fade-in-up">
+      {/* PROGRESSIVE DISCLOSURE: Hướng dẫn người dùng chọn dịp trước */}
+      {!selectedScene ? (
+        <div className="progressive-hint-box glass-panel animate-fade-in text-center" style={{ margin: '1.25rem 0 0.5rem', padding: '1rem 1.25rem' }}>
+          <p style={{ color: 'rgba(255, 255, 255, 0.9)', margin: '0 0 0.4rem', fontSize: '0.92rem' }}>
+            👆 <strong>Hành động chính:</strong> Hãy chọn 1 dịp/bối cảnh ở trên để hệ thống gợi ý y phục & thời tiết phù hợp nhất!
+          </p>
+          <button
+            type="button"
+            className="progressive-toggle-btn"
+            onClick={() => setIsCustomExpanded(prev => !prev)}
+            aria-expanded={isCustomExpanded}
+          >
+            {isCustomExpanded ? '▲ Thu gọn bộ lọc mở rộng' : '⚙️ Hoặc mở bộ lọc Thời tiết & Phong cách ngay ▾'}
+          </button>
+        </div>
+      ) : (
+        <div className="progressive-active-bar glass-panel animate-fade-in" style={{ margin: '1rem 0 1.25rem', padding: '0.65rem 1.15rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '1.15rem' }}>🎯</span>
+            <span style={{ fontSize: '0.9rem', color: '#DAA520', fontWeight: 600 }}>
+              Đã chọn: <strong>{scenes.find(s => s.id === selectedScene)?.name}</strong>
+            </span>
+          </div>
+          <button
+            type="button"
+            className="progressive-toggle-btn"
+            onClick={() => setIsCustomExpanded(prev => !prev)}
+          >
+            {isCustomExpanded ? '▲ Thu gọn Thời tiết & Phong cách' : '⚙️ Tùy chỉnh Thời tiết & Phong cách ▾'}
+          </button>
+        </div>
+      )}
+
+      {/* CHỈ MỞ KHI ĐÃ CHỌN DỊP HOẶC NGƯỜI DÙNG BẤM MỞ MỞ RỘNG */}
+      {(selectedScene || isCustomExpanded) && (
+        <div className="progressive-expanded-section animate-fade-in">
+          {/* 2. THỜI TIẾT REAL-TIME & PHONG CÁCH (2 CỘT) */}
+          <div className="selector-sub-grid animate-fade-in-up">
         {/* Thời tiết Real-time */}
         <div className="selector-sub-col glass-panel weather-realtime-panel">
           <div className="weather-col-header">
@@ -346,6 +390,8 @@ export default function SceneSelector({
           ))}
         </div>
       </div>
+        </div>
+      )}
     </section>
   );
 }

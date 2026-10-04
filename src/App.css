@@ -463,28 +463,37 @@ button {
 }
 
 @media (max-width: 768px) {
+  body {
+    padding-bottom: 72px;
+  }
   .top-navbar .navbar-container {
-    height: auto;
-    min-height: 60px;
-    flex-wrap: wrap;
-    padding: 8px 12px;
-    gap: 8px;
+    height: 56px;
+    min-height: 56px;
+    flex-wrap: nowrap;
+    padding: 0 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
   .nav-brand {
     order: 1;
+    cursor: pointer;
+  }
+  .brand-name {
+    font-size: 1.05rem;
   }
   .nav-controls {
     order: 2;
+    gap: 4px;
   }
+  .control-btn {
+    min-height: 40px;
+    min-width: 40px;
+    padding: 6px 8px;
+    font-size: 0.76rem;
+  }
+  /* Ẩn dải tab cuộn ngang bị cắt nhãn trên mobile, đã có MobileBottomNav */
   .nav-links {
-    order: 3;
-    width: 100%;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    padding: 4px 0;
-  }
-  .nav-links::-webkit-scrollbar {
     display: none;
   }
 }
@@ -759,6 +768,20 @@ button {
   font-size: 0.78rem;
   color: var(--color-gold);
   font-style: italic;
+}
+
+/* Sticky 3D Viewer on Mobile (Gen Z refinement) */
+@media (max-width: 768px) {
+  .result-viewer {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--color-bg-primary);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .result-sidebar {
+    padding-top: 1rem;
+  }
 }
 
 

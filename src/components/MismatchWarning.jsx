@@ -1,14 +1,24 @@
 import { useState } from 'react';
 import './MismatchWarning.css';
 
-export default function MismatchWarning({ warnings, onDismiss }) {
+export default function MismatchWarning({ warnings, onDismiss, onSwitchOutfit, onContinue }) {
   const [dismissed, setDismissed] = useState(false);
+  const [expandedRef, setExpandedRef] = useState(null);
 
   if (!warnings || warnings.length === 0 || dismissed) return null;
 
   const handleDismiss = () => {
     setDismissed(true);
     if (onDismiss) onDismiss();
+  };
+
+  const handleContinue = () => {
+    setDismissed(true);
+    if (onContinue) {
+      onContinue();
+    } else if (onDismiss) {
+      onDismiss();
+    }
   };
 
   return (
@@ -22,12 +32,13 @@ export default function MismatchWarning({ warnings, onDismiss }) {
               style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover', border: '1.5px solid var(--color-gold)' }}
               referrerPolicy="no-referrer"
             />
-            <h4 className="mismatch-warning__title">Cố Vấn AI: Lưu ý văn hóa & Gợi ý phối đồ</h4>
+            <h4 className="mismatch-warning__title">Cố Vấn AI: Lưu ý điển chế & Gợi ý phối đồ</h4>
           </div>
           <button
             className="mismatch-warning__close"
             onClick={handleDismiss}
             title="Đóng thông báo"
+            type="button"
           >
             ✕
           </button>
@@ -55,9 +66,42 @@ export default function MismatchWarning({ warnings, onDismiss }) {
                   </p>
                 )}
 
-                {w.reference && (
-                  <p className="warning-ref">
-                    📚 <em>Tham khảo: {w.reference}</em>
+                {/* Khối hành động: Đổi sang trang phục gợi ý hoặc Vẫn tiếp tục */}
+                <div className="warning-actions-row">
+                  {w.recommendedOutfitId && onSwitchOutfit && (
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-sm warning-action-btn"
+                      onClick={() => onSwitchOutfit(w.recommendedOutfitId)}
+                      id="warning-switch-outfit-btn"
+                    >
+                      ✨ Đổi sang {w.recommendedOutfitName || 'trang phục phù hợp'}
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm warning-continue-btn"
+                    onClick={handleContinue}
+                    id="warning-continue-btn"
+                  >
+                    ➡️ Vẫn tiếp tục phối
+                  </button>
+
+                  {w.reference && (
+                    <button
+                      type="button"
+                      className="btn-ref-toggle"
+                      onClick={() => setExpandedRef(prev => prev === i ? null : i)}
+                    >
+                      {expandedRef === i ? '▲ Thu gọn tư liệu' : '📖 Xem lý do & tư liệu ▾'}
+                    </button>
+                  )}
+                </div>
+
+                {expandedRef === i && w.reference && (
+                  <p className="warning-ref animate-fade-in" style={{ marginTop: '0.5rem' }}>
+                    📚 <em>Tư liệu lịch sử: {w.reference}</em>
                   </p>
                 )}
               </div>
@@ -66,7 +110,7 @@ export default function MismatchWarning({ warnings, onDismiss }) {
         </div>
 
         <p className="mismatch-warning__note">
-          Hệ thống đưa ra gợi ý nhằm bảo tồn nét đẹp nguyên bản — bạn hoàn toàn có thể sáng tạo tự do theo phong cách riêng!
+          Hệ thống đưa ra gợi ý nhằm bảo tồn nét đẹp nguyên bản di sản — bạn hoàn toàn có quyền quyết định phong cách sáng tạo riêng!
         </p>
       </div>
     </div>
