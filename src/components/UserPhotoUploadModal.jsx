@@ -12,19 +12,20 @@ export default function UserPhotoUploadModal({ isOpen, onClose, onConfirmPhoto }
 
   if (!isOpen) return null;
 
-  const handleFileProcess = (file) => {
+  const handleFileProcess = async (file) => {
     if (!file) return;
 
-    // Check MIME type or file extension (supports Windows registry quirks)
+    // Check extension or MIME type (supports Windows registry quirks where type is empty or octet-stream)
+    const ext = (file.name || '').split('.').pop()?.toLowerCase();
     const isImage = (file.type && file.type.startsWith('image/')) || 
-                    /\.(jpe?g|png|webp|gif|bmp|svg|jfif)$/i.test(file.name);
+                    ['jpg', 'jpeg', 'png', 'webp', 'jfif', 'bmp', 'svg'].includes(ext);
     if (!isImage) {
       alert('Vui lòng chọn file hình ảnh (JPG, PNG, WebP, JFIF)');
       return;
     }
 
-    if (file.size > 20 * 1024 * 1024) {
-      alert('Kích thước ảnh quá lớn. Vui lòng chọn ảnh dưới 20MB.');
+    if (file.size > 25 * 1024 * 1024) {
+      alert('Kích thước ảnh quá lớn. Vui lòng chọn ảnh dưới 25MB.');
       return;
     }
 
@@ -33,26 +34,114 @@ export default function UserPhotoUploadModal({ isOpen, onClose, onConfirmPhoto }
     setIsLoading(true);
     setLoadError(null);
 
-    // Read as Base64 Data URL so it renders instantly and reliably in every environment
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const dataUrl = e.target.result;
-      setPreviewUrl(dataUrl);
-      setIsLoading(false);
-    };
-    reader.onerror = (err) => {
-      console.error('FileReader error:', err);
-      try {
-        const fallbackUrl = URL.createObjectURL(file);
-        setPreviewUrl(fallbackUrl);
-        setIsLoading(false);
-      } catch (e2) {
-        console.error('Blob URL fallback error:', e2);
-        setLoadError('Không thể đọc file ảnh này. Vui lòng thử ảnh khác.');
-        setIsLoading(false);
+    try {
+      // 1. Read array buffer to inspect magic numbers and fix MIME type
+      const buffer = await file.arrayBuffer();
+      const bytes = new Uint8Array(buffer.slice(0, 16));
+
+      let detectedMime = 'image/jpeg';
+      if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) {
+        detectedMime = 'image/png';
+      } else if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 &&
+                 bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50) {
+        detectedMime = 'image/webp';
+      } else if (ext === 'png') {
+        detectedMime = 'image/png';
+      } else if (ext === 'webp') {
+        detectedMime = 'image/webp';
+      } else {
+        detectedMime = 'image/jpeg';
       }
-    };
-    reader.readAsDataURL(file);
+
+      // Check for HEIC signature
+      const isHeic = (bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) ||
+                     ['heic', 'heif'].includes(ext);
+      if (isHeic) {
+        setLoadError('Ảnh định dạng HEIC (Apple) chưa được trình duyệt hỗ trợ. Bạn vui lòng xuất ảnh sang JPG hoặc PNG.');
+        setIsLoading(false);
+        return;
+      }
+
+      // 2. Read as Data URL with guaranteed image MIME
+      const typedBlob = new Blob([buffer], { type: detectedMime });
+      let dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(typedBlob);
+      });
+
+      // Fix MIME in dataUrl if browser placed octet-stream
+      if (!dataUrl.startsWith('data:image/')) {
+        dataUrl = dataUrl.replace(/^data:[^;]*/, `data:${detectedMime}`);
+      }
+
+      // 3. Canonicalize via HTML Image & Canvas to guarantee valid RGB raster and fix CMYK / EXIF
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          let width = img.naturalWidth || img.width || 800;
+          let height = img.naturalHeight || img.height || 1000;
+          const maxDim = 1920;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          const cleanDataUrl = canvas.toDataURL('image/jpeg', 0.92);
+          setPreviewUrl(cleanDataUrl);
+          setIsLoading(false);
+        } catch (canvasErr) {
+          console.warn('Canvas export skipped, using dataUrl:', canvasErr);
+          setPreviewUrl(dataUrl);
+          setIsLoading(false);
+        }
+      };
+
+      img.onerror = () => {
+        // Fallback: try direct blob URL
+        try {
+          const blobUrl = URL.createObjectURL(typedBlob);
+          const img2 = new Image();
+          img2.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img2.naturalWidth || img2.width;
+            canvas.height = img2.naturalHeight || img2.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img2, 0, 0);
+            const cleanDataUrl = canvas.toDataURL('image/jpeg', 0.92);
+            URL.revokeObjectURL(blobUrl);
+            setPreviewUrl(cleanDataUrl);
+            setIsLoading(false);
+          };
+          img2.onerror = () => {
+            URL.revokeObjectURL(blobUrl);
+            // Even if test decode had quirks, provide dataUrl
+            setPreviewUrl(dataUrl);
+            setIsLoading(false);
+          };
+          img2.src = blobUrl;
+        } catch {
+          setPreviewUrl(dataUrl);
+          setIsLoading(false);
+        }
+      };
+
+      img.src = dataUrl;
+    } catch (err) {
+      console.error('File process error:', err);
+      setLoadError('Không thể xử lý tệp ảnh này. Vui lòng chọn ảnh khác.');
+      setIsLoading(false);
+    }
   };
 
   const handleDrop = (e) => {
@@ -140,8 +229,9 @@ export default function UserPhotoUploadModal({ isOpen, onClose, onConfirmPhoto }
                   alt="Xem trước ảnh của bạn"
                   className="preview-img"
                   style={{ transform: `scale(${zoomLevel})` }}
-                  onError={() => {
-                    setLoadError('Ảnh không tương thích định dạng trình duyệt.');
+                  onError={(e) => {
+                    console.error('Image element render error:', e);
+                    setLoadError('Trình duyệt gặp lỗi khi giải mã ảnh này. Vui lòng bấm "Chọn ảnh khác".');
                   }}
                 />
               )}

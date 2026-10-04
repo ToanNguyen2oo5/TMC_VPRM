@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import CostumeDetailModal from './CostumeDetailModal';
+import WeatherAdvisorWidget from './WeatherAdvisorWidget';
 import './OutfitSuggestions.css';
 
 function getRegionBadgeClass(region) {
@@ -15,9 +16,13 @@ export default function OutfitSuggestions({
   onSelect, 
   selectedId, 
   selectedScene, 
-  realtimeWeather 
+  selectedRegion = 'all',
+  onRegionSelect,
+  realtimeWeather,
+  onRealtimeWeatherChange
 }) {
   const [modalOutfit, setModalOutfit] = useState(null);
+  const [isWeatherFilterActive, setIsWeatherFilterActive] = useState(false);
 
   // Sắp xếp outfit gợi ý phù hợp nhất theo bối cảnh & thời tiết thực tế
   const sortedOutfits = useMemo(() => {
@@ -39,6 +44,30 @@ export default function OutfitSuggestions({
     });
   }, [outfits, selectedScene, realtimeWeather]);
 
+  // Lọc theo chế độ "Chỉ hiện đồ hợp thời tiết" nếu bật
+  const displayedOutfits = useMemo(() => {
+    if (isWeatherFilterActive && realtimeWeather?.recommendation?.outfitIds?.length > 0) {
+      const weatherMatches = sortedOutfits.filter(o => 
+        realtimeWeather.recommendation.outfitIds.includes(o.id)
+      );
+      if (weatherMatches.length > 0) return weatherMatches;
+    }
+    return sortedOutfits;
+  }, [sortedOutfits, isWeatherFilterActive, realtimeWeather]);
+
+  const handleSelectOutfitById = (outfitId) => {
+    const target = outfits.find(o => o.id === outfitId);
+    if (target) {
+      onSelect(target);
+      setTimeout(() => {
+        const el = document.getElementById(`outfit-${outfitId}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 50);
+    }
+  };
+
   if (!sortedOutfits || sortedOutfits.length === 0) {
     return (
       <section className="outfit-suggestions" id="outfit-suggestions">
@@ -57,30 +86,23 @@ export default function OutfitSuggestions({
           Danh mục <span className="text-gradient">Việt Phục tiêu biểu</span>
         </h2>
         <p className="outfit-suggestions__subtitle">
-          {sortedOutfits.length} di sản y phục đặc trưng — Chọn bộ trang phục bạn yêu thích nhất để bắt đầu phối đồ
+          {displayedOutfits.length} di sản y phục đặc trưng — Chọn bộ trang phục bạn yêu thích nhất để bắt đầu phối đồ
         </p>
       </div>
 
-      {/* Real-time Weather Recommendation Callout Pill */}
-      {realtimeWeather && (
-        <div className="outfit-weather-callout-pill animate-fade-in">
-          <div className="weather-pill-main">
-            <span className="weather-pill-icon">{realtimeWeather.condition.icon}</span>
-            <span className="weather-pill-title">
-              Khí hậu {realtimeWeather.city} ({realtimeWeather.temp}°C, {realtimeWeather.condition.textVi}):
-            </span>
-            <span className="weather-pill-text">{realtimeWeather.recommendation.adviceVi}</span>
-          </div>
-          {realtimeWeather.recommendation.recommendedFabricsVi?.length > 0 && (
-            <span className="weather-pill-tag">
-              🧵 Vải khuyên dùng: {realtimeWeather.recommendation.recommendedFabricsVi.join(', ')}
-            </span>
-          )}
-        </div>
-      )}
+      {/* Widget Cố Vấn Thời Tiết Thông Minh: Cả 3 miền khi chọn 'all', hoặc chi tiết từng vùng theo 11 điểm thiết kế */}
+      <WeatherAdvisorWidget
+        selectedRegion={selectedRegion}
+        onRegionSelect={onRegionSelect}
+        realtimeWeather={realtimeWeather}
+        onRealtimeWeatherChange={onRealtimeWeatherChange}
+        onSelectOutfitById={handleSelectOutfitById}
+        isWeatherFilterActive={isWeatherFilterActive}
+        onToggleWeatherFilter={() => setIsWeatherFilterActive(!isWeatherFilterActive)}
+      />
 
       <div className="outfit-grid">
-        {sortedOutfits.map((outfit, index) => {
+        {displayedOutfits.map((outfit, index) => {
           const isSelected = selectedId === outfit.id;
           const isModern = outfit.category === 'hien_dai' || outfit.id.includes('cach_tan');
           const isTopRecommended = selectedScene && outfit.boi_canh_phu_hop.some(s => s.toLowerCase().includes(selectedScene.toLowerCase()));

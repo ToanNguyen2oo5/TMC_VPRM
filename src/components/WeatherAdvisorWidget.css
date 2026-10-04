@@ -1,0 +1,515 @@
+/* Weather Advisor Widget — Premium Heritage Climate UI */
+.weather-advisor-widget {
+  margin: 1.25rem auto 1.75rem auto;
+  max-width: 1140px;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(26, 32, 44, 0.9) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 18px; /* Point 4: Bo góc 16-20px thay vì viên thuốc */
+  padding: 1rem 1.25rem;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35), 0 0 20px rgba(56, 189, 248, 0.08);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="light"] .weather-advisor-widget {
+  background: linear-gradient(135deg, rgba(240, 249, 255, 0.92) 0%, rgba(254, 252, 246, 0.95) 100%);
+  border-color: rgba(14, 116, 144, 0.35);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+}
+
+.weather-advisor-widget--collapsed {
+  padding: 0.65rem 1.25rem;
+}
+
+/* Top Bar: Title & Location Switcher */
+.weather-advisor-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="light"] .weather-advisor-top {
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+
+.weather-advisor-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.weather-title-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #38BDF8;
+  background: rgba(56, 189, 248, 0.12);
+  padding: 3px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+}
+
+[data-theme="light"] .weather-title-badge {
+  color: #0369A1;
+  background: rgba(14, 116, 144, 0.12);
+}
+
+.live-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 8px #10B981;
+  animation: pulse 1.8s infinite;
+}
+
+.weather-update-clock {
+  font-size: 0.76rem;
+  color: #94A3B8;
+}
+
+[data-theme="light"] .weather-update-clock {
+  color: #64748B;
+}
+
+.weather-location-select-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.location-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #CBD5E1;
+}
+
+[data-theme="light"] .location-label {
+  color: #334155;
+}
+
+.weather-location-select {
+  background: rgba(15, 23, 42, 0.8);
+  color: #F8FAFC;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 10px;
+  padding: 4px 10px;
+  font-size: 0.82rem;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+[data-theme="light"] .weather-location-select {
+  background: #FFFFFF;
+  color: #0F172A;
+  border-color: rgba(14, 116, 144, 0.4);
+}
+
+.btn-collapse-weather {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #94A3B8;
+  border-radius: 8px;
+  padding: 3px 8px;
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-collapse-weather:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #FFFFFF;
+}
+
+/* ========================================================
+   CASE 1: TẤT CẢ VÙNG MIỀN -> 3 THẺ CẢ 3 MIỀN (Bắc - Trung - Nam)
+   ======================================================== */
+.weather-three-regions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 0.85rem;
+}
+
+.three-region-card {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: all 0.25s ease;
+}
+
+[data-theme="light"] .three-region-card {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(14, 116, 144, 0.2);
+}
+
+.three-region-card:hover {
+  border-color: rgba(56, 189, 248, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.three-region-card--active {
+  border-color: var(--color-gold) !important;
+  box-shadow: 0 0 12px rgba(200, 161, 90, 0.3) !important;
+}
+
+.three-region-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.region-name-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.region-icon {
+  font-size: 1.25rem;
+}
+
+.region-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #F8FAFC;
+}
+
+[data-theme="light"] .region-name {
+  color: #0F172A;
+}
+
+.region-city {
+  font-size: 0.74rem;
+  color: #94A3B8;
+  margin-left: 4px;
+}
+
+.region-temp-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.region-temp-number {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #38BDF8;
+  letter-spacing: -0.5px;
+}
+
+.region-condition-desc {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cond-tag {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #E2E8F0;
+}
+
+[data-theme="light"] .cond-tag {
+  color: #334155;
+}
+
+.cond-tip {
+  font-size: 0.72rem;
+  color: #94A3B8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.region-action-chips {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.outfit-quick-chip {
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: #BAE6FD;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+[data-theme="light"] .outfit-quick-chip {
+  background: rgba(14, 116, 144, 0.1);
+  color: #0369A1;
+  border-color: rgba(14, 116, 144, 0.25);
+}
+
+.outfit-quick-chip:hover {
+  background: #38BDF8;
+  color: #0F172A;
+  transform: translateY(-1px);
+}
+
+/* ========================================================
+   CASE 2: TỪNG VÙNG CỤ THỂ -> CHI TIẾT THEO 11 ĐIỂM
+   ======================================================== */
+.weather-single-region-card {
+  margin-top: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.weather-single-body {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Left: Metric box (Point 2: Nhiệt độ to, nổi bật) */
+.weather-metric-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-right: 1.5rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+[data-theme="light"] .weather-metric-box {
+  border-right-color: rgba(0, 0, 0, 0.1);
+}
+
+.temp-icon-col {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.big-temp-value {
+  font-size: 2.15rem; /* Point 2: Cho 26°C to, tách khỏi câu dài */
+  font-weight: 800;
+  color: #38BDF8;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+[data-theme="light"] .big-temp-value {
+  color: #0284C7;
+}
+
+.metric-text-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.metric-city-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #F8FAFC;
+}
+
+[data-theme="light"] .metric-city-name {
+  color: #0F172A;
+}
+
+.metric-condition-text {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #E2E8F0; /* Point 11: Độ tương phản cao */
+}
+
+[data-theme="light"] .metric-condition-text {
+  color: #334155;
+}
+
+.metric-sub-stats {
+  font-size: 0.72rem;
+  color: #94A3B8;
+}
+
+/* Right: Garment Advice */
+.weather-advice-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.advice-headline-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.advice-label {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #F8FAFC;
+}
+
+[data-theme="light"] .advice-label {
+  color: #0F172A;
+}
+
+.fabric-pill {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #BAE6FD;
+  background: rgba(56, 189, 248, 0.15);
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.advice-main-content {
+  font-size: 0.86rem;
+  color: #E2E8F0; /* Point 11: Chữ rõ ràng không nhạt */
+  line-height: 1.45;
+  margin: 0;
+}
+
+[data-theme="light"] .advice-main-content {
+  color: #1E293B;
+}
+
+.advice-practical-field-tip {
+  font-size: 0.78rem;
+  color: #FBBF24;
+  margin: 0;
+  line-height: 1.35;
+}
+
+[data-theme="light"] .advice-practical-field-tip {
+  color: #B45309;
+}
+
+/* Bottom Action Chips Bar (Point 7: Chip bấm được để lọc phối đồ) */
+.weather-action-chips-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 0.65rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  flex-wrap: wrap;
+}
+
+[data-theme="light"] .weather-action-chips-bar {
+  border-top-color: rgba(0, 0, 0, 0.1);
+}
+
+.chips-bar-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #94A3B8;
+}
+
+[data-theme="light"] .chips-bar-title {
+  color: #64748B;
+}
+
+.chips-list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.weather-action-chip {
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: #F0F9FF;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s ease;
+}
+
+[data-theme="light"] .weather-action-chip {
+  background: rgba(14, 116, 144, 0.1);
+  color: #0369A1;
+  border-color: rgba(14, 116, 144, 0.3);
+}
+
+.weather-action-chip:hover {
+  background: #38BDF8;
+  color: #0F172A;
+  border-color: #38BDF8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+}
+
+.chip-arrow {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+.weather-filter-toggle-chip {
+  background: rgba(200, 161, 90, 0.15);
+  border-color: rgba(200, 161, 90, 0.4);
+  color: #FDE047;
+}
+
+[data-theme="light"] .weather-filter-toggle-chip {
+  background: rgba(161, 98, 7, 0.1);
+  color: #854D0E;
+  border-color: rgba(161, 98, 7, 0.35);
+}
+
+.weather-filter-toggle-chip--active {
+  background: linear-gradient(135deg, #B45309, #D97706) !important;
+  color: #FFFFFF !important;
+  border-color: #FDE047 !important;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .weather-three-regions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .weather-single-body {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .weather-metric-box {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-right: 0;
+    padding-bottom: 0.6rem;
+    width: 100%;
+  }
+}

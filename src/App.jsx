@@ -891,7 +891,10 @@ export default function App() {
               onSelect={handleOutfitSelect}
               selectedId={selectedOutfit?.id}
               selectedScene={selectedScene}
+              selectedRegion={selectedRegion}
+              onRegionSelect={handleRegionSelect}
               realtimeWeather={realtimeWeather}
+              onRealtimeWeatherChange={setRealtimeWeather}
             />
           </div>
 

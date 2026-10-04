@@ -18,8 +18,11 @@ export default function PhotoUpload({ onPhotoSelect, selectedOutfit, onGenerate,
     if (!file) return;
 
     // Validate
-    if (!file.type.startsWith('image/')) {
-      alert('Vui lòng chọn file ảnh (jpg, png, webp)');
+    const ext = (file.name || '').split('.').pop()?.toLowerCase();
+    const isImg = (file.type && file.type.startsWith('image/')) ||
+                  ['jpg', 'jpeg', 'png', 'webp', 'jfif', 'bmp'].includes(ext);
+    if (!isImg) {
+      alert('Vui lòng chọn file ảnh (JPG, PNG, WebP, JFIF)');
       return;
     }
     if (file.size > 10 * 1024 * 1024) {

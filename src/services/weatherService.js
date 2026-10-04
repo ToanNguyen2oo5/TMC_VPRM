@@ -99,51 +99,85 @@ function interpretWeatherCode(code) {
 }
 
 function getGarmentRecommendation(temp, weatherType) {
-  if (temp >= 31) {
+  const currentMonth = new Date().getMonth() + 1;
+  let seasonalActivity = 'chụp ảnh ngoài trời';
+  if (currentMonth >= 1 && currentMonth <= 3) {
+    seasonalActivity = 'du xuân trẩy hội';
+  } else if (currentMonth >= 9 && currentMonth <= 11) {
+    seasonalActivity = 'chụp ảnh mùa thu - đầu đông';
+  } else if (currentMonth === 12) {
+    seasonalActivity = 'chụp ảnh kỷ niệm cuối năm';
+  }
+
+  // 1. Trời nóng (>= 28°C)
+  if (temp >= 28) {
     return {
-      adviceVi: 'Nắng ấm phương Nam: Nên chọn vải đũi tơ tằm tự nhiên, lụa mỏng nhẹ thoáng khí hoặc Áo bà ba / Áo dài cách tân.',
-      adviceEn: 'Warm sunny weather: Lightweight mulberry silk, linen, breathable Ao Ba Ba or modern Ao Dai recommended.',
+      headlineVi: 'Trời nắng ấm, nhiệt độ cao',
+      headlineEn: 'Warm sunny weather',
+      adviceVi: 'Nên chọn vải đũi tự nhiên, lụa tơ tằm mỏng nhẹ thoáng khí hoặc Áo bà ba, Áo dài cách tân ngắn tay mát mẻ.',
+      adviceEn: 'Lightweight breathable fabrics recommended: raw tussah silk, linen, Ao Ba Ba, or modern breezy Ao Dai.',
       practicalFieldTipsVi: [
-        'Tránh vải lót nilon/polyester vì dễ bí mồ hôi khi dạo phố ngoài trời.',
-        'Nên chuẩn bị thêm quạt trầm hương hoặc quạt nan vừa làm duyên vừa giải nhiệt.',
-        'Trang điểm tone nhẹ tự nhiên chống chảy phấn dưới trời nắng gắt.'
+        'Tránh vải lót nilon/polyester vì dễ bí mồ hôi khi hoạt động ngoài trời.',
+        'Chuẩn bị thêm quạt nan hoặc quạt trầm hương vừa giải nhiệt vừa tạo dáng duyên dáng.',
+        'Trang điểm tone tự nhiên, chống lem phấn dưới trời nắng.'
       ],
-      recommendedFabricsVi: ['Lụa tơ tằm mỏng', 'Vải đũi tự nhiên', 'Voan tơ'],
-      outfitIds: ['ao_ba_ba_nam_bo', 'ao_dai_cach_tan']
+      recommendedFabricsVi: ['Lụa tơ tằm mỏng', 'Vải đũi tự nhiên', 'Voan tơ thoáng'],
+      outfitIds: ['ao_ba_ba_nam_bo', 'ao_dai_cach_tan'],
+      recommendedOutfits: [
+        { id: 'ao_ba_ba_nam_bo', name: 'Áo bà ba Nam Bộ' },
+        { id: 'ao_dai_cach_tan', name: 'Áo dài cách tân' }
+      ]
     };
   }
+
+  // 2. Trời mưa hoặc se lạnh (<= 21°C)
   if (temp <= 21 || weatherType === 'rainy' || weatherType === 'stormy') {
     const isRain = weatherType === 'rainy' || weatherType === 'stormy';
     return {
+      headlineVi: isRain ? 'Trời có mưa ẩm' : 'Trời se lạnh, nhiệt độ thấp',
+      headlineEn: isRain ? 'Rainy & damp conditions' : 'Chilly conditions',
       adviceVi: isRain 
-        ? 'Dễ có mưa ẩm: Cần cẩn trọng khi diện cổ phục tà dài quét đất, ưu tiên tà áo gọn gàng.'
-        : 'Thời tiết se lạnh: Rất thích hợp diện Áo tấc gấm dệt kim tuyến, Áo ngũ thân có lớp lót hoặc khăn đóng giữ ấm.',
+        ? 'Cẩn trọng vải dễ ướt, tránh chọn tà áo quá dài quét đất và hạn chế màu trắng tinh dễ vấy bùn bẩn.'
+        : 'Rất thích hợp diện Áo tấc gấm dệt nhiều lớp, Áo ngũ thân dày dặn kết hợp khăn đóng giữ ấm cổ.',
       adviceEn: isRain
-        ? 'Rainy/damp conditions: Caution with floor-length hems; opt for tidy cuts.'
-        : 'Chilly weather: Ideal for lined Ao Tac brocade, five-panel royal robes with layered undergarments.',
+        ? 'Beware of wet hems: avoid floor-dragging cuts, and avoid white fabrics prone to mud splashes.'
+        : 'Perfect for layered brocade Ao Tac, lined five-panel robes, and traditional head wraps for warmth.',
       practicalFieldTipsVi: isRain ? [
-        'Hạn chế mặc tà áo màu trắng hoặc be nhạt vì rất dễ bị bắn bùn bẩn khi di chuyển.',
-        'Ô giấy dầu và nón lá chỉ là đạo cụ tạo dáng, trời mưa thật hãy trang bị ô che chuyên dụng.',
-        'Sử dụng kẹp vải để xắn gọn vạt trước khi bước lên bậc thang đền chùa, di tích.'
+        'Hạn chế tà áo màu trắng hoặc be nhạt vì rất dễ bị bắn bùn bẩn khi di chuyển.',
+        'Ô giấy dầu chỉ để tạo dáng chụp nhanh, khi di chuyển cần trang bị ô che chuyên dụng.',
+        'Sử dụng kẹp vải để xắn gọn vạt khi bước lên bậc tam cấp di tích.'
       ] : [
-        'Thời tiết se lạnh là lúc diện Áo Tấc và Áo Ngũ Thân nhiều lớp đẹp nhất mà không sợ nóng.',
-        'Khăn đóng hoặc khăn vấn vừa giữ ấm vùng đầu cổ vừa tạo phong thái trang trọng.',
-        'Phù hợp diện cùng giày hài nhung thêu chỉ vàng hoặc giày tây cổ điển.'
+        'Thời tiết se lạnh là lúc diện Áo Tấc và Áo Ngũ Thân nhiều lớp đẹp nhất mà không lo nóng.',
+        'Khăn đóng hoặc khăn vấn vừa giữ ấm vừa tôn phong thái trang trọng.',
+        'Phù hợp diện cùng hài nhung thêu hoặc giày tây cổ điển.'
       ],
-      recommendedFabricsVi: ['Gấm hoa chìm', 'Nhung the', 'Lụa dệt dày'],
-      outfitIds: ['ao_ngu_than_ao_tac', 'ao_nhat_binh']
+      recommendedFabricsVi: ['Gấm hoa chìm', 'Nhung the', 'Lụa dệt dày dặn'],
+      outfitIds: ['ao_ngu_than_ao_tac', 'ao_nhat_binh'],
+      recommendedOutfits: [
+        { id: 'ao_ngu_than_ao_tac', name: 'Áo ngũ thân / Áo tấc' },
+        { id: 'ao_nhat_binh', name: 'Áo Nhật Bình cung đình' }
+      ]
     };
   }
+
+  // 3. Khí hậu dịu mát, ôn hòa (22 - 27°C)
   return {
-    adviceVi: 'Khí hậu ôn hòa lý tưởng: Rất đẹp để du xuân chụp ảnh cùng Áo dài truyền thống, Áo tứ thân Kinh Bắc hay Áo giao lĩnh.',
-    adviceEn: 'Ideal pleasant weather: Perfect for heritage photography with traditional Ao Dai, Ao Tu Than, or Ao Giao Linh.',
+    headlineVi: 'Thời tiết dịu mát lý tưởng',
+    headlineEn: 'Mild pleasant weather',
+    adviceVi: `Khí hậu rất đẹp để ${seasonalActivity} cùng Áo dài truyền thống, Áo tứ thân Kinh Bắc hay Áo giao lĩnh cổ truyền.`,
+    adviceEn: `Pleasant weather: Perfect for heritage photography with traditional Ao Dai, Ao Tu Than, or Ao Giao Linh.`,
     practicalFieldTipsVi: [
-      'Thời tiết vàng lý tưởng để chụp ảnh ánh sáng tự nhiên tại các di tích cổ kính.',
+      'Thời tiết lý tưởng để tận dụng ánh sáng tự nhiên tại các đền chùa, phố cổ.',
       'Dễ dàng kết hợp phụ kiện chuỗi ngọc, trâm cài hoa sen hoặc thắt lưng ngũ sắc.',
-      'Di chuyển thoải mái giữa các góc phố cổ, chùa chiền mà không lo trang phục bị nhăn nhàu.'
+      'Di chuyển thoải mái cả ngày mà không lo đổ mồ hôi hay nhăn nhàu trang phục.'
     ],
-    recommendedFabricsVi: ['Lụa Hà Đông', 'The lụa', 'Gấm tơ tằm'],
-    outfitIds: ['ao_dai_hue', 'ao_tu_than', 'ao_giao_linh']
+    recommendedFabricsVi: ['Lụa Hà Đông', 'The lụa mềm', 'Gấm tơ tằm'],
+    outfitIds: ['ao_dai_hue', 'ao_tu_than', 'ao_giao_linh'],
+    recommendedOutfits: [
+      { id: 'ao_dai_hue', name: 'Áo dài truyền thống' },
+      { id: 'ao_tu_than', name: 'Áo tứ thân Kinh Bắc' },
+      { id: 'ao_giao_linh', name: 'Áo giao lĩnh cổ truyền' }
+    ]
   };
 }
 
