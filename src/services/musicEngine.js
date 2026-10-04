@@ -1,8 +1,20 @@
 // Vietnamese Traditional Instrumental Music Engine
 // Features specialized I - IV - V (Chủ âm - Hạ át - Át âm) Pentatonic Harmonic Progression
-// with Web Audio API for 100% reliable, zero-latency playback
+// and Native High-Fidelity MP3 Audio Playback for "Lanterns on the River"
+
+const BASE = import.meta.env.BASE_URL || '/';
+export const AUDIO_URL = BASE.endsWith('/') ? `${BASE}Lanterns_on_the_River.mp3` : `${BASE}/Lanterns_on_the_River.mp3`;
 
 export const PENTATONIC_TRACKS = [
+  {
+    id: 'lanterns-on-the-river',
+    title: 'Lanterns on the River',
+    scaleName: 'Cổ Điệu Hoa Đăng • Nhạc Nền Chính',
+    description: 'Bản hòa tấu nhạc cụ truyền thống thanh bình, du dương trên dòng sông quê hương (Lanterns on the River)',
+    src: AUDIO_URL,
+    isAudioFile: true,
+    tempo: 72
+  },
   {
     id: 'hoa-am-i-iv-v',
     title: 'Hòa Âm Ngũ Cung I – IV – V',
@@ -79,6 +91,40 @@ class TraditionalMusicEngine {
     this.volume = 0.55;
     this.masterGain = null;
     this.onStateChangeCallbacks = [];
+    this.audioElement = null;
+    this.hasExplicitlyPaused = false;
+  }
+
+  initAudioElement() {
+    if (typeof window === 'undefined') return null;
+    if (!this.audioElement) {
+      const track = PENTATONIC_TRACKS[this.currentTrackIndex];
+      const src = track?.isAudioFile ? track.src : AUDIO_URL;
+      this.audioElement = new Audio(src);
+      this.audioElement.loop = true;
+      this.audioElement.preload = 'auto';
+      this.audioElement.volume = this.volume;
+
+      this.audioElement.addEventListener('play', () => {
+        if (!this.isPlaying) {
+          this.isPlaying = true;
+          this.notify();
+        }
+      });
+
+      this.audioElement.addEventListener('pause', () => {
+        const currentTrack = PENTATONIC_TRACKS[this.currentTrackIndex];
+        if (currentTrack?.isAudioFile && this.isPlaying && this.hasExplicitlyPaused) {
+          this.isPlaying = false;
+          this.notify();
+        }
+      });
+
+      this.audioElement.addEventListener('error', (e) => {
+        console.warn('Audio element error:', e);
+      });
+    }
+    return this.audioElement;
   }
 
   initContext() {
@@ -107,7 +153,7 @@ class TraditionalMusicEngine {
   }
 
   getState() {
-    const currentTrack = PENTATONIC_TRACKS[this.currentTrackIndex];
+    const currentTrack = PENTATONIC_TRACKS[this.currentTrackIndex] || PENTATONIC_TRACKS[0];
     return {
       isPlaying: this.isPlaying,
       currentTrack,
@@ -116,12 +162,17 @@ class TraditionalMusicEngine {
       volume: this.volume,
       step: this.step,
       activeChordIndex: this.activeChordIndex,
-      activeChord: currentTrack?.chords ? currentTrack.chords[this.activeChordIndex] : null
+      activeChord: currentTrack?.chords ? currentTrack.chords[this.activeChordIndex] : null,
+      isAudioFile: !!currentTrack?.isAudioFile,
+      hasExplicitlyPaused: this.hasExplicitlyPaused
     };
   }
 
   setVolume(val) {
     this.volume = Math.max(0, Math.min(1, val));
+    if (this.audioElement) {
+      this.audioElement.volume = this.volume;
+    }
     if (this.masterGain && this.ctx) {
       this.masterGain.gain.setValueAtTime(this.volume, this.ctx.currentTime);
     }
@@ -331,15 +382,62 @@ class TraditionalMusicEngine {
   }
 
   play() {
-    this.initContext();
-    if (this.isPlaying) return;
-    this.isPlaying = true;
-    this.notify();
-    this.tick();
+    this.hasExplicitlyPaused = false;
+    const track = PENTATONIC_TRACKS[this.currentTrackIndex];
+
+    if (track?.isAudioFile) {
+      if (this.timerId) {
+        clearTimeout(this.timerId);
+        this.timerId = null;
+      }
+      const audio = this.initAudioElement();
+      if (!audio) return Promise.resolve(false);
+
+      audio.volume = this.volume;
+      const targetSrc = track.src || AUDIO_URL;
+      if (!audio.src.includes('Lanterns_on_the_River.mp3')) {
+        audio.src = targetSrc;
+      }
+
+      const promise = audio.play();
+      if (promise !== undefined) {
+        return promise
+          .then(() => {
+            this.isPlaying = true;
+            this.notify();
+            return true;
+          })
+          .catch((err) => {
+            console.info('Autoplay waiting for user gesture:', err.name);
+            this.isPlaying = false;
+            this.notify();
+            throw err;
+          });
+      }
+      this.isPlaying = true;
+      this.notify();
+      return Promise.resolve(true);
+    } else {
+      if (this.audioElement) {
+        this.audioElement.pause();
+      }
+      this.initContext();
+      if (this.isPlaying) return Promise.resolve(true);
+      this.isPlaying = true;
+      this.notify();
+      this.tick();
+      return Promise.resolve(true);
+    }
   }
 
-  pause() {
+  pause(isExplicit = true) {
+    if (isExplicit) {
+      this.hasExplicitlyPaused = true;
+    }
     this.isPlaying = false;
+    if (this.audioElement) {
+      this.audioElement.pause();
+    }
     if (this.timerId) {
       clearTimeout(this.timerId);
       this.timerId = null;
@@ -349,27 +447,44 @@ class TraditionalMusicEngine {
 
   toggle() {
     if (this.isPlaying) {
-      this.pause();
+      this.pause(true);
+      return Promise.resolve(false);
     } else {
-      this.play();
+      return this.play();
     }
   }
 
   selectTrack(index) {
     if (index >= 0 && index < PENTATONIC_TRACKS.length) {
+      const wasPlaying = this.isPlaying;
+      this.pause(false);
       this.currentTrackIndex = index;
       this.step = 0;
       this.activeChordIndex = 0;
-      this.notify();
+      const track = PENTATONIC_TRACKS[index];
+      if (track.isAudioFile) {
+        const audio = this.initAudioElement();
+        if (audio) {
+          audio.src = track.src || AUDIO_URL;
+          audio.currentTime = 0;
+        }
+      }
+      if (wasPlaying) {
+        this.play().catch(() => {});
+      } else {
+        this.notify();
+      }
     }
   }
 
   jumpToChord(chordIndex) {
+    const track = PENTATONIC_TRACKS[this.currentTrackIndex];
+    if (!track?.hasChordProgression) return;
     if (chordIndex >= 0 && chordIndex <= 3) {
       this.activeChordIndex = chordIndex;
       this.step = chordIndex * 8;
       if (!this.isPlaying) {
-        this.play();
+        this.play().catch(() => {});
       } else {
         this.notify();
       }
@@ -377,17 +492,13 @@ class TraditionalMusicEngine {
   }
 
   nextTrack() {
-    this.currentTrackIndex = (this.currentTrackIndex + 1) % PENTATONIC_TRACKS.length;
-    this.step = 0;
-    this.activeChordIndex = 0;
-    this.notify();
+    const nextIdx = (this.currentTrackIndex + 1) % PENTATONIC_TRACKS.length;
+    this.selectTrack(nextIdx);
   }
 
   prevTrack() {
-    this.currentTrackIndex = (this.currentTrackIndex - 1 + PENTATONIC_TRACKS.length) % PENTATONIC_TRACKS.length;
-    this.step = 0;
-    this.activeChordIndex = 0;
-    this.notify();
+    const prevIdx = (this.currentTrackIndex - 1 + PENTATONIC_TRACKS.length) % PENTATONIC_TRACKS.length;
+    this.selectTrack(prevIdx);
   }
 }
 

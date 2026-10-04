@@ -9,11 +9,44 @@ export default function MusicPlayer() {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
 
+  // Subscribe to engine state changes
   useEffect(() => {
     const unsubscribe = musicEngine.subscribe((newState) => {
       setEngineState(newState);
     });
     return () => unsubscribe();
+  }, []);
+
+  // Autoplay on website load with seamless fallback on first user gesture
+  useEffect(() => {
+    let unmounted = false;
+
+    const attemptAutoplay = () => {
+      const playPromise = musicEngine.play();
+      if (playPromise && typeof playPromise.then === 'function') {
+        playPromise.catch(() => {
+          // Autoplay blocked by browser policy without prior interaction
+          const onFirstInteraction = () => {
+            if (!unmounted && !musicEngine.hasExplicitlyPaused) {
+              musicEngine.play().catch(() => {});
+            }
+            ['pointerdown', 'click', 'keydown', 'touchstart', 'scroll'].forEach((evt) => {
+              window.removeEventListener(evt, onFirstInteraction, true);
+            });
+          };
+
+          ['pointerdown', 'click', 'keydown', 'touchstart', 'scroll'].forEach((evt) => {
+            window.addEventListener(evt, onFirstInteraction, { once: true, passive: true, capture: true });
+          });
+        });
+      }
+    };
+
+    attemptAutoplay();
+
+    return () => {
+      unmounted = true;
+    };
   }, []);
 
   // Close drawer when clicking outside
@@ -37,7 +70,7 @@ export default function MusicPlayer() {
   const handleSelectTrack = (index) => {
     musicEngine.selectTrack(index);
     if (!engineState.isPlaying) {
-      musicEngine.play();
+      musicEngine.play().catch(() => {});
     }
   };
 
@@ -49,37 +82,60 @@ export default function MusicPlayer() {
 
   return (
     <div className="music-player-wrap" ref={containerRef}>
-      {/* Navbar Button */}
-      <button
-        type="button"
-        className={`music-toggle-btn ${isPlaying ? 'music-toggle-btn--playing' : ''}`}
-        onClick={() => setIsOpen(!isOpen)}
-        title={isPlaying ? (lang === 'en' ? `Playing: ${currentTrack?.title} • Click to adjust` : `Đang phát: ${currentTrack?.title} • Bấm để chỉnh nhạc`) : (lang === 'en' ? 'Play Vietnamese Heritage Music' : 'Bật Nhạc Cổ Phong Cung Đình')}
-        aria-label="Nhạc Cung Đình"
-      >
-        <span
-          className={`music-equalizer ${isPlaying ? 'music-equalizer--active' : ''}`}
+      {/* Navbar Split Pill Controls */}
+      <div className={`music-pill-group ${isPlaying ? 'music-pill-group--playing' : ''}`}>
+        {/* Main ON / OFF Toggle Button */}
+        <button
+          type="button"
+          className={`music-toggle-btn ${isPlaying ? 'music-toggle-btn--playing' : ''}`}
+          onClick={handleTogglePlay}
+          title={
+            isPlaying
+              ? (lang === 'en'
+                  ? `Playing: ${currentTrack?.title} • Click to Mute / Pause`
+                  : `Đang phát: ${currentTrack?.title} • Bấm để Tắt nhạc`)
+              : (lang === 'en'
+                  ? 'Click to Play Background Music (Lanterns on the River)'
+                  : 'Bấm để Bật nhạc nền (Lanterns on the River)')
+          }
+          aria-label={isPlaying ? 'Tắt nhạc nền' : 'Bật nhạc nền'}
+        >
+          <span className={`music-equalizer ${isPlaying ? 'music-equalizer--active' : ''}`}>
+            <span className="music-bar" />
+            <span className="music-bar" />
+            <span className="music-bar" />
+          </span>
+          <span className="music-btn-label">
+            {isPlaying
+              ? (currentTrack?.id === 'lanterns-on-the-river'
+                  ? 'Lanterns on River'
+                  : currentTrack?.title || (lang === 'en' ? 'Music ON' : 'Đang phát'))
+              : (lang === 'en' ? '🎵 Play BGM' : '🎵 Bật Nhạc')}
+          </span>
+          <span className={`music-status-dot ${isPlaying ? 'music-status-dot--active' : ''}`} />
+        </button>
+
+        {/* Options / Playlist Menu Trigger */}
+        <button
+          type="button"
+          className={`music-menu-btn ${isOpen ? 'music-menu-btn--active' : ''}`}
           onClick={(e) => {
             e.stopPropagation();
-            handleTogglePlay(e);
+            setIsOpen(!isOpen);
           }}
-          title={isPlaying ? (lang === 'en' ? 'Pause music' : 'Tạm dừng nhạc') : (lang === 'en' ? 'Play music' : 'Phát nhạc')}
+          title={lang === 'en' ? 'Playlist & Volume Settings' : 'Danh sách nhạc & Âm lượng'}
+          aria-label="Cài đặt nhạc"
         >
-          <span className="music-bar" />
-          <span className="music-bar" />
-          <span className="music-bar" />
-        </span>
-        <span className="music-btn-label">
-          {isPlaying ? (lang === 'en' ? 'Court Music' : 'Nhã Nhạc') : (lang === 'en' ? '🎵 Music' : '🎵 Nhạc')}
-        </span>
-      </button>
+          <span className="music-menu-icon">{isOpen ? '▲' : '▾'}</span>
+        </button>
+      </div>
 
       {/* Music Drawer */}
       {isOpen && (
         <div className="music-drawer animate-scale-up">
           <div className="music-drawer-header">
             <span className="music-drawer-title">
-              🎶 {lang === 'en' ? 'Vietnamese Court & Folk Music' : 'Nhã Nhạc & Cổ Nhạc Việt'}
+              🎶 {lang === 'en' ? 'Heritage BGM & Court Music' : 'Nhạc Nền & Cổ Nhạc Việt'}
             </span>
             <button
               type="button"
@@ -93,9 +149,14 @@ export default function MusicPlayer() {
 
           {/* Currently Playing Card */}
           <div className="now-playing-box">
-            <span className="now-playing-label">
-              {isPlaying ? (lang === 'en' ? '● Playing' : '● Đang ngân nga') : (lang === 'en' ? '○ Paused' : '○ Tạm dừng')}
-            </span>
+            <div className="now-playing-header">
+              <span className="now-playing-label">
+                {isPlaying ? (lang === 'en' ? '● Playing' : '● Đang phát') : (lang === 'en' ? '○ Paused' : '○ Tạm dừng')}
+              </span>
+              {currentTrack?.isAudioFile && (
+                <span className="now-playing-badge">🏮 BGM Gốc</span>
+              )}
+            </div>
             <h4 className="now-playing-title">{currentTrack?.title}</h4>
             <span className="now-playing-scale">{currentTrack?.scaleName}</span>
           </div>
@@ -114,7 +175,7 @@ export default function MusicPlayer() {
               type="button"
               className="music-ctrl-btn music-ctrl-btn--main"
               onClick={handleTogglePlay}
-              title={isPlaying ? 'Tạm dừng' : 'Phát nhạc'}
+              title={isPlaying ? 'Tạm dừng nhạc' : 'Bật phát nhạc'}
             >
               {isPlaying ? '⏸' : '▶'}
             </button>
@@ -158,10 +219,13 @@ export default function MusicPlayer() {
                   onClick={() => handleSelectTrack(idx)}
                 >
                   <span className="track-item-icon">
-                    {isCurrent && isPlaying ? '🔊' : isCurrent ? '⏸' : '🎵'}
+                    {isCurrent && isPlaying ? '🔊' : isCurrent ? '⏸' : track.isAudioFile ? '🏮' : '🎵'}
                   </span>
                   <div className="track-item-info">
-                    <span className="track-item-title">{track.title}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span className="track-item-title">{track.title}</span>
+                      {track.isAudioFile && <span className="track-tag-bgm">BGM</span>}
+                    </div>
                     <span className="track-item-desc">{track.description}</span>
                   </div>
                 </button>

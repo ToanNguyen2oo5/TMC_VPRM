@@ -17,8 +17,9 @@ import VietnamMap from './components/VietnamMap';
 import ChatBot from './components/ChatBot';
 import LotusPetals from './components/LotusPetals';
 import LottieIcon from './components/LottieIcon';
-import AppLogo, { LOGO_VARIANTS } from './components/AppLogo';
+import AppLogo from './components/AppLogo';
 import MusicPlayer from './components/MusicPlayer';
+import { musicEngine } from './services/musicEngine';
 import OnboardingModal from './components/OnboardingModal';
 import StickyStepper from './components/StickyStepper';
 import { lotusBloomAnimation, lanternAnimation } from './assets/lottieAnimations';
@@ -111,15 +112,9 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('home');
 
   // Logo Variant: 'emblem' | 'crest'
-  const [logoVariant, setLogoVariant] = useState(() => {
+  const [logoVariant] = useState(() => {
     return localStorage.getItem('vp_logo_variant') || 'emblem';
   });
-
-  const handleToggleLogoVariant = (variant) => {
-    setLogoVariant(variant);
-    localStorage.setItem('vp_logo_variant', variant);
-    showToast(`⚜️ Đã chuyển sang biểu tượng: ${variant === 'crest' ? 'Ấn Triện Hoàng Gia' : 'Sen Vàng & Giao Lĩnh Tân Thời'}`);
-  };
 
   // Mixer Flow State
   const [selectedScene, setSelectedScene] = useState(null);
@@ -140,6 +135,15 @@ export default function App() {
   // Weather & Style selection for Step 1
   const [selectedWeather, setSelectedWeather] = useState('warm');
   const [selectedStyle, setSelectedStyle] = useState('classic');
+
+  // Background Music state subscription
+  const [isMusicPlaying, setIsMusicPlaying] = useState(() => musicEngine.getState().isPlaying);
+  useEffect(() => {
+    const unsub = musicEngine.subscribe((state) => {
+      setIsMusicPlaying(state.isPlaying);
+    });
+    return () => unsub();
+  }, []);
 
   // Daily Cultural Tips & Onboarding Modal state
   const [tipIndex, setTipIndex] = useState(0);
@@ -516,8 +520,8 @@ export default function App() {
       {/* TOP NAVIGATION BAR */}
       <nav className="top-navbar glass-panel">
         <div className="container navbar-container">
-          <div className="nav-brand" onClick={() => setActiveTab('home')} title="Bấm để xem chi tiết Logo & Nhận diện thương hiệu">
-            <AppLogo size="sm" variant={logoVariant} interactive={true} />
+          <div className="nav-brand" onClick={() => setActiveTab('home')} title="Việt Phục Remix">
+            <AppLogo size="sm" variant={logoVariant} />
             <span className="brand-name">Việt Phục <span className="text-gradient">Remix</span></span>
           </div>
 
@@ -612,7 +616,7 @@ export default function App() {
             <div className="hero__bg" />
             <div className="container hero__content">
               <div className="hero__logo-center animate-fade-in-up" style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.25rem' }}>
-                <AppLogo size="hero" variant={logoVariant} interactive={true} showBadge={true} />
+                <AppLogo size="hero" variant={logoVariant} showBadge={true} />
               </div>
               <p className="hero__badge">
                 {t('hero_badge')}
@@ -637,14 +641,15 @@ export default function App() {
                   {t('hero_btn_lookbook')}
                 </button>
                 <button 
-                  className="btn btn-secondary btn-lg"
+                  className={`btn ${isMusicPlaying ? 'btn-primary' : 'btn-secondary'} btn-lg`}
                   onClick={() => {
-                    const musicBtn = document.querySelector('.music-toggle-btn');
-                    if (musicBtn) musicBtn.click();
+                    musicEngine.toggle();
                   }}
-                  title={lang === 'en' ? 'Play Vietnamese Court Music' : 'Bật/Tắt Nhã Nhạc Cung Đình Việt Nam'}
+                  title={isMusicPlaying ? (lang === 'en' ? 'Click to Mute / Pause BGM' : 'Bấm để Tắt nhạc nền (Lanterns on the River)') : (lang === 'en' ? 'Click to Play BGM (Lanterns on the River)' : 'Bấm để Bật nhạc nền (Lanterns on the River)')}
                 >
-                  {t('hero_btn_music')}
+                  {isMusicPlaying
+                    ? (lang === 'en' ? '⏸ Pause BGM' : '⏸ Tắt Nhạc Nền')
+                    : (lang === 'en' ? '🎶 Play BGM' : '🎶 Bật Nhạc Nền')}
                 </button>
                 <button 
                   className="btn btn-ghost btn-lg"
@@ -759,49 +764,6 @@ export default function App() {
           <div className="container" style={{ margin: '2.5rem auto 1.5rem' }}>
             <VietnamMap onSelectOutfitForMixer={handleSelectFromOtherViews} />
           </div>
-
-          {/* Logo & Brand Identity Showcase Banner */}
-          <section className="container" style={{ margin: '1.5rem auto' }}>
-            <div className="glass-panel animate-fade-in-up" style={{ padding: '1.75rem', borderRadius: '16px', border: '1px solid rgba(212, 160, 23, 0.3)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1.5rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-                  <AppLogo size="lg" variant={logoVariant} interactive={true} />
-                  <div>
-                    <span className="section-badge" style={{ marginBottom: '0.25rem', display: 'inline-block' }}>Nhận diện thương hiệu chính thức</span>
-                    <h3 style={{ fontSize: '1.35rem', margin: '0.2rem 0', fontFamily: 'var(--font-serif)' }}>
-                      Logo <span className="text-gradient">Việt Phục Remix</span>
-                    </h3>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', maxWidth: '540px' }}>
-                      {LOGO_VARIANTS[logoVariant]?.name}: {LOGO_VARIANTS[logoVariant]?.description}
-                    </p>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                  <button
-                    className={`btn btn-sm ${logoVariant === 'emblem' ? 'btn-primary' : 'btn-secondary'}`}
-                    onClick={() => handleToggleLogoVariant('emblem')}
-                  >
-                    🪷 Biểu tượng Sen Vàng
-                  </button>
-                  <button
-                    className={`btn btn-sm ${logoVariant === 'crest' ? 'btn-primary' : 'btn-secondary'}`}
-                    onClick={() => handleToggleLogoVariant('crest')}
-                  >
-                    👑 Ấn triện Cung đình
-                  </button>
-                  <a
-                    href={LOGO_VARIANTS[logoVariant]?.src}
-                    download={`viet-phuc-remix-logo-${logoVariant}.jpg`}
-                    className="btn btn-secondary btn-sm"
-                    style={{ textDecoration: 'none' }}
-                  >
-                    ⬇ Tải Logo HD
-                  </a>
-                </div>
-              </div>
-            </div>
-          </section>
 
           {/* Highlights Section */}
           <section className="container home-highlights">

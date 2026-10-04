@@ -24,9 +24,12 @@ function getAI() {
   return ai;
 }
 
-// Model chính: Gemini 3 Pro Image (Model sinh ảnh cao cấp nhất của Google DeepMind)
-// Sẽ hoạt động khi người dùng cấu hình billing / pay-as-you-go trên Google AI Studio
-const IMAGE_MODEL = 'gemini-3-pro-image';
+// Danh sách các model sinh ảnh của Google Gemini theo thứ tự ưu tiên
+const GEMINI_IMAGE_MODELS = [
+  'gemini-2.5-flash-image',
+  'gemini-3-pro-image',
+  'gemini-3.1-flash-image'
+];
 
 /**
  * Chuyển File/Blob thành base64 string (không có prefix data:...)
@@ -56,105 +59,135 @@ ${SNAPSHOT_NEGATIVE_PROMPT}`;
 }
 
 /**
+ * Sinh ảnh trực tiếp bằng Google Gemini (Multimodal Image Generation)
+ */
+async function generateWithGemini(userPhotoBase64, outfitData, angle = 0, referenceImageBase64 = null, customizations = {}) {
+  const genAI = getAI();
+  const prompt = buildOutfitPrompt(outfitData, angle, customizations);
+
+  const parts = [];
+
+  // Thêm ảnh người dùng nếu có
+  if (userPhotoBase64) {
+    parts.push({
+      inlineData: {
+        mimeType: 'image/jpeg',
+        data: userPhotoBase64
+      }
+    });
+    parts.push({
+      text: 'QUAN TRỌNG: Đây là ảnh khuôn mặt tham chiếu. A hyper-photorealistic close-up portrait of the same female subject, preserving exact facial identity, skin tone, and proportions. Bạn PHẢI giữ nguyên chính xác các đường nét khuôn mặt, mắt, mũi, miệng, kiểu tóc và kính (nếu có) của người này và ghép vào nhân vật trong ảnh kết quả. BẮT BUỘC PHẢI TẠO ẢNH TOÀN THÂN TỪ ĐỈNH ĐẦU ĐẾN GÓT CHÂN (Full body shot from head to toe, showing entire body, long pants, and feet standing on floor). TUYỆT ĐỐI KHÔNG chụp cận mặt, KHÔNG chụp nửa người hay crop ngang hông.'
+    });
+  }
+
+  // Thêm ảnh tham chiếu nếu đang sinh góc xoay
+  if (referenceImageBase64 && angle !== 0) {
+    const colorSpec = describeCustomColors(customizations?.colors, outfitData);
+    parts.push({
+      inlineData: {
+        mimeType: 'image/png',
+        data: referenceImageBase64
+      }
+    });
+    parts.push({
+      text: `QUAN TRỌNG: Đây là ảnh nhân vật ở góc 0 độ. Bạn PHẢI giữ nguyên 100% bố cục TOÀN THÂN từ đầu đến chân, loại trang phục Việt Nam này, phom dáng tà áo, kiểu cổ áo, chất liệu vải và CHÍNH XÁC MÀU SẮC của trang phục từ ảnh gốc (${colorSpec.summaryVi}). Giữ nguyên khuôn mặt nhân vật (nhìn từ góc ${angle} độ). Tuyệt đối không thay đổi kiểu dáng trang phục hay đổi màu sắc trang phục, không crop thành nửa người. Chỉ thay đổi góc nhìn sang ${angle} độ.`
+    });
+  }
+
+  parts.push({ text: prompt });
+  const contents = [{ role: 'user', parts }];
+
+  console.group(`🎨 [ƯU TIÊN 1 - GOOGLE GEMINI IMAGE] - ${outfitData.ten} (Góc ${angle}°)`);
+  console.log('📌 OUTFIT ID:', outfitData.id, '| ANGLE:', angle);
+  console.log('📝 PROMPT HOÀN CHỈNH TIÊM VÀO GEMINI:\n\n' + prompt);
+  if (userPhotoBase64) {
+    const facePart = parts.find(p => p.text && p.text.includes('tham chiếu'));
+    if (facePart) {
+      console.log('👤 LỆNH BẢO TOÀN KHUÔN MẶT THAM CHIẾU:\n\n' + facePart.text);
+    }
+  }
+  console.groupEnd();
+
+  let lastError = null;
+  for (const model of GEMINI_IMAGE_MODELS) {
+    try {
+      console.log(`🚀 Đang gửi yêu cầu sinh ảnh tới Google Gemini (${model})...`);
+      const response = await genAI.models.generateContent({
+        model: model,
+        contents: contents,
+        config: {
+          responseModalities: ['TEXT', 'IMAGE'],
+        }
+      });
+
+      const candidateParts = response.candidates?.[0]?.content?.parts || [];
+      for (const part of candidateParts) {
+        if (part.inlineData && part.inlineData.data) {
+          console.log(`✅ Sinh ảnh thành công bằng Google Gemini (${model})!`);
+          return part.inlineData.data;
+        }
+      }
+      throw new Error(`Model ${model} không trả về dữ liệu ảnh (inlineData).`);
+    } catch (err) {
+      console.warn(`⚠️ Google Gemini (${model}) thất bại:`, err.message);
+      lastError = err;
+    }
+  }
+
+  throw lastError || new Error('Tất cả model Google Gemini Image đều không thành công.');
+}
+
+/**
  * Sinh ảnh mockup nhân vật mặc trang phục ở một góc cụ thể
+ * Ưu tiên:
+ * 1. Google Gemini Image (Multimodal Generation - Ưu tiên số 1)
+ * 2. Hugging Face FLUX PuLID (Dự phòng 1 khi Gemini lỗi và có ảnh mặt)
+ * 3. FLUX.1 Realism 12B (Dự phòng 2 khi các model trên lỗi)
+ *
  * @param {string|null} userPhotoBase64 - Ảnh người dùng dạng base64 (null nếu dùng nhân vật mẫu)
  * @param {object} outfitData - Dữ liệu outfit từ trangphuc.json
  * @param {number} angle - Góc xoay (0, 45, 90, 135, 180, 225, 270, 315)
  * @param {string|null} referenceImageBase64 - Ảnh tham chiếu (ảnh góc 0°) cho các góc sau
- * @returns {Promise<string>} base64 image data
+ * @returns {Promise<string>} base64 image data hoặc URL ảnh
  */
 export async function generateOutfitImage(userPhotoBase64, outfitData, angle = 0, referenceImageBase64 = null, customizations = {}) {
   if (DEMO_MODE) {
     return getDemoImage(outfitData.id, angle);
   }
 
-  // Nếu người dùng upload ảnh mặt, sử dụng Hugging Face FLUX PuLID (với token trong .env)
+  // =========================================================================
+  // ƯU TIÊN SỐ 1: GOOGLE GEMINI API (Luôn luôn thực thi trước)
+  // =========================================================================
+  try {
+    console.info(`🎯 [ƯU TIÊN 1] Đang gọi Google Gemini Image Generator cho: ${outfitData.ten} (Góc ${angle}°)...`);
+    return await generateWithGemini(userPhotoBase64, outfitData, angle, referenceImageBase64, customizations);
+  } catch (geminiError) {
+    const isQuotaError = geminiError.message?.includes('429') || geminiError.message?.includes('RESOURCE_EXHAUSTED');
+    if (isQuotaError) {
+      console.warn('⚠️ Google Gemini API bị giới hạn Quota = 0 (Free Tier yêu cầu Pay-as-you-go). Chi tiết:', geminiError.message);
+    } else {
+      console.warn('⚠️ Google Gemini API gặp lỗi:', geminiError.message);
+    }
+  }
+
+  // =========================================================================
+  // DỰ PHÒNG 1 (FALLBACK 1): HUGGING FACE FLUX PuLID
+  // Chỉ kích hoạt khi Gemini thất bại VÀ người dùng có tải lên ảnh khuôn mặt
+  // =========================================================================
   if (userPhotoBase64) {
     try {
-      console.log('Sử dụng Hugging Face FLUX PuLID cho:', outfitData.ten);
+      console.info('🔄 [DỰ PHÒNG 1] Chuyển tiếp sang Hugging Face FLUX PuLID ghép mặt cho:', outfitData.ten);
       return await generateOutfitImageWithFaceHF(userPhotoBase64, outfitData, angle, customizations);
     } catch (hfError) {
-      console.warn('Hugging Face FLUX PuLID gặp lỗi hoặc hết Quota GPU:', hfError.message);
-      console.info('Tự động chuyển tiếp sang Gemini API với ảnh khuôn mặt tham chiếu...');
+      console.warn('⚠️ Hugging Face FLUX PuLID gặp lỗi hoặc hết Quota GPU:', hfError.message);
     }
   }
 
-  try {
-    const genAI = getAI();
-    const prompt = buildOutfitPrompt(outfitData, angle, customizations);
-
-    const contents = [];
-
-    // Build parts array
-    const parts = [];
-
-    // Thêm ảnh người dùng nếu có
-    if (userPhotoBase64) {
-      parts.push({
-        inlineData: {
-          mimeType: 'image/jpeg',
-          data: userPhotoBase64
-        }
-      });
-      parts.push({
-        text: 'QUAN TRỌNG: Đây là ảnh khuôn mặt tham chiếu. A hyper-photorealistic close-up portrait of the same female subject, preserving exact facial identity, skin tone, and proportions. Bạn PHẢI giữ nguyên chính xác các đường nét khuôn mặt, mắt, mũi, miệng, kiểu tóc và kính (nếu có) của người này và ghép vào nhân vật trong ảnh kết quả. BẮT BUỘC PHẢI TẠO ẢNH TOÀN THÂN TỪ ĐỈNH ĐẦU ĐẾN GÓT CHÂN (Full body shot from head to toe, showing entire body, long pants, and feet standing on floor). TUYỆT ĐỐI KHÔNG chụp cận mặt, KHÔNG chụp nửa người hay crop ngang hông.'
-      });
-    }
-
-    // Thêm ảnh tham chiếu nếu đang sinh góc xoay
-    if (referenceImageBase64 && angle !== 0) {
-      const colorSpec = describeCustomColors(customizations?.colors, outfitData);
-      parts.push({
-        inlineData: {
-          mimeType: 'image/png',
-          data: referenceImageBase64
-        }
-      });
-      parts.push({
-        text: `QUAN TRỌNG: Đây là ảnh nhân vật ở góc 0 độ. Bạn PHẢI giữ nguyên 100% bố cục TOÀN THÂN từ đầu đến chân, loại trang phục Việt Nam này, phom dáng tà áo, kiểu cổ áo, chất liệu vải và CHÍNH XÁC MÀU SẮC của trang phục từ ảnh gốc (${colorSpec.summaryVi}). Giữ nguyên khuôn mặt nhân vật (nhìn từ góc ${angle} độ). Tuyệt đối không thay đổi kiểu dáng trang phục hay đổi màu sắc trang phục, không crop thành nửa người. Chỉ thay đổi góc nhìn sang ${angle} độ.`
-      });
-    }
-
-    parts.push({ text: prompt });
-
-    contents.push({ role: 'user', parts });
-
-    console.group(`🎨 [GEMINI IMAGE GENERATION PROMPT] - ${outfitData.ten} (Góc ${angle}°)`);
-    console.log('📌 OUTFIT ID:', outfitData.id, '| ANGLE:', angle);
-    console.log('📝 PROMPT HOÀN CHỈNH TIÊM VÀO MODEL:\n\n' + prompt);
-    if (userPhotoBase64) {
-      const facePart = parts.find(p => p.text && p.text.includes('tham chiếu'));
-      if (facePart) {
-        console.log('👤 LỆNH BẢO TOÀN KHUÔN MẶT THAM CHIẾU:\n\n' + facePart.text);
-      }
-    }
-    console.groupEnd();
-
-    const response = await genAI.models.generateContent({
-      model: IMAGE_MODEL,
-      contents: contents,
-      config: {
-        responseModalities: ['TEXT', 'IMAGE'],
-      }
-    });
-
-    for (const part of response.candidates[0].content.parts) {
-      if (part.inlineData) {
-        console.log('✅ Sinh ảnh thành công bằng Google Gemini 3 Pro Image!');
-        return part.inlineData.data;
-      }
-    }
-    throw new Error('Gemini không trả về ảnh.');
-  } catch (error) {
-    const isQuotaError = error.message?.includes('429') || error.message?.includes('RESOURCE_EXHAUSTED');
-    if (isQuotaError) {
-      console.warn('⚠️ Google Gemini API bị giới hạn Quota = 0 (Free Tier).');
-    } else {
-      console.warn('⚠️ Google Gemini API gặp lỗi:', error.message);
-    }
-    console.info('🚀 Tự động kích hoạt Model xịn thế hệ mới: FLUX.1 Realism (Black Forest Labs 12B - Ultra HD Photorealism)...');
-    return await generateFallbackImage(outfitData, angle, customizations);
-  }
+  // =========================================================================
+  // DỰ PHÒNG 2 (FALLBACK 2): FLUX.1 Realism (12B Ultra HD Photorealism)
+  // =========================================================================
+  console.info('🚀 [DỰ PHÒNG 2] Tự động kích hoạt Model FLUX.1 Realism (Black Forest Labs 12B - Ultra HD Photorealism)...');
+  return await generateFallbackImage(outfitData, angle, customizations);
 }
 
 /**
