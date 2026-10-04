@@ -8,6 +8,7 @@ export default function UserPhotoUploadModal({ isOpen, onClose, onConfirmPhoto }
   const [isDragOver, setIsDragOver] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState(null);
+  const [showFaceGuide, setShowFaceGuide] = useState(true);
   const fileInputRef = useRef(null);
 
   if (!isOpen) return null;
@@ -224,16 +225,34 @@ export default function UserPhotoUploadModal({ isOpen, onClose, onConfirmPhoto }
                   <p style={{ margin: '6px 0 0', fontSize: '0.8rem' }}>{loadError}</p>
                 </div>
               ) : (
-                <img
-                  src={previewUrl}
-                  alt="Xem trước ảnh của bạn"
-                  className="preview-img"
-                  style={{ transform: `scale(${zoomLevel})` }}
-                  onError={(e) => {
-                    console.error('Image element render error:', e);
-                    setLoadError('Trình duyệt gặp lỗi khi giải mã ảnh này. Vui lòng bấm "Chọn ảnh khác".');
-                  }}
-                />
+                <>
+                  <img
+                    src={previewUrl}
+                    alt="Xem trước ảnh của bạn"
+                    className="preview-img"
+                    style={{ transform: `scale(${zoomLevel})` }}
+                    onError={(e) => {
+                      console.error('Image element render error:', e);
+                      setLoadError('Trình duyệt gặp lỗi khi giải mã ảnh này. Vui lòng bấm "Chọn ảnh khác".');
+                    }}
+                  />
+
+                  {/* Face & Shoulder Silhouette Guide Overlay */}
+                  {showFaceGuide && (
+                    <div className="face-guide-overlay animate-fade-in" title="Khung định vị khuôn mặt và vai">
+                      <svg viewBox="0 0 180 220" className="face-guide-svg">
+                        {/* Head/Face Oval */}
+                        <ellipse cx="90" cy="80" rx="38" ry="48" stroke="rgba(218, 165, 32, 0.7)" strokeWidth="1.75" strokeDasharray="5 4" fill="none" />
+                        {/* Eye level line */}
+                        <line x1="72" y1="78" x2="108" y2="78" stroke="rgba(218, 165, 32, 0.4)" strokeWidth="1" strokeDasharray="2 2" />
+                        {/* Shoulders curve */}
+                        <path d="M 74 128 L 74 144 Q 74 156 56 164 L 16 192" stroke="rgba(218, 165, 32, 0.6)" strokeWidth="1.75" strokeDasharray="5 4" fill="none" />
+                        <path d="M 106 128 L 106 144 Q 106 156 124 164 L 164 192" stroke="rgba(218, 165, 32, 0.6)" strokeWidth="1.75" strokeDasharray="5 4" fill="none" />
+                      </svg>
+                      <span className="face-guide-hint">Căn chỉnh mặt & vai vào khung</span>
+                    </div>
+                  )}
+                </>
               )}
             </div>
 
@@ -250,17 +269,27 @@ export default function UserPhotoUploadModal({ isOpen, onClose, onConfirmPhoto }
               <span>Phóng to</span>
             </div>
 
-            <button
-              type="button"
-              className="btn btn-ghost btn-sm"
-              onClick={() => {
-                setPreviewUrl(null);
-                setSelectedFile(null);
-                setLoadError(null);
-              }}
-            >
-              🔄 Chọn ảnh khác
-            </button>
+            <div className="preview-action-controls">
+              <button
+                type="button"
+                className={`btn btn-sm ${showFaceGuide ? 'btn-secondary' : 'btn-ghost'}`}
+                onClick={() => setShowFaceGuide(!showFaceGuide)}
+                title="Bật/Tắt khung định vị khuôn mặt"
+              >
+                <span>{showFaceGuide ? '👁️ Ẩn khung căn' : '👁️‍🗨️ Hiện khung căn'}</span>
+              </button>
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                onClick={() => {
+                  setPreviewUrl(null);
+                  setSelectedFile(null);
+                  setLoadError(null);
+                }}
+              >
+                🔄 Chọn ảnh khác
+              </button>
+            </div>
           </div>
         )}
 

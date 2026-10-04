@@ -231,32 +231,37 @@
 }
 
 .cond-tip {
-  font-size: 0.72rem;
-  color: #94A3B8;
+  font-size: 0.78rem;
+  color: #CBD5E1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+[data-theme="light"] .cond-tip {
+  color: #475569;
+}
+
 .region-action-chips {
   display: flex;
-  gap: 6px;
-  margin-top: 4px;
+  gap: 8px;
+  margin-top: 6px;
   flex-wrap: wrap;
 }
 
 .outfit-quick-chip {
   background: rgba(56, 189, 248, 0.12);
-  border: 1px solid rgba(56, 189, 248, 0.3);
+  border: 1px solid rgba(56, 189, 248, 0.35);
   color: #BAE6FD;
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  padding: 3px 8px;
-  border-radius: 8px;
+  padding: 6px 12px;
+  min-height: 38px;
+  border-radius: 10px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   transition: all 0.2s ease;
 }
 
@@ -347,8 +352,12 @@
 }
 
 .metric-sub-stats {
-  font-size: 0.72rem;
-  color: #94A3B8;
+  font-size: 0.76rem;
+  color: #CBD5E1;
+}
+
+[data-theme="light"] .metric-sub-stats {
+  color: #475569;
 }
 
 /* Right: Garment Advice */
@@ -444,14 +453,15 @@
   background: rgba(56, 189, 248, 0.12);
   border: 1px solid rgba(56, 189, 248, 0.35);
   color: #F0F9FF;
-  padding: 4px 10px;
-  border-radius: 8px;
-  font-size: 0.76rem;
+  padding: 7px 14px;
+  min-height: 38px;
+  border-radius: 10px;
+  font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   transition: all 0.2s ease;
 }
 

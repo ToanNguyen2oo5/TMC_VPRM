@@ -53,6 +53,7 @@ export default function OutfitCustomizer({
   const [sleeve] = useState('Dài tay');
   const [height, setHeight] = useState('162');
   const [material, setMaterial] = useState('Lụa tơ tằm Vạn Phúc');
+  const [isHeritageExpanded, setIsHeritageExpanded] = useState(false);
 
   // Angle Mode: 'single' | 'multi'
   const [angleMode, setAngleMode] = useState('single');
@@ -400,13 +401,32 @@ export default function OutfitCustomizer({
         )}
       </div>
 
-      {/* 3. Tóm tắt trang phục & ý nghĩa */}
-      <div className="outfit-heritage-summary">
-        <span className="pane-section-label">Ý nghĩa di sản:</span>
-        <p className="heritage-summary-text">
-          {selectedOutfit?.y_nghia?.slice(0, 180)}...
-        </p>
-      </div>
+      {/* 3. Tóm tắt trang phục & ý nghĩa dạng Accordion gọn gàng */}
+      {selectedOutfit?.y_nghia && (
+        <div className="outfit-heritage-accordion">
+          <button
+            type="button"
+            className="heritage-accordion-toggle"
+            onClick={() => setIsHeritageExpanded(!isHeritageExpanded)}
+            aria-expanded={isHeritageExpanded}
+          >
+            <span>📖 {isHeritageExpanded ? 'Thu gọn ý nghĩa di sản' : 'Đọc ý nghĩa & quy chế di sản'}</span>
+            <span className="accordion-arrow">{isHeritageExpanded ? '▲' : '▼'}</span>
+          </button>
+          {isHeritageExpanded && (
+            <div className="heritage-accordion-content animate-fade-in">
+              <p className="heritage-summary-text">
+                {selectedOutfit.y_nghia}
+              </p>
+              {selectedOutfit.nguon_tham_khao && (
+                <small className="heritage-source-text">
+                  Nguồn: {selectedOutfit.nguon_tham_khao}
+                </small>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 

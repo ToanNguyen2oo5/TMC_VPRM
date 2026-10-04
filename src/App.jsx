@@ -272,8 +272,8 @@ export default function App() {
     setTurntableImages(null);
     setError(null);
     setTimeout(() => {
-      outfitRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
+      outfitRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 450);
   }, []);
 
   // Handle region filter
@@ -625,8 +625,9 @@ export default function App() {
                 {t('hero_badge')}
               </p>
               <div className="hero__tech-chips animate-fade-in-up">
-                <span className="hero-tech-chip">⚡ Powered by Google Gemini 1.5 & Google AI Studio</span>
-                <span className="hero-tech-chip">🚀 Hybrid Architecture: Instant SVG (&lt;16ms) + Multimodal Vision</span>
+                <span className="hero-tech-chip">👘 7+ Kiểu cổ phục triều đại Việt • Thử đồ AI trực quan</span>
+                <span className="hero-tech-chip">✨ Phối đồ chuẩn quy chế di sản trong 30 giây</span>
+                <span className="hero-tech-chip">⚡ Powered by Gemini AI</span>
               </div>
               <h1 className="hero__title">
                 {t('hero_title_1')}<span className="text-gradient">{t('hero_title_2')}</span>

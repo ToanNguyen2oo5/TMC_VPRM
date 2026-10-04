@@ -196,6 +196,48 @@
   flex: 1;
 }
 
+/* Face Silhouette Overlay Guide */
+.face-guide-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 8px;
+  z-index: 5;
+}
+
+.face-guide-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.face-guide-hint {
+  font-size: 0.68rem;
+  color: #FDE047;
+  background: rgba(0, 0, 0, 0.75);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(218, 165, 32, 0.4);
+  letter-spacing: 0.2px;
+  position: relative;
+  z-index: 6;
+  white-space: nowrap;
+}
+
+.preview-action-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 /* Privacy Guarantee */
 .upload-privacy-note {
   font-size: 0.76rem;
