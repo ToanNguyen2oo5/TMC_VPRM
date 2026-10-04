@@ -21,8 +21,9 @@ import AppLogo from './components/AppLogo';
 import MusicPlayer from './components/MusicPlayer';
 import { musicEngine } from './services/musicEngine';
 import OnboardingModal from './components/OnboardingModal';
+import RentalModal from './components/RentalModal';
 import StickyStepper from './components/StickyStepper';
-import { lotusBloomAnimation, lanternAnimation } from './assets/lottieAnimations';
+import { lanternAnimation } from './assets/lottieAnimations';
 import { useTheme } from './hooks/useTheme';
 import { useTranslation } from './services/i18n.jsx';
 import './App.css';
@@ -135,6 +136,7 @@ export default function App() {
   // Weather & Style selection for Step 1
   const [selectedWeather, setSelectedWeather] = useState('warm');
   const [selectedStyle, setSelectedStyle] = useState('classic');
+  const [realtimeWeather, setRealtimeWeather] = useState(null);
 
   // Background Music state subscription
   const [isMusicPlaying, setIsMusicPlaying] = useState(() => musicEngine.getState().isPlaying);
@@ -148,6 +150,7 @@ export default function App() {
   // Daily Cultural Tips & Onboarding Modal state
   const [tipIndex, setTipIndex] = useState(0);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(() => !localStorage.getItem('vpr_onboarded'));
+  const [isRentalModalOpen, setIsRentalModalOpen] = useState(false);
 
   const handleCloseOnboarding = () => {
     setIsOnboardingOpen(false);
@@ -621,6 +624,10 @@ export default function App() {
               <p className="hero__badge">
                 {t('hero_badge')}
               </p>
+              <div className="hero__tech-chips animate-fade-in-up">
+                <span className="hero-tech-chip">⚡ Powered by Google Gemini 1.5 & Google AI Studio</span>
+                <span className="hero-tech-chip">🚀 Hybrid Architecture: Instant SVG (&lt;16ms) + Multimodal Vision</span>
+              </div>
               <h1 className="hero__title">
                 {t('hero_title_1')}<span className="text-gradient">{t('hero_title_2')}</span>
               </h1>
@@ -836,6 +843,24 @@ export default function App() {
                 ✨ Mở Cửa Sổ Tư Vấn AI
               </button>
             </div>
+
+            {/* Banner Mạng Lưới Thuê Cổ Phục & Đơn Nhóm Kỷ Yếu */}
+            <div className="home-banner-hub glass-panel animate-fade-in-up" style={{ marginTop: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+                <span style={{ fontSize: '2.5rem', flexShrink: 0 }}>👘</span>
+                <div className="banner-text">
+                  <h3>👘 Mạng Lưới Thuê Cổ Phục & Ưu Đãi Kỷ Yếu Lớp (-25%)</h3>
+                  <p>Kết nối hơn 6+ tiệm cổ phục đối tác tại Hà Nội, Huế, TP.HCM với quỹ bảo chứng cọc minh bạch và ưu đãi đặc quyền cho học sinh - sinh viên.</p>
+                </div>
+              </div>
+              <button
+                className="btn btn-secondary"
+                style={{ background: 'linear-gradient(135deg, rgba(218, 165, 32, 0.25) 0%, rgba(139, 0, 0, 0.3) 100%)', borderColor: '#daa520' }}
+                onClick={() => setIsRentalModalOpen(true)}
+              >
+                🤝 Mở Danh Bạ & Dự Toán
+              </button>
+            </div>
           </section>
         </div>
       )}
@@ -856,6 +881,7 @@ export default function App() {
             onWeatherSelect={setSelectedWeather}
             selectedStyle={selectedStyle}
             onStyleSelect={setSelectedStyle}
+            onRealtimeWeatherChange={setRealtimeWeather}
           />
 
           {/* Step 2: Outfit Suggestions */}
@@ -865,6 +891,7 @@ export default function App() {
               onSelect={handleOutfitSelect}
               selectedId={selectedOutfit?.id}
               selectedScene={selectedScene}
+              realtimeWeather={realtimeWeather}
             />
           </div>
 
@@ -917,6 +944,7 @@ export default function App() {
                       isGeneratingRemaining={isGeneratingRemaining}
                       remainingProgress={remainingProgress}
                       onGenerateRemaining={handleGenerateRemainingAngles}
+                      selectedOutfit={selectedOutfit}
                     />
                   </div>
 
@@ -942,6 +970,17 @@ export default function App() {
                             onClick={handleAddToCompare}
                           >
                             ⚖️ Thêm vào danh sách So sánh ({comparedOutfits.length}/3)
+                          </button>
+                          <button 
+                            className="btn btn-primary btn-block"
+                            style={{ 
+                              background: 'linear-gradient(135deg, #b8860b 0%, #8b0000 100%)', 
+                              borderColor: '#ffd700',
+                              boxShadow: '0 4px 15px rgba(218, 165, 32, 0.35)'
+                            }}
+                            onClick={() => setIsRentalModalOpen(true)}
+                          >
+                            👘 Tìm tiệm thuê & Dự toán kỷ yếu
                           </button>
                         </div>
 
@@ -1045,6 +1084,14 @@ export default function App() {
 
       {/* Onboarding Modal 3 bước ngắn */}
       <OnboardingModal isOpen={isOnboardingOpen} onClose={handleCloseOnboarding} />
+
+      {/* Mạng lưới tiệm cổ phục & Dự toán kỷ yếu */}
+      <RentalModal
+        isOpen={isRentalModalOpen}
+        onClose={() => setIsRentalModalOpen(false)}
+        outfit={selectedOutfit || getAllOutfits()[0]}
+        onToast={showToast}
+      />
     </div>
   );
 }

@@ -1,184 +1,778 @@
+/* ===================================================
+   LOOKBOOK STUDIO & EXPORT CSS (4 TEMPLATES)
+   =================================================== */
 .lookbook-export {
-  padding: var(--space-6) 0;
-  border-top: 1px solid var(--color-border);
-  margin-top: var(--space-6);
+  padding: var(--space-6, 1.5rem) 0;
+  border-top: 1px solid var(--color-border, rgba(218, 165, 32, 0.2));
+  margin-top: var(--space-6, 1.5rem);
 }
 
 .lookbook-export__header {
-  margin-bottom: var(--space-4);
+  margin-bottom: 1.25rem;
   text-align: center;
-}
-
-.lookbook-export__label {
-  display: inline-block;
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--color-gold);
-  margin-bottom: var(--space-2);
 }
 
 .lookbook-export__title {
-  font-size: 1.45rem;
-  font-family: var(--font-serif);
-  font-weight: 500;
-  line-height: 1.25;
+  font-size: 1.5rem;
+  font-family: var(--font-serif, 'Playfair Display', serif);
+  font-weight: 600;
+  margin: 0.35rem 0;
 }
 
-/* Lookbook Poster Card */
-.lookbook-card-wrapper {
+.lookbook-export__subtitle {
+  font-size: 0.85rem;
+  color: var(--color-text-muted, #a39e93);
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* Template Selector Bar */
+.template-selector-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.6rem;
+  margin: 1.25rem 0 1.5rem;
+}
+
+.template-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.65rem 0.85rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md, 10px);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.25s ease;
+  color: var(--color-text-primary, #fbf7f0);
+}
+
+.template-tab-btn:hover {
+  background: rgba(218, 165, 32, 0.08);
+  border-color: rgba(218, 165, 32, 0.4);
+  transform: translateY(-1px);
+}
+
+.template-tab-btn.active {
+  background: linear-gradient(135deg, rgba(218, 165, 32, 0.2) 0%, rgba(139, 0, 0, 0.25) 100%);
+  border-color: #daa520;
+  box-shadow: 0 0 15px rgba(218, 165, 32, 0.3);
+}
+
+.template-tab-icon {
+  font-size: 1.35rem;
+  flex-shrink: 0;
+}
+
+.template-tab-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.template-tab-name {
+  font-size: 0.825rem;
+  font-weight: 700;
+  color: #ffd700;
+}
+
+.template-tab-desc {
+  font-size: 0.675rem;
+  color: var(--color-text-muted, #a39e93);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 110px;
+}
+
+/* Fit Mode Control Bar */
+.lookbook-fit-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 0.5rem auto 1.25rem;
+  flex-wrap: wrap;
+}
+
+.fit-bar-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #ffd700;
+  letter-spacing: 0.3px;
+}
+
+.fit-toggle-group {
+  display: flex;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 4px;
+  border-radius: 999px;
+  border: 1px solid rgba(218, 165, 32, 0.25);
+}
+
+.fit-toggle-btn {
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  color: #a39e93;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.fit-toggle-btn:hover {
+  color: #ffd700;
+  background: rgba(218, 165, 32, 0.1);
+}
+
+.fit-toggle-btn.active {
+  background: linear-gradient(135deg, rgba(218, 165, 32, 0.3) 0%, rgba(164, 38, 44, 0.3) 100%);
+  color: #ffffff;
+  border: 1px solid #daa520;
+  box-shadow: 0 0 10px rgba(218, 165, 32, 0.35);
+}
+
+/* Ambient blurred backdrop for Contain Fit mode across all frames */
+.vogue-photo-backdrop,
+.cinema-backdrop,
+.card-art-backdrop,
+.polaroid-photo-backdrop {
+  position: absolute;
+  inset: -15px;
+  background-size: cover;
+  background-position: center top;
+  filter: blur(20px) brightness(0.4) saturate(1.25);
+  transform: scale(1.15);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Stage Area */
+.lookbook-card-stage {
   display: flex;
   justify-content: center;
-  padding: var(--space-4) 0;
+  padding: 0.5rem 0 1.5rem;
 }
 
-.lookbook-card {
-  width: 360px;
+/* ===================================================
+   TEMPLATE 1: HERITAGE VOGUE
+   =================================================== */
+.poster-frame--vogue {
+  width: 440px;
   max-width: 100%;
-  background: #14100D;
-  border: 1.5px solid var(--color-gold);
-  border-radius: var(--radius-lg);
+  background: #0f0c0a;
+  border: 2px solid #daa520;
+  border-radius: 8px;
   overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(218, 165, 32, 0.25);
+  color: #fbf7f0;
+  padding: 1.25rem 1.25rem 1rem;
+}
+
+.vogue-header {
+  text-align: center;
+  margin-bottom: 0.75rem;
+}
+
+.vogue-issue {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #daa520;
+  text-transform: uppercase;
+}
+
+.vogue-masthead {
+  font-family: var(--font-serif, 'Playfair Display', serif);
+  font-size: 2.1rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  margin: 0.2rem 0;
+  color: #fbf7f0;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.vogue-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #daa520, transparent);
+  margin-top: 0.35rem;
+}
+
+.vogue-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.vogue-photo-wrap {
   position: relative;
-  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.7), 0 0 25px rgba(200, 161, 90, 0.2);
-}
-
-.lookbook-card__bg {
-  display: none;
-}
-
-.lookbook-card__image {
   width: 100%;
   aspect-ratio: 3 / 4;
   overflow: hidden;
-  background: #0E0A08;
+  border-radius: 4px;
+  border: 1px solid rgba(218, 165, 32, 0.3);
+  background: #1a1512;
 }
 
-.lookbook-card__image img {
+.vogue-photo {
+  position: relative;
   width: 100%;
   height: 100%;
-  object-fit: cover;
   display: block;
+  z-index: 2;
+  transition: object-fit 0.25s ease;
 }
 
-.lookbook-card__info {
-  padding: 1rem 1.25rem;
+.vogue-photo--contain {
+  object-fit: contain;
+  object-position: center center;
 }
 
-.lookbook-card__brand {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 0.5rem;
-}
-
-.lookbook-card__logo-img {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+.vogue-photo--cover {
   object-fit: cover;
-  border: 1px solid var(--color-gold);
+  object-position: center 10%;
 }
 
-.lookbook-card__brand-text {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--color-gold);
-  letter-spacing: 0.5px;
-}
-
-.lookbook-card__name {
-  font-family: var(--font-serif);
-  font-size: 1.25rem;
-  color: #FFFFFF;
-  margin: 0 0 4px 0;
-}
-
-.lookbook-card__region {
-  font-size: 0.85rem; /* 13.6px */
-  color: var(--color-gold);
-  margin-bottom: 8px;
-}
-
-.lookbook-card__colors {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 8px;
-}
-
-.lookbook-card__color {
-  font-size: 0.78rem;
-  padding: 2px 8px;
-  border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #F7F3EC;
-}
-
-.lookbook-card__desc {
-  font-size: 0.85rem; /* ~13.6px */
-  color: #D1C7BD;
-  line-height: 1.5;
-  margin: 0 0 10px 0;
-}
-
-/* Meta Box for spots and rental */
-.lookbook-card__meta-box {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(200, 161, 90, 0.25);
-  border-radius: var(--radius-sm);
-  padding: 8px 10px;
-  margin-top: 8px;
+.vogue-overlay-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
+  align-items: flex-end;
 }
 
-.meta-heading {
-  font-size: 0.82rem; /* 13px */
-  color: var(--color-gold);
-  display: block;
+.badge-year, .badge-region {
+  font-size: 0.675rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  background: rgba(15, 12, 10, 0.85);
+  border: 1px solid rgba(218, 165, 32, 0.5);
+  color: #ffd700;
+  backdrop-filter: blur(4px);
 }
 
-.meta-text {
-  font-size: 0.82rem; /* 13px */
-  color: #F0ECE4;
-  line-height: 1.35;
-  display: block;
+.vogue-content-column {
+  padding: 0.25rem 0.25rem 0;
 }
 
-.meta-rental {
+.vogue-kicker {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #daa520;
+}
+
+.vogue-title {
+  font-family: var(--font-serif, 'Playfair Display', serif);
+  font-size: 1.45rem;
+  font-weight: 700;
+  margin: 0.2rem 0 0.4rem;
+  color: #ffffff;
+}
+
+.vogue-quote {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: #d8d0c5;
+  line-height: 1.45;
+  margin-bottom: 0.75rem;
+  border-left: 2px solid #daa520;
+  padding-left: 0.6rem;
+}
+
+.vogue-meta-details {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(218, 165, 32, 0.2);
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.vogue-meta-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  padding: 0.2rem 0;
+}
+
+.vogue-meta-row .label {
+  color: #a39e93;
+}
+
+.vogue-meta-row .val {
+  color: #fbf7f0;
+  font-weight: 600;
+}
+
+.vogue-meta-row .val.highlight {
+  color: #2ecc71;
+}
+
+.vogue-footer-strip {
   display: flex;
   align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 0.6rem;
 }
 
-.meta-price {
-  font-size: 0.85rem; /* 13.6px */
+.vogue-barcode {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fake-barcode {
+  width: 140px;
+  height: 22px;
+  background: repeating-linear-gradient(
+    90deg,
+    #fff,
+    #fff 2px,
+    transparent 2px,
+    transparent 4px,
+    #fff 4px,
+    #fff 7px,
+    transparent 7px,
+    transparent 9px
+  );
+  opacity: 0.75;
+}
+
+.vogue-barcode span {
+  font-size: 0.6rem;
+  font-family: monospace;
+  color: #a39e93;
+  letter-spacing: 0.1em;
+}
+
+.vogue-qr {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.qr-img {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #daa520;
+  border-radius: 4px;
+}
+
+.qr-hint {
+  font-size: 0.6rem;
+  color: #daa520;
+  text-transform: uppercase;
+  max-width: 45px;
+  line-height: 1.2;
+}
+
+/* ===================================================
+   TEMPLATE 2: CINEMATIC 16:9
+   =================================================== */
+.poster-frame--cinema {
+  width: 520px;
+  max-width: 100%;
+  background: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+  color: #ffffff;
+}
+
+.cinema-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 0.85rem;
+  background: #080808;
+  font-size: 0.675rem;
+  font-family: monospace;
+  letter-spacing: 0.1em;
+  color: #888888;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.cinema-rec-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e74c3c;
+  animation: pulse-core 1.2s infinite;
+}
+
+.cinema-brand {
+  color: #ffd700;
   font-weight: 700;
-  color: #4CAF50;
 }
 
-.meta-note {
-  font-size: 0.74rem;
-  color: rgba(240, 236, 228, 0.6);
+.cinema-body {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #111111;
+  overflow: hidden;
 }
 
-.lookbook-card__watermark {
-  padding: 6px 12px;
+.cinema-photo {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 2;
+  transition: object-fit 0.25s ease;
+}
+
+.cinema-photo--contain {
+  object-fit: contain;
+  object-position: center center;
+}
+
+.cinema-photo--cover {
+  object-fit: cover;
+  object-position: center 10%;
+}
+
+.cinema-gradient-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.88) 100%);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.cinema-subtitles {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
   text-align: center;
-  font-size: 0.75rem;
-  color: rgba(200, 161, 90, 0.65);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  background: #0D0A08;
+  padding: 0 1.25rem;
+  z-index: 4;
 }
 
+.cinema-dialogue {
+  font-family: var(--font-serif, 'Playfair Display', serif);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #ffeaa7;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95), 0 0 10px rgba(255, 234, 167, 0.4);
+  margin: 0 0 2px 0;
+}
+
+.cinema-translation {
+  font-size: 0.7rem;
+  color: #cccccc;
+  text-shadow: 0 1px 4px #000;
+}
+
+.cinema-bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 0.85rem;
+  background: #080808;
+  border-top: 1px solid #1a1a1a;
+}
+
+.cinema-meta-tags {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.c-tag {
+  font-size: 0.6rem;
+  font-family: monospace;
+  padding: 2px 6px;
+  border: 1px solid #333333;
+  color: #aaaaaa;
+}
+
+.cinema-qr-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.65rem;
+  font-family: monospace;
+  color: #888888;
+}
+
+.qr-mini {
+  width: 22px;
+  height: 22px;
+  border-radius: 2px;
+}
+
+/* ===================================================
+   TEMPLATE 3: HERITAGE TRADING CARD
+   =================================================== */
+.poster-frame--card {
+  width: 380px;
+  max-width: 100%;
+}
+
+.card-outer-gold {
+  padding: 10px;
+  background: linear-gradient(135deg, #ffd700 0%, #b8860b 25%, #8b0000 50%, #daa520 75%, #ffe066 100%);
+  border-radius: 16px;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.75), 0 0 25px rgba(218, 165, 32, 0.4);
+}
+
+.card-inner-box {
+  background: #140f0c;
+  border-radius: 12px;
+  padding: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  color: #fbf7f0;
+}
+
+.card-top-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(218, 165, 32, 0.3);
+  padding-bottom: 0.4rem;
+}
+
+.card-element-gem {
+  font-size: 0.725rem;
+  font-weight: 700;
+  color: #ffd700;
+}
+
+.card-char-name {
+  font-family: var(--font-serif, 'Playfair Display', serif);
+  font-size: 1.15rem;
+  margin: 0;
+  color: #ffffff;
+}
+
+.card-rarity {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #ff4757;
+  letter-spacing: 0.05em;
+}
+
+.card-artwork-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid #daa520;
+}
+
+.card-art {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 2;
+  transition: object-fit 0.25s ease;
+}
+
+.card-art--contain {
+  object-fit: contain;
+  object-position: center center;
+}
+
+.card-art--cover {
+  object-fit: cover;
+  object-position: center 12%;
+}
+
+.card-art-caption {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  padding: 0.2rem 0.5rem;
+  background: rgba(0, 0, 0, 0.75);
+  border: 1px solid #daa520;
+  border-radius: 4px;
+  font-size: 0.675rem;
+  color: #ffd700;
+  font-weight: 600;
+}
+
+.card-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.4rem;
+  text-align: center;
+}
+
+.card-stat {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(218, 165, 32, 0.25);
+  border-radius: 6px;
+  padding: 0.35rem 0.2rem;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.65rem;
+  color: #a39e93;
+}
+
+.stat-value {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #ffd700;
+}
+
+.card-flavor-text {
+  font-size: 0.75rem;
+  font-style: italic;
+  color: #d1c7bd;
+  line-height: 1.4;
+  margin: 0;
+  padding: 0.4rem 0.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+.card-bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: #a39e93;
+  padding-top: 0.3rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.card-qr-img {
+  width: 24px;
+  height: 24px;
+  border-radius: 2px;
+}
+
+/* ===================================================
+   TEMPLATE 4: RETRO POLAROID
+   =================================================== */
+.poster-frame--polaroid {
+  position: relative;
+  width: 360px;
+  max-width: 100%;
+  background: #fdfbf7;
+  padding: 1rem 1rem 1.75rem;
+  border-radius: 4px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.2);
+  color: #2c2520;
+}
+
+.washi-tape {
+  position: absolute;
+  top: -12px;
+  width: 80px;
+  height: 24px;
+  background: rgba(218, 165, 32, 0.6);
+  opacity: 0.85;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  transform: rotate(-3deg);
+  z-index: 2;
+}
+
+.washi-tape--left {
+  left: 20px;
+}
+
+.washi-tape--right {
+  right: 20px;
+  transform: rotate(4deg);
+}
+
+.polaroid-photo-area {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #222222;
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+.polaroid-photo {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 2;
+  transition: object-fit 0.25s ease;
+}
+
+.polaroid-photo--contain {
+  object-fit: contain;
+  object-position: center center;
+}
+
+.polaroid-photo--cover {
+  object-fit: cover;
+  object-position: center 12%;
+}
+
+.polaroid-stamp {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  border: 2px solid #c0392b;
+  color: #c0392b;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  transform: rotate(-12deg);
+  letter-spacing: 0.05em;
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.polaroid-caption-area {
+  padding-top: 1rem;
+}
+
+.polaroid-handwriting {
+  font-family: 'Brush Script MT', 'Dancing Script', cursive, serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 0.35rem;
+  color: #1a1512;
+}
+
+.polaroid-subline {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.725rem;
+  color: #7f756d;
+  margin-bottom: 0.6rem;
+}
+
+.polaroid-qr-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-top: 1px dashed #d1c7bd;
+  padding-top: 0.5rem;
+  font-size: 0.65rem;
+  color: #998d82;
+}
+
+/* Global Actions */
 .lookbook-export__actions {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
 }

@@ -103,14 +103,33 @@ function getGarmentRecommendation(temp, weatherType) {
     return {
       adviceVi: 'Nắng ấm phương Nam: Nên chọn vải đũi tơ tằm tự nhiên, lụa mỏng nhẹ thoáng khí hoặc Áo bà ba / Áo dài cách tân.',
       adviceEn: 'Warm sunny weather: Lightweight mulberry silk, linen, breathable Ao Ba Ba or modern Ao Dai recommended.',
+      practicalFieldTipsVi: [
+        'Tránh vải lót nilon/polyester vì dễ bí mồ hôi khi dạo phố ngoài trời.',
+        'Nên chuẩn bị thêm quạt trầm hương hoặc quạt nan vừa làm duyên vừa giải nhiệt.',
+        'Trang điểm tone nhẹ tự nhiên chống chảy phấn dưới trời nắng gắt.'
+      ],
       recommendedFabricsVi: ['Lụa tơ tằm mỏng', 'Vải đũi tự nhiên', 'Voan tơ'],
       outfitIds: ['ao_ba_ba_nam_bo', 'ao_dai_cach_tan']
     };
   }
-  if (temp <= 21) {
+  if (temp <= 21 || weatherType === 'rainy' || weatherType === 'stormy') {
+    const isRain = weatherType === 'rainy' || weatherType === 'stormy';
     return {
-      adviceVi: 'Thời tiết se lạnh: Rất thích hợp diện Áo tấc gấm dệt kim tuyến, Áo ngũ thân có lớp lót hoặc khăn đóng giữ ấm.',
-      adviceEn: 'Chilly weather: Ideal for lined Ao Tac brocade, five-panel royal robes with layered undergarments.',
+      adviceVi: isRain 
+        ? 'Dễ có mưa ẩm: Cần cẩn trọng khi diện cổ phục tà dài quét đất, ưu tiên tà áo gọn gàng.'
+        : 'Thời tiết se lạnh: Rất thích hợp diện Áo tấc gấm dệt kim tuyến, Áo ngũ thân có lớp lót hoặc khăn đóng giữ ấm.',
+      adviceEn: isRain
+        ? 'Rainy/damp conditions: Caution with floor-length hems; opt for tidy cuts.'
+        : 'Chilly weather: Ideal for lined Ao Tac brocade, five-panel royal robes with layered undergarments.',
+      practicalFieldTipsVi: isRain ? [
+        'Hạn chế mặc tà áo màu trắng hoặc be nhạt vì rất dễ bị bắn bùn bẩn khi di chuyển.',
+        'Ô giấy dầu và nón lá chỉ là đạo cụ tạo dáng, trời mưa thật hãy trang bị ô che chuyên dụng.',
+        'Sử dụng kẹp vải để xắn gọn vạt trước khi bước lên bậc thang đền chùa, di tích.'
+      ] : [
+        'Thời tiết se lạnh là lúc diện Áo Tấc và Áo Ngũ Thân nhiều lớp đẹp nhất mà không sợ nóng.',
+        'Khăn đóng hoặc khăn vấn vừa giữ ấm vùng đầu cổ vừa tạo phong thái trang trọng.',
+        'Phù hợp diện cùng giày hài nhung thêu chỉ vàng hoặc giày tây cổ điển.'
+      ],
       recommendedFabricsVi: ['Gấm hoa chìm', 'Nhung the', 'Lụa dệt dày'],
       outfitIds: ['ao_ngu_than_ao_tac', 'ao_nhat_binh']
     };
@@ -118,6 +137,11 @@ function getGarmentRecommendation(temp, weatherType) {
   return {
     adviceVi: 'Khí hậu ôn hòa lý tưởng: Rất đẹp để du xuân chụp ảnh cùng Áo dài truyền thống, Áo tứ thân Kinh Bắc hay Áo giao lĩnh.',
     adviceEn: 'Ideal pleasant weather: Perfect for heritage photography with traditional Ao Dai, Ao Tu Than, or Ao Giao Linh.',
+    practicalFieldTipsVi: [
+      'Thời tiết vàng lý tưởng để chụp ảnh ánh sáng tự nhiên tại các di tích cổ kính.',
+      'Dễ dàng kết hợp phụ kiện chuỗi ngọc, trâm cài hoa sen hoặc thắt lưng ngũ sắc.',
+      'Di chuyển thoải mái giữa các góc phố cổ, chùa chiền mà không lo trang phục bị nhăn nhàu.'
+    ],
     recommendedFabricsVi: ['Lụa Hà Đông', 'The lụa', 'Gấm tơ tằm'],
     outfitIds: ['ao_dai_hue', 'ao_tu_than', 'ao_giao_linh']
   };
@@ -204,4 +228,44 @@ export async function getAllRegionsWeather() {
     getRegionWeather('nam')
   ]);
   return { bac, trung, nam };
+}
+
+/**
+ * Lấy thời tiết theo tọa độ GPS người dùng
+ */
+export async function getWeatherByCoords(lat, lon, locationName = 'Vị trí hiện tại') {
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Asia%2FHo_Chi_Minh`;
+    const res = await fetch(url, { signal: AbortSignal.timeout(6000) });
+    if (!res.ok) throw new Error(`Weather API HTTP ${res.status}`);
+    
+    const json = await res.json();
+    const current = json.current || {};
+    const temp = Math.round(current.temperature_2m ?? 26);
+    const humidity = Math.round(current.relative_humidity_2m ?? 75);
+    const weatherCode = current.weather_code ?? 1;
+    const windSpeed = Math.round(current.wind_speed_10m ?? 8);
+
+    const condition = interpretWeatherCode(weatherCode);
+    const recommendation = getGarmentRecommendation(temp, condition.type);
+
+    return {
+      regionKey: 'gps',
+      city: locationName,
+      nameVi: locationName,
+      nameEn: locationName,
+      shortNameVi: 'Vị trí của bạn',
+      shortNameEn: 'Your Location',
+      temp,
+      humidity,
+      windSpeed,
+      condition,
+      recommendation,
+      isRealtime: true,
+      lastUpdated: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+    };
+  } catch (error) {
+    console.warn('Lỗi lấy thời tiết theo tọa độ:', error);
+    return null;
+  }
 }

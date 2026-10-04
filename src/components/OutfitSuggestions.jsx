@@ -10,20 +10,34 @@ function getRegionBadgeClass(region) {
   return 'badge-chung';
 }
 
-export default function OutfitSuggestions({ outfits, onSelect, selectedId, selectedScene }) {
+export default function OutfitSuggestions({ 
+  outfits, 
+  onSelect, 
+  selectedId, 
+  selectedScene, 
+  realtimeWeather 
+}) {
   const [modalOutfit, setModalOutfit] = useState(null);
 
-  // Sắp xếp outfit gợi ý phù hợp nhất lên đầu
+  // Sắp xếp outfit gợi ý phù hợp nhất theo bối cảnh & thời tiết thực tế
   const sortedOutfits = useMemo(() => {
     if (!outfits) return [];
     return [...outfits].sort((a, b) => {
-      const aMatches = selectedScene && a.boi_canh_phu_hop.some(s => s.toLowerCase().includes(selectedScene.toLowerCase()));
-      const bMatches = selectedScene && b.boi_canh_phu_hop.some(s => s.toLowerCase().includes(selectedScene.toLowerCase()));
-      if (aMatches && !bMatches) return -1;
-      if (!aMatches && bMatches) return 1;
+      const aSceneMatch = selectedScene && a.boi_canh_phu_hop.some(s => s.toLowerCase().includes(selectedScene.toLowerCase()));
+      const bSceneMatch = selectedScene && b.boi_canh_phu_hop.some(s => s.toLowerCase().includes(selectedScene.toLowerCase()));
+
+      const aWeatherMatch = realtimeWeather?.recommendation?.outfitIds?.includes(a.id);
+      const bWeatherMatch = realtimeWeather?.recommendation?.outfitIds?.includes(b.id);
+
+      const scoreA = (aSceneMatch ? 3 : 0) + (aWeatherMatch ? 2 : 0);
+      const scoreB = (bSceneMatch ? 3 : 0) + (bWeatherMatch ? 2 : 0);
+
+      if (scoreA !== scoreB) {
+        return scoreB - scoreA;
+      }
       return 0;
     });
-  }, [outfits, selectedScene]);
+  }, [outfits, selectedScene, realtimeWeather]);
 
   if (!sortedOutfits || sortedOutfits.length === 0) {
     return (
@@ -47,11 +61,30 @@ export default function OutfitSuggestions({ outfits, onSelect, selectedId, selec
         </p>
       </div>
 
+      {/* Real-time Weather Recommendation Callout Pill */}
+      {realtimeWeather && (
+        <div className="outfit-weather-callout-pill animate-fade-in">
+          <div className="weather-pill-main">
+            <span className="weather-pill-icon">{realtimeWeather.condition.icon}</span>
+            <span className="weather-pill-title">
+              Khí hậu {realtimeWeather.city} ({realtimeWeather.temp}°C, {realtimeWeather.condition.textVi}):
+            </span>
+            <span className="weather-pill-text">{realtimeWeather.recommendation.adviceVi}</span>
+          </div>
+          {realtimeWeather.recommendation.recommendedFabricsVi?.length > 0 && (
+            <span className="weather-pill-tag">
+              🧵 Vải khuyên dùng: {realtimeWeather.recommendation.recommendedFabricsVi.join(', ')}
+            </span>
+          )}
+        </div>
+      )}
+
       <div className="outfit-grid">
         {sortedOutfits.map((outfit, index) => {
           const isSelected = selectedId === outfit.id;
           const isModern = outfit.category === 'hien_dai' || outfit.id.includes('cach_tan');
           const isTopRecommended = selectedScene && outfit.boi_canh_phu_hop.some(s => s.toLowerCase().includes(selectedScene.toLowerCase()));
+          const isWeatherRecommended = realtimeWeather?.recommendation?.outfitIds?.includes(outfit.id);
 
           return (
             <div
@@ -64,7 +97,14 @@ export default function OutfitSuggestions({ outfits, onSelect, selectedId, selec
               {/* Highlight badge for top recommendation */}
               {isTopRecommended && (
                 <div className="top-recommend-badge">
-                  ✨ Gợi ý cho bạn
+                  ✨ Gợi ý cho dịp này
+                </div>
+              )}
+
+              {/* Real-time Weather matching badge */}
+              {isWeatherRecommended && (
+                <div className="weather-recommend-badge" title={realtimeWeather?.recommendation?.adviceVi}>
+                  <span>{realtimeWeather?.condition?.icon} Chuẩn thời tiết ({realtimeWeather?.temp}°C)</span>
                 </div>
               )}
 
@@ -73,6 +113,11 @@ export default function OutfitSuggestions({ outfits, onSelect, selectedId, selec
                 className="outfit-card__img-wrap"
                 onClick={() => onSelect(outfit)}
               >
+                <div className="outfit-card__placeholder">
+                  <span className="outfit-card__placeholder-icon">👘</span>
+                  <span className="outfit-card__placeholder-title">{outfit.ten}</span>
+                  <span className="outfit-card__placeholder-era">{outfit.era || 'Di sản Việt Nam'}</span>
+                </div>
                 <img
                   src={outfit.anh_dai_dien}
                   alt={outfit.ten}

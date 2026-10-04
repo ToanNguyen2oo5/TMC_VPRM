@@ -36,6 +36,57 @@
   margin: 0 auto;
 }
 
+/* Real-time Weather Recommendation Callout Pill */
+.outfit-weather-callout-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: 960px;
+  margin: 1.25rem auto 1.75rem auto;
+  padding: 10px 18px;
+  background: linear-gradient(135deg, rgba(14, 116, 144, 0.15) 0%, rgba(30, 58, 138, 0.18) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: var(--radius-full);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  flex-wrap: wrap;
+}
+
+.weather-pill-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.weather-pill-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.weather-pill-title {
+  font-weight: 700;
+  color: #38BDF8;
+  font-size: 0.86rem;
+}
+
+.weather-pill-text {
+  font-size: 0.84rem;
+  color: var(--color-text-secondary);
+}
+
+.weather-pill-tag {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #BAE6FD;
+  background: rgba(56, 189, 248, 0.2);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  white-space: nowrap;
+}
+
 .outfit-suggestions__empty {
   text-align: center;
   padding: var(--space-10) var(--space-4);
@@ -99,23 +150,77 @@
   letter-spacing: 0.3px;
 }
 
+/* Real-time Weather Matching Badge */
+.weather-recommend-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  background: linear-gradient(135deg, rgba(14, 116, 144, 0.9), rgba(30, 64, 175, 0.85));
+  backdrop-filter: blur(8px);
+  color: #F0F9FF;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 /* Card Image Thumbnail */
 .outfit-card__img-wrap {
   width: 100%;
-  height: 180px;
+  height: 220px;
   border-radius: var(--radius-md);
   overflow: hidden;
   position: relative;
-  background: #14100D;
+  background: radial-gradient(circle at 50% 30%, #2a1b14 0%, #120e0c 100%);
+  border: 1px solid rgba(218, 165, 32, 0.15);
   cursor: pointer;
 }
 
+.outfit-card__placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1rem;
+  gap: 0.35rem;
+  z-index: 1;
+}
+
+.outfit-card__placeholder-icon {
+  font-size: 2.2rem;
+  filter: drop-shadow(0 2px 8px rgba(218, 165, 32, 0.4));
+}
+
+.outfit-card__placeholder-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #DAA520;
+}
+
+.outfit-card__placeholder-era {
+  font-size: 0.75rem;
+  color: #A0AEC0;
+}
+
 .outfit-card__img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: top center;
   transition: transform 0.4s ease;
   display: block;
+  z-index: 2;
 }
 
 .outfit-card:hover .outfit-card__img {
@@ -125,15 +230,17 @@
 .outfit-card__img-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
   transition: opacity 0.2s ease;
   color: #FFFFFF;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 600;
+  z-index: 3;
 }
 
 .outfit-card:hover .outfit-card__img-overlay {

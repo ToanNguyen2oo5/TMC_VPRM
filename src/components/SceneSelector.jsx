@@ -1,4 +1,6 @@
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '../services/i18n';
+import { getRegionWeather, getWeatherByCoords } from '../services/weatherService';
 import './SceneSelector.css';
 
 const SCENES_DATA = {
@@ -77,13 +79,71 @@ export default function SceneSelector({
   selectedWeather = 'warm',
   onWeatherSelect,
   selectedStyle = 'classic',
-  onStyleSelect
+  onStyleSelect,
+  onRealtimeWeatherChange
 }) {
   const { lang, t } = useTranslation();
   const scenes = SCENES_DATA[lang] || SCENES_DATA.vi;
   const weathers = WEATHERS_DATA[lang] || WEATHERS_DATA.vi;
   const styles = STYLES_DATA[lang] || STYLES_DATA.vi;
   const regions = REGIONS_DATA[lang] || REGIONS_DATA.vi;
+
+  const [activeWeatherTab, setActiveWeatherTab] = useState('bac');
+  const [liveWeather, setLiveWeather] = useState(null);
+  const [isWeatherLoading, setIsWeatherLoading] = useState(true);
+  const [isManualWeather, setIsManualWeather] = useState(false);
+
+  // Sync region selection if already set
+  useEffect(() => {
+    if (selectedRegion && ['bac', 'trung', 'nam'].includes(selectedRegion.toLowerCase())) {
+      setActiveWeatherTab(selectedRegion.toLowerCase());
+    }
+  }, [selectedRegion]);
+
+  // Fetch real-time weather on change
+  const fetchWeather = useCallback(async (tabKey) => {
+    setIsWeatherLoading(true);
+    try {
+      if (tabKey === 'gps') {
+        if (!navigator.geolocation) {
+          setIsWeatherLoading(false);
+          return;
+        }
+        navigator.geolocation.getCurrentPosition(
+          async (pos) => {
+            const data = await getWeatherByCoords(pos.coords.latitude, pos.coords.longitude, 'Vị trí của bạn');
+            if (data) {
+              setLiveWeather(data);
+              if (onRealtimeWeatherChange) onRealtimeWeatherChange(data);
+            }
+            setIsWeatherLoading(false);
+          },
+          (err) => {
+            console.warn('GPS error, falling back to Hanoi:', err);
+            getRegionWeather('bac').then(fallback => {
+              setLiveWeather(fallback);
+              if (onRealtimeWeatherChange) onRealtimeWeatherChange(fallback);
+              setIsWeatherLoading(false);
+            });
+          },
+          { timeout: 7000 }
+        );
+        return;
+      }
+
+      const data = await getRegionWeather(tabKey);
+      setLiveWeather(data);
+      if (onRealtimeWeatherChange) onRealtimeWeatherChange(data);
+    } catch (err) {
+      console.warn('Weather fetch error:', err);
+    } finally {
+      setIsWeatherLoading(false);
+    }
+  }, [onRealtimeWeatherChange]);
+
+  useEffect(() => {
+    fetchWeather(activeWeatherTab);
+  }, [activeWeatherTab, fetchWeather]);
 
   return (
     <section className="scene-selector" id="scene-selector">
@@ -130,29 +190,116 @@ export default function SceneSelector({
         </div>
       </div>
 
-      {/* 2. THỜI TIẾT & PHONG CÁCH (2 CỘT) */}
+      {/* 2. THỜI TIẾT REAL-TIME & PHONG CÁCH (2 CỘT) */}
       <div className="selector-sub-grid animate-fade-in-up">
-        {/* Thời tiết */}
-        <div className="selector-sub-col glass-panel">
-          <label className="group-block-title">
-            <span>🌦️</span> {lang === 'en' ? 'Expected Climate & Fabric Tip:' : 'Thời tiết dự kiến:'}
-          </label>
-          <div className="sub-options-grid">
-            {weathers.map(w => (
+        {/* Thời tiết Real-time */}
+        <div className="selector-sub-col glass-panel weather-realtime-panel">
+          <div className="weather-col-header">
+            <label className="group-block-title" style={{ margin: 0 }}>
+              <span>🌦️</span> {lang === 'en' ? 'Live Weather & AI Advice:' : 'Thời tiết Real-time & Gợi ý:'}
+            </label>
+            {liveWeather?.isRealtime && (
+              <span className="live-weather-badge">
+                <span className="live-dot" /> Trực tiếp {liveWeather.lastUpdated}
+              </span>
+            )}
+          </div>
+
+          {/* Region Tabs */}
+          <div className="weather-reg-pills">
+            {[
+              { id: 'bac', label: 'Bắc Bộ', city: 'Hà Nội', icon: '🏔️' },
+              { id: 'trung', label: 'Trung Bộ', city: 'Huế', icon: '🌊' },
+              { id: 'nam', label: 'Nam Bộ', city: 'TP.HCM', icon: '🌴' },
+              { id: 'gps', label: 'GPS', city: 'Vị trí bạn', icon: '📍' },
+            ].map(reg => (
               <button
-                key={w.id}
+                key={reg.id}
                 type="button"
-                className={`sub-opt-btn ${selectedWeather === w.id ? 'sub-opt-btn--active' : ''}`}
-                onClick={() => onWeatherSelect && onWeatherSelect(w.id)}
+                className={`weather-reg-pill ${activeWeatherTab === reg.id ? 'weather-reg-pill--active' : ''}`}
+                onClick={() => {
+                  setActiveWeatherTab(reg.id);
+                  if (reg.id !== 'gps' && onRegionSelect) {
+                    onRegionSelect(reg.id);
+                  }
+                }}
               >
-                <span className="sub-opt-icon">{w.icon}</span>
-                <div className="sub-opt-info">
-                  <strong>{w.name}</strong>
-                  <small>{w.tip}</small>
-                </div>
+                <span>{reg.icon} {reg.label}</span>
               </button>
             ))}
           </div>
+
+          {/* Realtime Weather Metric Card */}
+          {isWeatherLoading ? (
+            <div className="weather-live-loading">
+              <span className="skeleton-pulse">⚡ Đang cập nhật khí tượng trực tiếp...</span>
+            </div>
+          ) : liveWeather ? (
+            <div className="weather-live-card animate-fade-in">
+              <div className="weather-live-top">
+                <div className="weather-live-metric">
+                  <span className="weather-live-icon">{liveWeather.condition.icon}</span>
+                  <div className="weather-live-numbers">
+                    <span className="weather-live-temp">{liveWeather.temp}°C</span>
+                    <span className="weather-live-city">{liveWeather.city}</span>
+                  </div>
+                </div>
+                <div className="weather-live-stats">
+                  <span className="condition-text">{liveWeather.condition.textVi}</span>
+                  <span className="condition-sub">Độ ẩm: {liveWeather.humidity}% • Gió: {liveWeather.windSpeed} km/h</span>
+                </div>
+              </div>
+
+              {/* AI Garment Advice Callout */}
+              <div className="weather-advice-callout">
+                <div className="advice-title-row">
+                  <span className="advice-badge">💡 Mẹo mặc đẹp hôm nay:</span>
+                  {liveWeather.recommendation.recommendedFabricsVi && (
+                    <span className="advice-fabric">
+                      Vải: {liveWeather.recommendation.recommendedFabricsVi.join(', ')}
+                    </span>
+                  )}
+                </div>
+                <p className="advice-desc">{liveWeather.recommendation.adviceVi}</p>
+                {liveWeather.recommendation.practicalFieldTipsVi?.[0] && (
+                  <p className="advice-tip">
+                    🎯 <em>Mẹo thực tế: {liveWeather.recommendation.practicalFieldTipsVi[0]}</em>
+                  </p>
+                )}
+              </div>
+            </div>
+          ) : null}
+
+          {/* Toggle manual simulation */}
+          <div className="weather-toggle-row">
+            <button
+              type="button"
+              className="weather-sim-toggle"
+              onClick={() => setIsManualWeather(!isManualWeather)}
+            >
+              {isManualWeather ? '✕ Thu gọn (Dùng thời tiết thực)' : '⚙️ Hoặc mô phỏng thời tiết khác cho buổi chụp...'}
+            </button>
+          </div>
+
+          {/* Manual Climate Buttons */}
+          {isManualWeather && (
+            <div className="sub-options-grid animate-fade-in" style={{ marginTop: '0.75rem' }}>
+              {weathers.map(w => (
+                <button
+                  key={w.id}
+                  type="button"
+                  className={`sub-opt-btn ${selectedWeather === w.id ? 'sub-opt-btn--active' : ''}`}
+                  onClick={() => onWeatherSelect && onWeatherSelect(w.id)}
+                >
+                  <span className="sub-opt-icon">{w.icon}</span>
+                  <div className="sub-opt-info">
+                    <strong>{w.name}</strong>
+                    <small>{w.tip}</small>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Phong cách */}

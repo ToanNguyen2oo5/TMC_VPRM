@@ -28,8 +28,7 @@ export default function PhotoUpload({ onPhotoSelect, selectedOutfit, onGenerate,
     }
 
     const base64 = await fileToBase64(file);
-    const previewUrl = URL.createObjectURL(file);
-    setPreview(previewUrl);
+    setPreview(`data:image/png;base64,${base64}`);
     setSelectedAvatar(null);
     onPhotoSelect(base64);
   };

@@ -112,17 +112,21 @@ export default function LookbookGallery({ savedOutfits = [], onRemoveFromLookboo
           return (
             <article key={item.id || idx} className="lookbook-card glass-card">
               <div className="lookbook-card__media">
-                {item.image ? (
+                <div className="lookbook-placeholder">
+                  <span className="lookbook-placeholder-icon">👘</span>
+                  <p className="lookbook-placeholder-title">{item.outfitName || item.outfit?.ten}</p>
+                  <span className="lookbook-placeholder-sub">{item.region || item.scene || 'Di sản Việt Nam'}</span>
+                </div>
+                {item.image && (
                   <img 
                     src={item.image.startsWith('http') || item.image.startsWith('data:') || item.image.startsWith('/generated') ? item.image : `data:image/png;base64,${item.image}`} 
                     alt={item.outfitName || item.outfit?.ten}
                     className="lookbook-img"
+                    loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
                   />
-                ) : (
-                  <div className="lookbook-placeholder">
-                    <span>✨</span>
-                    <p>{item.outfitName || item.outfit?.ten}</p>
-                  </div>
                 )}
 
                 <div className="lookbook-badge-score">

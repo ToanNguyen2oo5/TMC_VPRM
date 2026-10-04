@@ -5,7 +5,7 @@
 
 export const TRADITIONAL_COLORS = [
   { id: 'do_son', name: 'Đỏ son', hex: '#A4262C', element: 'Hỏa', meaning: 'May mắn, hỷ sự, thịnh vượng ngày Tết và hôn lễ' },
-  { id: 'vang_nghe', name: 'Vàng nghệ (Vàng đồng)', hex: '#C8A15A', element: 'Thổ', meaning: 'Phú quý, vương giả, uy nghi chốn hoàng cung Đại Nam' },
+  { id: 'vang_nghe', name: 'Vàng nghệ', hex: '#C8A15A', element: 'Thổ', meaning: 'Phú quý, vương giả, uy nghi chốn hoàng cung Đại Nam' },
   { id: 'xanh_cham', name: 'Xanh chàm', hex: '#23405E', element: 'Mộc/Thủy', meaning: 'Trầm mặc, nho nhã, mộc mạc bền bỉ theo năm tháng' },
   { id: 'nau_non', name: 'Nâu non', hex: '#8D6E63', element: 'Thổ', meaning: 'Chân phương, đằm thắm, gắn bó với đất đai Kinh Bắc' },
   { id: 'trang_nga', name: 'Trắng ngà', hex: '#FBF7F0', element: 'Kim', meaning: 'Thuần khiết, trong sáng, đoan trang của người thiếu nữ' },

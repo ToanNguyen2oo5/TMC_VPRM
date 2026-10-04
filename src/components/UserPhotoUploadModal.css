@@ -123,6 +123,29 @@
 }
 
 /* Image Preview in modal */
+.upload-loading-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1rem;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-secondary);
+  font-size: 0.88rem;
+}
+
+.upload-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(218, 165, 32, 0.2);
+  border-top-color: var(--color-gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
 .upload-preview-area {
   display: flex;
   flex-direction: column;
@@ -138,6 +161,19 @@
   border: 2px solid var(--color-gold);
   position: relative;
   background: #14100D;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-error-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1rem;
+  color: #ff6b6b;
 }
 
 .preview-img {

@@ -95,6 +95,17 @@ export default function WeatherWidget({ onSelectOutfitId = null, compact = false
                 ))}
               </div>
             )}
+
+            {activeWeather.recommendation.practicalFieldTipsVi && (
+              <div className="weather-field-tips">
+                <span className="field-tips-label">💡 Mẹo thực chiến khi dạo phố / chụp ảnh:</span>
+                <ul className="field-tips-list">
+                  {activeWeather.recommendation.practicalFieldTipsVi.map((tip, idx) => (
+                    <li key={idx} className="field-tip-item">{tip}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       ) : null}

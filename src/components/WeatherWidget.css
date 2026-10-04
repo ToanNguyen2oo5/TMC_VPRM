@@ -194,3 +194,44 @@
 .weather-widget__loading {
   padding: var(--space-4) 0;
 }
+
+.weather-field-tips {
+  margin-top: 0.6rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(218, 165, 32, 0.08);
+  border-left: 2px solid #daa520;
+  border-radius: 0 6px 6px 0;
+}
+
+.field-tips-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #ffd700;
+  margin-bottom: 0.35rem;
+}
+
+.field-tips-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.field-tip-item {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary, #d1c7bd);
+  line-height: 1.35;
+  position: relative;
+  padding-left: 0.85rem;
+}
+
+.field-tip-item::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #daa520;
+}
+

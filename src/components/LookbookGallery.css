@@ -83,64 +83,84 @@
   position: relative;
   width: 100%;
   height: 320px;
-  background: rgba(0, 0, 0, 0.4);
+  background: radial-gradient(circle at 50% 30%, #2a1b14 0%, #120e0c 100%);
   overflow: hidden;
 }
 
 .lookbook-img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  object-position: top center;
+  transition: transform 0.4s ease;
+  z-index: 2;
 }
 
 .lookbook-card:hover .lookbook-img {
-  transform: scale(1.03);
+  transform: scale(1.04);
 }
 
 .lookbook-placeholder {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 1rem;
+  padding: 1.5rem;
+  gap: 0.5rem;
+  z-index: 1;
 }
 
-.lookbook-placeholder span {
-  font-size: 3.5rem;
-  margin-bottom: 0.5rem;
+.lookbook-placeholder-icon {
+  font-size: 3rem;
+  filter: drop-shadow(0 2px 8px rgba(218, 165, 32, 0.4));
+}
+
+.lookbook-placeholder-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #DAA520;
+  margin: 0;
+}
+
+.lookbook-placeholder-sub {
+  font-size: 0.8rem;
+  color: #A0AEC0;
 }
 
 .lookbook-badge-score {
   position: absolute;
   top: 0.75rem;
   left: 0.75rem;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(6px);
-  padding: 0.25rem 0.6rem;
+  padding: 0.25rem 0.65rem;
   border-radius: 999px;
   font-size: 0.8rem;
   color: #DAA520;
   font-weight: 700;
-  border: 1px solid rgba(218, 165, 32, 0.3);
+  border: 1px solid rgba(218, 165, 32, 0.35);
+  z-index: 3;
 }
 
 .like-btn {
   position: absolute;
   top: 0.75rem;
   right: 0.75rem;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 999px;
   padding: 0.25rem 0.65rem;
   color: #fff;
   font-size: 0.8rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  z-index: 3;
 }
 
 .like-btn:hover {

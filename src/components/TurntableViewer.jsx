@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { COSTUME_META } from '../data/costumeMeta';
 import './TurntableViewer.css';
 
 const ANGLES = [
@@ -8,6 +9,21 @@ const ANGLES = [
   { label: 'Trái', angle: 270 }
 ];
 
+const CULTURAL_STAGES = [
+  { id: 1, title: 'Tuyển chọn tơ lụa di sản', desc: 'Lụa Vạn Phúc & gấm tơ tằm theo điển chế triều đại', icon: '🧵' },
+  { id: 2, title: 'Hòa sắc Ngũ Hành tương sinh', desc: 'Cân bằng Kim - Mộc - Thủy - Hỏa - Thổ mang lại cát tường', icon: '🎨' },
+  { id: 3, title: 'Gemini AI may đo & ướm tà', desc: 'Bóc tách vóc dáng và dựng dáng áo chuẩn tỷ lệ nhân vật', icon: '✨' },
+  { id: 4, title: 'Đính cúc ngũ thường & phụ kiện', desc: 'Hoàn thiện nếp áo, khăn vấn, hài thêu và chuỗi ngọc', icon: '🪷' }
+];
+
+const FOLK_TRIVIA = [
+  { quote: 'Năm hạt nút cài áo ngũ thân tượng trưng cho Ngũ thường Nho gia: Nhân, Lễ, Nghĩa, Trí, Tín.', author: 'Trần Quang Đức — Ngàn Năm Áo Mũ' },
+  { quote: 'Viền cổ áo Nhật Bình mang 5 sắc Ngũ hành tương sinh, biểu trưng cho phúc thọ miên trường của hoàng tộc.', author: 'Đại Nam Hội Điển Sự Lệ' },
+  { quote: 'Áo tứ thân mớ ba mớ bảy, yếm đào thắm sắc cùng nón quai thao dập dờn trong câu ca Quan họ Kinh Bắc.', author: 'Di sản UNESCO Quan Họ' },
+  { quote: 'Khăn rằn đen trắng sông nước phương Nam gửi gắm nghĩa tình sắt son trước sau như một của người miệt vườn.', author: 'Bảo tàng Phụ nữ Nam Bộ' },
+  { quote: 'Vạt áo Hữu Nhậm Đại Việt vắt chéo từ trái sang phải, biểu trưng cho lẽ thuận hòa âm dương đất trời.', author: 'Viện Khảo cổ học Việt Nam' }
+];
+
 export default function TurntableViewer({ 
   images, 
   isLoading, 
@@ -15,11 +31,14 @@ export default function TurntableViewer({
   angleMode = 'single',
   isGeneratingRemaining = false,
   remainingProgress = null,
-  onGenerateRemaining = null
+  onGenerateRemaining = null,
+  selectedOutfit = null
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [preloaded, setPreloaded] = useState({});
+  const [currentStageIdx, setCurrentStageIdx] = useState(0);
+  const [currentTriviaIdx, setCurrentTriviaIdx] = useState(0);
 
   const containerRef = useRef(null);
   const dragStartX = useRef(0);
@@ -28,6 +47,22 @@ export default function TurntableViewer({
   const pendingIndex = useRef(0);
   const tiltRef = useRef({ x: 0, y: 0 });
   const wrapperRef = useRef(null);
+
+  // Cycling stages & trivia during loading
+  useEffect(() => {
+    if (!isLoading) return;
+    const stageTimer = setInterval(() => {
+      setCurrentStageIdx(prev => (prev + 1) % CULTURAL_STAGES.length);
+    }, 2800);
+    const triviaTimer = setInterval(() => {
+      setCurrentTriviaIdx(prev => (prev + 1) % FOLK_TRIVIA.length);
+    }, 3800);
+
+    return () => {
+      clearInterval(stageTimer);
+      clearInterval(triviaTimer);
+    };
+  }, [isLoading]);
 
   // Reset on new image set
   useEffect(() => {
@@ -46,7 +81,7 @@ export default function TurntableViewer({
       img.onload = () => setPreloaded(prev => ({ ...prev, [i]: true }));
       img.src = src.startsWith('http') ? src : `data:image/png;base64,${src}`;
     });
-  }, [images]);
+  }, [images, preloaded]);
 
   // Apply tilt via rAF (no re-renders)
   const applyTilt = useCallback(() => {
@@ -112,23 +147,58 @@ export default function TurntableViewer({
     setIsDragging(false);
   };
 
-  // Loading skeleton
+  // Get costume persona metadata
+  const costumeMeta = selectedOutfit?.id ? COSTUME_META[selectedOutfit.id] : null;
+
+  // Sensory Cultural Loading Screen
   if (isLoading) {
+    const stage = CULTURAL_STAGES[currentStageIdx];
+    const trivia = FOLK_TRIVIA[currentTriviaIdx];
+
     return (
       <section className="turntable" id="turntable-viewer">
-        <div className="turntable__header">
-          <h2 className="turntable__title">
-            Đang <span className="text-gradient">thử đồ</span> cho bạn…
+        <div className="turntable__header text-center">
+          <span className="section-badge animate-pulse">✨ AI Di Sản Đang May Đo</span>
+          <h2 className="turntable__title" style={{ marginTop: '0.5rem' }}>
+            Hành Trình <span className="text-gradient">Ướm Việt Phục Số</span>
           </h2>
-          <p className="turntable__subtitle">AI đang may đo và áp dụng trang phục lên vóc dáng của bạn</p>
+          <p className="turntable__subtitle">
+            Hệ thống đang kết hợp Google Gemini 1.5 với điển chế cổ phục để ướm thử trang phục lên vóc dáng của bạn
+          </p>
         </div>
-        <div className="turntable__skeleton-frame">
-          <div className="skeleton-shimmer" />
-          <div className="turntable__skeleton-info">
-            <span className="spinner" />
-            <span>
-              {progress ? `${Math.round((progress.current / progress.total) * 100)}%` : 'Đang xử lý…'}
-            </span>
+
+        <div className="turntable__cultural-loader glass-panel animate-fade-in">
+          {/* Circular Progress & Spinner */}
+          <div className="loader-center-ring">
+            <div className="lotus-pulse-core">
+              <span className="core-icon">{stage.icon}</span>
+            </div>
+            <div className="loader-spinner-orbit" />
+          </div>
+
+          {/* Stepper Status */}
+          <div className="loader-stage-info animate-fade-in-up" key={stage.id}>
+            <span className="stage-step-tag">Giai đoạn {stage.id}/4</span>
+            <h3 className="stage-title">{stage.title}</h3>
+            <p className="stage-desc">{stage.desc}</p>
+          </div>
+
+          {/* Progress bar */}
+          <div className="loader-progress-track">
+            <div 
+              className="loader-progress-fill" 
+              style={{ width: progress ? `${Math.round((progress.current / progress.total) * 100)}%` : `${(currentStageIdx + 1) * 25}%` }}
+            />
+          </div>
+
+          {/* Folklore Trivia Card */}
+          <div className="loader-trivia-box animate-fade-in" key={currentTriviaIdx}>
+            <div className="trivia-header">
+              <span className="trivia-icon">📖</span>
+              <span className="trivia-badge">Giai thoại di sản bạn có biết?</span>
+            </div>
+            <p className="trivia-quote">"{trivia.quote}"</p>
+            <span className="trivia-author">— {trivia.author}</span>
           </div>
         </div>
       </section>
@@ -162,6 +232,27 @@ export default function TurntableViewer({
           </p>
         )}
       </div>
+
+      {/* Persona Badge: Danh xưng Cổ phong Gen Z */}
+      {costumeMeta && (
+        <div className="persona-badge-banner glass-panel animate-fade-in-up">
+          <div className="persona-badge-header">
+            <div className="persona-title-group">
+              <span className="persona-crown">👑</span>
+              <div>
+                <span className="persona-tag">Danh xưng AI phong tặng:</span>
+                <h3 className="persona-name">{costumeMeta.personaTitle}</h3>
+              </div>
+            </div>
+            <span className="persona-authenticity-pill">{costumeMeta.authenticityTag}</span>
+          </div>
+          <p className="persona-praise">"{costumeMeta.funPraise}"</p>
+          <div className="persona-meta-chips">
+            <span className="persona-chip">🔮 {costumeMeta.element}</span>
+            <span className="persona-chip">🏷️ Thuê tham khảo: {costumeMeta.rentalEstimate}</span>
+          </div>
+        </div>
+      )}
 
       <div
         className={`turntable__frame ${isDragging ? 'is-dragging' : ''}`}

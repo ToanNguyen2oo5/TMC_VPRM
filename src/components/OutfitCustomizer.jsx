@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { fileToBase64 } from '../services/geminiImageService';
 import { PRESET_PALETTES, TRADITIONAL_COLORS, calculateColorHarmony } from '../services/colorHarmonyService';
 import { evaluateCulturalWarnings } from '../services/culturalWarningService';
@@ -49,8 +49,8 @@ export default function OutfitCustomizer({
   // Customization states
   const [fit, setFit] = useState('Vừa vặn');
   const [length, setLength] = useState('Dài (chấm gót)');
-  const [collar, setCollar] = useState('Truyền thống');
-  const [sleeve, setSleeve] = useState('Dài tay');
+  const [collar] = useState('Truyền thống');
+  const [sleeve] = useState('Dài tay');
   const [height, setHeight] = useState('162');
   const [material, setMaterial] = useState('Lụa tơ tằm Vạn Phúc');
 
@@ -122,11 +122,11 @@ export default function OutfitCustomizer({
     }
   };
 
-  const handleConfirmUserPhoto = async (file) => {
-    const base64 = await fileToBase64(file);
-    const previewUrl = URL.createObjectURL(file);
-    setPreview(previewUrl);
-    setUserPhoto(base64);
+  const handleConfirmUserPhoto = async (file, zoom = 1, dataUrl = null, base64 = null) => {
+    const finalBase64 = base64 || await fileToBase64(file);
+    const finalPreview = dataUrl || `data:image/png;base64,${finalBase64}`;
+    setPreview(finalPreview);
+    setUserPhoto(finalBase64);
     setSelectedAvatar(null);
   };
 

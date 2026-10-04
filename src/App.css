@@ -164,6 +164,28 @@ button {
   background: radial-gradient(circle at top center, rgba(122, 31, 43, 0.1) 0%, transparent 50%);
 }
 
+.hero__tech-chips {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin: 0.5rem auto 1.25rem;
+}
+
+.hero-tech-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.85rem;
+  background: rgba(218, 165, 32, 0.1);
+  border: 1px solid rgba(218, 165, 32, 0.35);
+  border-radius: 999px;
+  font-size: 0.775rem;
+  font-weight: 600;
+  color: #ffd700;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
 .hero__title {
   font-size: var(--font-size-4xl);
   line-height: 1.1;
