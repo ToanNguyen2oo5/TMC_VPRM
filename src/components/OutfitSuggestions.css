@@ -353,3 +353,36 @@
 .outfit-select-btn {
   flex: 1.4;
 }
+
+/* Hiệu ứng mưa đọng trên thẻ */
+.rain-glass-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px);
+  background-size: 15px 15px;
+  background-position: 0 0;
+  opacity: 0.3;
+  z-index: 5;
+  animation: rainDropsSlide 5s linear infinite;
+}
+
+@keyframes rainDropsSlide {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100%; }
+}
+
+.weather-badge-rain {
+  background: rgba(100, 150, 200, 0.2) !important;
+  border-color: rgba(100, 150, 200, 0.5) !important;
+  color: #cceeff !important;
+}
+
+[data-theme="light"] .weather-badge-rain {
+  background: rgba(100, 150, 200, 0.1) !important;
+  color: #004466 !important;
+}
+

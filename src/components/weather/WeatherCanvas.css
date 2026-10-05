@@ -1,0 +1,75 @@
+/* src/components/weather/WeatherCanvas.css */
+
+.weather-system-container {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+}
+
+.sky {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+.sky i {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.3s ease;
+}
+.sky i.on {
+  opacity: 1;
+}
+
+.weather-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.09;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+.vig {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 40%, transparent 52%, rgba(8, 4, 3, 0.6));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sky i {
+    transition-duration: 0.2s;
+  }
+}
+
+/* Ẩn các cánh hoa cũ của trang web nếu có class lottie-container */
+.mixer-view .lottie-container {
+  display: none !important;
+}
+
+/* Kính của thẻ trang phục từ prototype */
+.glass-overlay-drops {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.outfit-card__img-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+}

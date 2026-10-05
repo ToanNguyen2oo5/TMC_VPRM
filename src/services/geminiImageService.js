@@ -2,6 +2,7 @@ import { GoogleGenAI } from '@google/genai';
 import { generateOutfitImageWithFaceHF } from './hfImageService';
 import { generateOutfitWithCloudflare } from './cloudflareImageService';
 import { swapFaceOnImage } from './faceSwapService';
+import { enhanceFaceOnImage } from './faceEnhanceService';
 import { 
   getGarmentContext, 
   translateCustomizations, 
@@ -28,9 +29,8 @@ function getAI() {
 
 // Danh sách các model sinh ảnh của Google Gemini theo thứ tự ưu tiên
 const GEMINI_IMAGE_MODELS = [
-  'gemini-2.5-flash-image',
-  'gemini-3-pro-image',
-  'gemini-3.1-flash-image'
+  'imagen-3.0-generate-001',
+  'imagen-3.0-fast-generate-001'
 ];
 
 /**
@@ -150,9 +150,11 @@ async function generateWithGemini(userPhotoBase64, outfitData, angle = 0, refere
  * @param {object} outfitData - Dữ liệu outfit từ trangphuc.json
  * @param {number} angle - Góc xoay (0, 45, 90, 135, 180, 225, 270, 315)
  * @param {string|null} referenceImageBase64 - Ảnh tham chiếu (ảnh góc 0°) cho các góc sau
+ * @param {object} customizations - Các tùy chỉnh nâng cao
+ * @param {number|null} seed - Seed cố định để ảnh 360 nhất quán
  * @returns {Promise<string>} base64 image data hoặc URL ảnh
  */
-export async function generateOutfitImage(userPhotoBase64, outfitData, angle = 0, referenceImageBase64 = null, customizations = {}) {
+export async function generateOutfitImage(userPhotoBase64, outfitData, angle = 0, referenceImageBase64 = null, customizations = {}, seed = null) {
   if (DEMO_MODE) {
     return getDemoImage(outfitData.id, angle);
   }
@@ -169,7 +171,7 @@ export async function generateOutfitImage(userPhotoBase64, outfitData, angle = 0
   if (cfAccountId && cfApiToken) {
     try {
       console.info(`⚡ [GIAI ĐOẠN 1] Kích hoạt Cloudflare Workers AI FLUX.1 [schnell] cho: ${outfitData.ten} (Góc ${angle}°)...`);
-      baseCostumeImage = await generateOutfitWithCloudflare(outfitData, angle, customizations, userPhotoBase64);
+      baseCostumeImage = await generateOutfitWithCloudflare(outfitData, angle, customizations, userPhotoBase64, seed);
     } catch (cfError) {
       console.warn('⚠️ Cloudflare Workers AI gặp lỗi hoặc hết quota, chuyển sang dự phòng:', cfError.message);
     }
@@ -198,12 +200,16 @@ export async function generateOutfitImage(userPhotoBase64, outfitData, angle = 0
   if (userPhotoBase64 && baseCostumeImage) {
     try {
       console.info('🎭 [GIAI ĐOẠN 2] Đang ghép chính xác khuôn mặt bạn vào bộ Việt Phục qua InsightFace Swap...');
-      const swappedImage = await swapFaceOnImage(userPhotoBase64, baseCostumeImage);
-      if (swappedImage) {
-        return swappedImage;
+      let finalImage = await swapFaceOnImage(userPhotoBase64, baseCostumeImage);
+      
+      console.info('✨ [GIAI ĐOẠN 3] Đang làm đẹp khuôn mặt (tăng thiện cảm) bằng CodeFormer...');
+      finalImage = await enhanceFaceOnImage(finalImage);
+      
+      if (finalImage) {
+        return finalImage;
       }
     } catch (swapErr) {
-      console.warn('⚠️ Face Swap gặp sự cố, giữ nguyên ảnh chất lượng cao gốc:', swapErr.message);
+      console.warn('⚠️ Face Swap/Enhance gặp sự cố, giữ nguyên ảnh chất lượng cao gốc:', swapErr.message);
     }
   }
 

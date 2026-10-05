@@ -6,7 +6,7 @@ import { buildSnapshotPrompt } from './outfitPromptHelper';
  * Hạn mức miễn phí: 10,000 neurons/ngày (~250-300 ảnh/ngày)
  * Tốc độ: ~2-4 giây/ảnh
  */
-export async function generateOutfitWithCloudflare(outfitData, angle = 0, customizations = {}, userPhotoBase64 = null) {
+export async function generateOutfitWithCloudflare(outfitData, angle = 0, customizations = {}, userPhotoBase64 = null, seed = null) {
   const accountId = import.meta.env.VITE_CF_ACCOUNT_ID;
   const apiToken = import.meta.env.VITE_CF_API_TOKEN;
 
@@ -36,7 +36,7 @@ export async function generateOutfitWithCloudflare(outfitData, angle = 0, custom
   }
 
   console.group(`⚡ [CLOUDFLARE WORKERS AI - FLUX.1 SCHNELL] - ${outfitData.ten} (Góc ${angle}°)`);
-  console.log('📌 OUTFIT:', outfitData.ten, '| GÓC:', angle);
+  console.log('📌 OUTFIT:', outfitData.ten, '| GÓC:', angle, '| SEED:', seed);
   console.log('🚀 MODEL: @cf/black-forest-labs/flux-1-schnell');
   console.log('📝 PROMPT:\n', enhancedPrompt);
   console.groupEnd();
@@ -46,6 +46,15 @@ export async function generateOutfitWithCloudflare(outfitData, angle = 0, custom
   const baseUrl = isDev ? '/cloudflare-ai' : 'https://api.cloudflare.com';
   const endpoint = `${baseUrl}/client/v4/accounts/${accountId}/ai/run/@cf/black-forest-labs/flux-1-schnell`;
 
+  const bodyData = {
+    prompt: enhancedPrompt,
+    steps: 4
+  };
+  // Do NOT pass seed to CF Workers AI as it throws 400 Bad Request
+  // if (seed !== null && seed !== undefined) {
+  //   bodyData.seed = seed;
+  // }
+
   try {
     const response = await fetch(endpoint, {
       method: 'POST',
@@ -53,10 +62,7 @@ export async function generateOutfitWithCloudflare(outfitData, angle = 0, custom
         'Authorization': `Bearer ${apiToken}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        prompt: enhancedPrompt,
-        steps: 4
-      })
+      body: JSON.stringify(bodyData)
     });
 
     if (!response.ok) {

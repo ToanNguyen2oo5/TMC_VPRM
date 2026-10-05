@@ -26,6 +26,9 @@ import MobileBottomNav from './components/MobileBottomNav';
 import { lanternAnimation } from './assets/lottieAnimations';
 import { useTheme } from './hooks/useTheme';
 import { useTranslation } from './services/i18n.jsx';
+import HeroCarousel from './components/HeroCarousel';
+import WeatherCanvas from './components/weather/WeatherCanvas';
+import { mapConditionToWeatherType } from './components/weather/weatherThemes';
 import './App.css';
 
 
@@ -132,11 +135,30 @@ export default function App() {
   const [angleMode, setAngleMode] = useState('single');
   const [isGeneratingRemaining, setIsGeneratingRemaining] = useState(false);
   const [remainingProgress, setRemainingProgress] = useState(null);
-
-  // Weather & Style selection for Step 1
+  const [generationSeed, setGenerationSeed] = useState(null);
   const [selectedWeather, setSelectedWeather] = useState('warm');
   const [selectedStyle, setSelectedStyle] = useState('classic');
   const [realtimeWeather, setRealtimeWeather] = useState(null);
+
+  // Weather states for Canvas
+  const [isReducedMotion, setIsReducedMotion] = useState(() => {
+    try {
+      return localStorage.getItem('vp_reduced_motion') === 'true' || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (e) {
+      return false;
+    }
+  });
+
+  const canvasRegionKey = (selectedRegion === 'all' || selectedRegion === 'taynguyen') ? 'bac' : selectedRegion;
+  let activeWeatherType = 'clear';
+  if (realtimeWeather && realtimeWeather.condition) {
+    activeWeatherType = mapConditionToWeatherType(realtimeWeather.condition.type, realtimeWeather.temp);
+  } else {
+    // Nếu chưa load xong hoặc lỗi API, dùng default weather của vùng (mưa, nắng, sương, v.v...)
+    // theo như file prototype gốc
+    const autoMap = { 'bac': 'fog', 'trung': 'clear', 'nam': 'hot', 'taynguyen': 'fog', 'all': 'fog' };
+    activeWeatherType = autoMap[canvasRegionKey] || 'clear';
+  }
 
   // Daily Cultural Tips & Onboarding Modal state
   const [tipIndex, setTipIndex] = useState(0);
@@ -261,9 +283,9 @@ export default function App() {
   // Get filtered outfits for mixer
   const filteredOutfits = selectedScene
     ? filterOutfits({
-        scene: SCENE_MAP[selectedScene],
-        region: REGION_MAP[selectedRegion],
-      })
+      scene: SCENE_MAP[selectedScene],
+      region: REGION_MAP[selectedRegion],
+    })
     : getAllOutfits().slice(0, 4);
 
   // Handle scene selection
@@ -365,14 +387,18 @@ export default function App() {
         accessories: data.accessories
       };
 
+      const currentSeed = Math.floor(Math.random() * 1000000);
+      setGenerationSeed(currentSeed);
+
       const frontImage = await generateOutfitImage(
         data.userPhoto,
         selectedOutfit,
         0,
         null,
-        outfitCustomPayload
+        outfitCustomPayload,
+        currentSeed
       );
-      
+
       setTurntableImages([frontImage]);
       setIsGenerating(false);
 
@@ -395,11 +421,12 @@ export default function App() {
               selectedOutfit,
               angle,
               frontImage,
-              outfitCustomPayload
+              outfitCustomPayload,
+              currentSeed
             );
             setTurntableImages(prev => {
-               if (!prev) return [img];
-               return [...prev, img];
+              if (!prev) return [img];
+              return [...prev, img];
             });
           } catch (e) {
             console.warn('Background gen failed for angle', angle);
@@ -448,7 +475,8 @@ export default function App() {
           selectedOutfit,
           angle,
           frontImage,
-          outfitCustomPayload
+          outfitCustomPayload,
+          generationSeed
         );
         setTurntableImages(prev => {
           if (!prev) return [img];
@@ -591,25 +619,25 @@ export default function App() {
           </div>
 
           <div className="nav-links">
-            <button 
+            <button
               className={`nav-btn ${activeTab === 'home' ? 'nav-btn--active' : ''}`}
               onClick={() => setActiveTab('home')}
             >
               {t('nav_home')}
             </button>
-            <button 
+            <button
               className={`nav-btn ${activeTab === 'mixer' ? 'nav-btn--active' : ''}`}
               onClick={() => setActiveTab('mixer')}
             >
               {t('nav_mixer')}
             </button>
-            <button 
+            <button
               className={`nav-btn ${activeTab === 'explore' ? 'nav-btn--active' : ''}`}
               onClick={() => setActiveTab('explore')}
             >
               {t('nav_explore')}
             </button>
-            <button 
+            <button
               className={`nav-btn ${activeTab === 'compare' ? 'nav-btn--active' : ''}`}
               onClick={() => setActiveTab('compare')}
             >
@@ -618,7 +646,7 @@ export default function App() {
                 <span className="nav-badge">{comparedOutfits.length}</span>
               )}
             </button>
-            <button 
+            <button
               className={`nav-btn ${activeTab === 'lookbook' ? 'nav-btn--active' : ''}`}
               onClick={() => setActiveTab('lookbook')}
             >
@@ -627,7 +655,7 @@ export default function App() {
                 <span className="nav-badge">{savedLookbooks.length}</span>
               )}
             </button>
-            <button 
+            <button
               className={`nav-btn ${activeTab === 'culture' ? 'nav-btn--active' : ''}`}
               onClick={() => setActiveTab('culture')}
             >
@@ -676,61 +704,8 @@ export default function App() {
       {/* VIEW 1: HOME */}
       {activeTab === 'home' && (
         <div className="home-view">
-          {/* Hero Section */}
-          <header className="hero">
-            <div className="hero__bg" />
-            <div className="container hero__content">
-              {showWeatherBanner && realtimeWeather && (
-                <div className="weather-banner glass-panel animate-fade-in" style={{ padding: '8px 16px', borderRadius: '30px', marginBottom: '1.5rem', display: 'inline-flex', alignItems: 'center', gap: '10px', border: '1px solid var(--color-gold)', background: 'rgba(200, 161, 90, 0.15)' }}>
-                  <span style={{ fontSize: '0.9rem', color: 'var(--color-text-primary)' }}>{realtimeWeather.text} Remix một bộ Áo Tấc ấm áp đi dạo phố không?</span>
-                  <button onClick={() => { handleQuickEventSelect('dao-pho'); }} style={{ background: 'var(--color-gold)', color: '#000', border: 'none', borderRadius: '15px', padding: '4px 12px', fontSize: '0.8rem', fontWeight: 'bold', cursor: 'pointer' }}>Thử ngay</button>
-                </div>
-              )}
-              <div className="hero__logo-center animate-fade-in-up" style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.25rem' }}>
-                <AppLogo size="hero" variant={logoVariant} showBadge={true} />
-              </div>
-              <p className="hero__badge">
-                {t('hero_badge')}
-              </p>
-              <div className="hero__tech-chips animate-fade-in-up">
-                <span className="hero-tech-chip">👘 7+ Kiểu cổ phục triều đại Việt • Thử đồ AI trực quan</span>
-                <span className="hero-tech-chip">✨ Phối đồ chuẩn quy chế di sản trong 30 giây</span>
-                <span className="hero-tech-chip">⚡ Powered by Gemini AI</span>
-              </div>
-              <h1 className="hero__title">
-                {t('hero_title_1')}<span className="text-gradient">{t('hero_title_2')}</span>
-              </h1>
-              <p className="hero__desc">
-                {t('hero_desc')}
-              </p>
-              <div className="hero__actions">
-                <button 
-                  className="btn btn-primary btn-lg"
-                  onClick={() => setActiveTab('mixer')}
-                  id="hero-start-cta"
-                  style={{ minWidth: '180px', fontSize: '1.05rem', boxShadow: '0 4px 20px rgba(218, 165, 32, 0.4)' }}
-                >
-                  ✨ {t('hero_btn_mix')}
-                </button>
-                <button 
-                  className="btn btn-secondary btn-lg"
-                  onClick={() => setActiveTab('lookbook')}
-                >
-                  {t('hero_btn_lookbook')}
-                </button>
-              </div>
-              <div className="hero__sublink-row" style={{ marginTop: '0.85rem' }}>
-                <button 
-                  type="button"
-                  className="btn-text-link"
-                  onClick={() => setIsOnboardingOpen(true)}
-                  style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.7)', fontSize: '0.82rem', cursor: 'pointer', textDecoration: 'underline' }}
-                >
-                  📖 {t('hero_btn_guide')} (3 bước)
-                </button>
-              </div>
-            </div>
-          </header>
+          {/* Hero Section: Era Slider Carousel */}
+          <HeroCarousel onSelectOutfit={handleSelectFromOtherViews} />
 
           {/* 1. BỐN THẺ LỐI TẮT THEO SỰ KIỆN */}
           <section className="container event-shortcuts-section animate-fade-in-up">
@@ -743,13 +718,13 @@ export default function App() {
             <div className="event-shortcuts-grid">
               {EVENT_SHORTCUTS.map(sc => {
                 const scTitle = sc.id === 'tet' ? t('event_tet_title') :
-                                sc.id === 'tot-nghiep' ? t('event_grad_title') :
-                                sc.id === 'dam-cuoi' ? t('event_wedding_title') :
-                                t('event_yearbook_title');
+                  sc.id === 'tot-nghiep' ? t('event_grad_title') :
+                    sc.id === 'dam-cuoi' ? t('event_wedding_title') :
+                      t('event_yearbook_title');
                 const scDesc = sc.id === 'tet' ? t('event_tet_desc') :
-                               sc.id === 'tot-nghiep' ? t('event_grad_desc') :
-                               sc.id === 'dam-cuoi' ? t('event_wedding_desc') :
-                               t('event_yearbook_desc');
+                  sc.id === 'tot-nghiep' ? t('event_grad_desc') :
+                    sc.id === 'dam-cuoi' ? t('event_wedding_desc') :
+                      t('event_yearbook_desc');
                 return (
                   <button
                     key={sc.id}
@@ -779,13 +754,13 @@ export default function App() {
             <div className="regional-strip-grid">
               {REGIONAL_STRIPS.map(reg => {
                 const regName = reg.id === 'bac' ? t('reg_bac') :
-                                reg.id === 'trung' ? t('reg_trung') :
-                                reg.id === 'nam' ? t('reg_nam') :
-                                t('reg_highlands');
+                  reg.id === 'trung' ? t('reg_trung') :
+                    reg.id === 'nam' ? t('reg_nam') :
+                      t('reg_highlands');
                 const regDesc = reg.id === 'bac' ? t('reg_bac_desc') :
-                                reg.id === 'trung' ? t('reg_trung_desc') :
-                                reg.id === 'nam' ? t('reg_nam_desc') :
-                                t('reg_highlands_desc');
+                  reg.id === 'trung' ? t('reg_trung_desc') :
+                    reg.id === 'nam' ? t('reg_nam_desc') :
+                      t('reg_highlands_desc');
                 return (
                   <button
                     key={reg.id}
@@ -853,7 +828,7 @@ export default function App() {
                   <h3 className="highlight-title">{outfit.ten}</h3>
                   <p className="highlight-desc">{outfit.mo_ta_ngan}</p>
                   <div className="highlight-actions">
-                    <button 
+                    <button
                       className="btn btn-primary btn-sm btn-block"
                       onClick={() => handleSelectFromOtherViews(outfit)}
                     >
@@ -930,9 +905,11 @@ export default function App() {
 
       {/* VIEW 2: MIX & MATCH (PHỐI ĐỒ 5 BƯỚC) */}
       {activeTab === 'mixer' && (
-        <main className="container main-content">
-          {/* Sticky Stepper (Priority 4) */}
-          <StickyStepper currentStep={currentMixerStep} stepTitle={mixerStepTitle} />
+        <div className="mixer-view">
+          <WeatherCanvas regionKey={canvasRegionKey} weatherType={activeWeatherType} isReducedMotion={isReducedMotion} />
+          <main className="container main-content" style={{ position: 'relative', zIndex: 10 }}>
+            {/* Sticky Stepper (Priority 4) */}
+            <StickyStepper currentStep={currentMixerStep} stepTitle={mixerStepTitle} />
 
           {/* Step 1: Scene Selection */}
           <SceneSelector
@@ -1037,26 +1014,26 @@ export default function App() {
                       selectedOutfit={selectedOutfit}
                       customizationData={customizationData}
                     />
-                    
+
                     {/* Thanh công cụ hành động nhanh chuyển sang dưới ảnh (cột trái) */}
                     {turntableImages && selectedOutfit && (
                       <div className="result-actions-panel glass-panel" style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                        <button 
+                        <button
                           className="btn btn-primary btn-block"
                           onClick={handleSaveToLookbook}
                         >
                           💖 Lưu vào Lookbook cá nhân
                         </button>
-                        <button 
+                        <button
                           className="btn btn-secondary btn-block"
                           onClick={handleAddToCompare}
                         >
                           ⚖️ Thêm vào danh sách So sánh ({comparedOutfits.length}/3)
                         </button>
-                        <button 
+                        <button
                           className="btn btn-primary btn-block"
-                          style={{ 
-                            background: 'linear-gradient(135deg, #b8860b 0%, #8b0000 100%)', 
+                          style={{
+                            background: 'linear-gradient(135deg, #b8860b 0%, #8b0000 100%)',
                             borderColor: '#ffd700',
                             boxShadow: '0 4px 15px rgba(218, 165, 32, 0.35)'
                           }}
@@ -1108,6 +1085,7 @@ export default function App() {
             )}
           </div>
         </main>
+        </div>
       )}
 
       {/* VIEW 3: EXPLORE COSTUMES */}
@@ -1185,7 +1163,7 @@ export default function App() {
       />
 
       {/* Hiệu ứng cánh sen rơi phủ khắp giao diện */}
-      <LotusPetals enabled={petalsEnabled} />
+      <LotusPetals enabled={petalsEnabled && activeTab !== 'mixer'} />
 
       {/* Cố vấn Việt Phục AI Chatbot */}
       <ChatBot />

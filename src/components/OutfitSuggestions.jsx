@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import CostumeDetailModal from './CostumeDetailModal';
 import WeatherAdvisorWidget from './WeatherAdvisorWidget';
+import OutfitGlass from './weather/OutfitGlass';
 import './OutfitSuggestions.css';
 
 function getRegionBadgeClass(region) {
@@ -125,8 +126,12 @@ export default function OutfitSuggestions({
 
               {/* Real-time Weather matching badge */}
               {isWeatherRecommended && (
-                <div className="weather-recommend-badge" title={realtimeWeather?.recommendation?.adviceVi}>
-                  <span>{realtimeWeather?.condition?.icon} Chuẩn thời tiết ({realtimeWeather?.temp}°C)</span>
+                <div className={`weather-recommend-badge ${realtimeWeather?.condition?.type?.includes('rain') || realtimeWeather?.condition?.type?.includes('storm') ? 'weather-badge-rain' : ''}`} title={realtimeWeather?.recommendation?.adviceVi}>
+                  <span>
+                    {realtimeWeather?.condition?.icon} Chuẩn thời tiết 
+                    {realtimeWeather?.temp >= 33 ? ' (Nên mặc lụa mỏng)' : 
+                     (realtimeWeather?.condition?.type?.includes('rain') || realtimeWeather?.condition?.type?.includes('storm')) ? ' (Thêm nón lá/ô)' : ''}
+                  </span>
                 </div>
               )}
 
@@ -135,6 +140,10 @@ export default function OutfitSuggestions({
                 className="outfit-card__img-wrap"
                 onClick={() => onSelect(outfit)}
               >
+                <OutfitGlass 
+                  weatherType={realtimeWeather?.condition?.type?.includes('rain') || realtimeWeather?.condition?.type?.includes('storm') ? 'shower' : 'clear'} 
+                  isReducedMotion={false} 
+                />
                 <div className="outfit-card__placeholder">
                   <span className="outfit-card__placeholder-icon">👘</span>
                   <span className="outfit-card__placeholder-title">{outfit.ten}</span>

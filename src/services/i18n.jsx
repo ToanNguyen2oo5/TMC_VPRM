@@ -35,7 +35,7 @@ const TRANSLATIONS = {
     hero_btn_music: '🎶 Nhạc Nền',
     hero_btn_music_play: '🎶 Bật Nhạc Nền',
     hero_btn_music_pause: '⏸ Tắt Nhạc Nền',
-    hero_btn_guide: '❓ Hướng dẫn',
+    hero_btn_guide: 'Hướng dẫn nhanh',
 
     // Quick Event Shortcuts
     event_shortcuts_badge: 'Chọn nhanh theo sự kiện',
@@ -157,7 +157,7 @@ const TRANSLATIONS = {
     hero_btn_music: '🎶 BGM Music',
     hero_btn_music_play: '🎶 Play BGM',
     hero_btn_music_pause: '⏸ Pause BGM',
-    hero_btn_guide: '❓ Guide',
+    hero_btn_guide: 'Quick Guide',
 
     // Quick Event Shortcuts
     event_shortcuts_badge: 'Quick Event Shortcuts',
