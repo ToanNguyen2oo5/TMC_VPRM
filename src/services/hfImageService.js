@@ -22,19 +22,19 @@ export async function generateOutfitImageWithFaceHF(userPhotoBase64, outfitData,
 
   const faceBlob = base64ToBlob(userPhotoBase64);
 
-  // Tham số chuẩn của yanze/PuLID-FLUX
+  // Tham số tối ưu cho yanze/PuLID-FLUX để khuôn mặt tự nhiên, không bị méo hay bệt
   // prompt, id_image, start_step, guidance, seed, true_cfg, width, height, num_steps, id_weight, neg_prompt, timestep_to_start_cfg, max_sequence_length
   const inputs = [
     prompt,
     faceBlob,
     4,        // start_step
-    4,        // guidance
+    3.5,      // guidance (3.5 cân bằng độ chân thực và tương phản)
     -1,       // seed (random)
     1,        // true_cfg
     896,      // width
     1152,     // height
-    20,       // num_steps
-    1.0,      // id_weight
+    24,       // num_steps (24 bước giúp chi tiết vải và da mượt mà)
+    0.8,      // id_weight (0.8 giúp khuôn mặt tự nhiên, không bị cứng đơ hay méo)
     negPrompt, // neg_prompt
     1,        // timestep_to_start_cfg
     128       // max_sequence_length

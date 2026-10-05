@@ -13,6 +13,11 @@ export default defineConfig({
         target: 'https://api.replicate.com',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/replicate-api/, '')
+      },
+      '/cloudflare-ai': {
+        target: 'https://api.cloudflare.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/cloudflare-ai/, '')
       }
     }
   }

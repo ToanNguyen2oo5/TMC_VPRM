@@ -1,5 +1,6 @@
 import { GoogleGenAI } from '@google/genai';
 import { generateOutfitImageWithFaceHF } from './hfImageService';
+import { generateOutfitWithCloudflare } from './cloudflareImageService';
 import { 
   getGarmentContext, 
   translateCustomizations, 
@@ -184,34 +185,43 @@ export async function generateOutfitImage(userPhotoBase64, outfitData, angle = 0
   }
 
   // =========================================================================
-  // DỰ PHÒNG 2 (FALLBACK 2): FLUX.1 Realism (12B Ultra HD Photorealism)
+  // DỰ PHÒNG 2 (FALLBACK 2): CLOUDFLARE WORKERS AI - FLUX.1 [SCHNELL]
+  // Tốc độ cao (~2-4s), sắc nét đỉnh cao, 10.000 neurons miễn phí mỗi ngày
   // =========================================================================
-  console.info('🚀 [DỰ PHÒNG 2] Tự động kích hoạt Model FLUX.1 Realism (Black Forest Labs 12B - Ultra HD Photorealism)...');
+  try {
+    console.info('⚡ [DỰ PHÒNG 2] Tự động kích hoạt Cloudflare Workers AI FLUX.1 [schnell] cho:', outfitData.ten);
+    return await generateOutfitWithCloudflare(outfitData, angle, customizations, userPhotoBase64);
+  } catch (cfError) {
+    console.warn('⚠️ Cloudflare Workers AI gặp lỗi hoặc chưa cấu hình:', cfError.message);
+  }
+
+  // =========================================================================
+  // DỰ PHÒNG 3 (FALLBACK 3): FLUX.1 REALISM ĐỘC LẬP (POLLINATIONS)
+  // Đảm bảo 100% ứng dụng luôn có ảnh trả về với độ nét cao
+  // =========================================================================
+  console.info('🚀 [DỰ PHÒNG 3] Tự động kích hoạt Model FLUX.1 Dự phòng an toàn...');
   return await generateFallbackImage(outfitData, angle, customizations);
 }
 
 /**
- * Sinh ảnh cao cấp bằng FLUX.1 Realism (Black Forest Labs 12B model qua Pollinations.ai)
- * Model FLUX.1 Realism chuyên tạo ảnh chân dung chân thực, độ nét cao, sợi chỉ thêu vàng và nếp vải rủ tự nhiên.
+ * Sinh ảnh dự phòng an toàn bằng FLUX.1
  * Độ phân giải chuẩn: 896x1152 (tỉ lệ 3:4 chân dung toàn thân sắc nét).
  */
 async function generateFallbackImage(outfitData, angle = 0, customizations = {}) {
   const basePrompt = buildSnapshotPrompt(outfitData, angle, customizations);
-  const fullPrompt = `${basePrompt} Negative prompt: ${SNAPSHOT_NEGATIVE_PROMPT}`;
+  const fullPrompt = `${basePrompt}, 8k portrait, cinematic lighting, ultra-detailed fabric textures, traditional Vietnamese costume masterpiece, extremely high quality`;
 
-  console.group(`🎨 [AI ENGINE: FLUX.1 REALISM (12B)] - ${outfitData.ten} (Góc ${angle}°)`);
+  console.group(`🎨 [AI ENGINE: FLUX.1 DỰ PHÒNG] - ${outfitData.ten} (Góc ${angle}°)`);
   console.log('📌 OUTFIT ID:', outfitData.id, '| ANGLE:', angle);
-  console.log('🚀 MODEL: FLUX.1 Realism (Black Forest Labs 12B Parameters - Ultra Photorealism)');
+  console.log('🚀 MODEL: FLUX.1 High Definition');
   console.log('📐 RESOLUTION: 896x1152 (HD Portrait Head-to-Toe)');
   console.log('📝 PROMPT HOÀN CHỈNH TIÊM VÀO FLUX:\n\n' + fullPrompt);
   console.groupEnd();
 
-  // Random seed để các góc không bị trùng ảnh nếu prompt quá giống nhau
-  const seed = Math.floor(Math.random() * 100000);
+  const seed = Math.floor(Math.random() * 1000000);
   const encodedPrompt = encodeURIComponent(fullPrompt);
 
-  // FLUX.1 Realism với kích thước 896x1152, nologo=true, enhance=false để giữ nguyên prompt văn hóa chuẩn
-  return `https://image.pollinations.ai/prompt/${encodedPrompt}?width=896&height=1152&nologo=true&model=flux-realism&enhance=false&seed=${seed}`;
+  return `https://image.pollinations.ai/prompt/${encodedPrompt}?width=896&height=1152&nologo=true&model=flux&enhance=true&seed=${seed}`;
 }
 
 

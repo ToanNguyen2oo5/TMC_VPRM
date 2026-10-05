@@ -76,6 +76,12 @@ export default function TurntableViewer({
     }
   }, [images]);
 
+  const normalizeImageSrc = (src) => {
+    if (!src) return '';
+    if (src.startsWith('http://') || src.startsWith('https://') || src.startsWith('data:')) return src;
+    return `data:image/jpeg;base64,${src}`;
+  };
+
   // Preload images into browser cache
   useEffect(() => {
     if (!images) return;
@@ -83,7 +89,7 @@ export default function TurntableViewer({
       if (preloaded[i]) return;
       const img = new Image();
       img.onload = () => setPreloaded(prev => ({ ...prev, [i]: true }));
-      img.src = src.startsWith('http') ? src : `data:image/png;base64,${src}`;
+      img.src = normalizeImageSrc(src);
     });
   }, [images, preloaded]);
 
@@ -222,7 +228,7 @@ export default function TurntableViewer({
 
   const isMulti = angleMode === 'multi' || images.length > 1 || isGeneratingRemaining;
   const activeImg = images[activeIndex] || images[0];
-  const imgSrc = activeImg && (activeImg.startsWith('http') ? activeImg : `data:image/png;base64,${activeImg}`);
+  const imgSrc = normalizeImageSrc(activeImg);
 
   return (
     <section className="turntable" id="turntable-viewer">
