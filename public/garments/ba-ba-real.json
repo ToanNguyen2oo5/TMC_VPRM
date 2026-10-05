@@ -1,0 +1,17 @@
+{
+  "id": "ba-ba-real",
+  "name": "Bà Ba (Thật)",
+  "image": "/garments/ba-ba-placeholder.png",
+  "category": "upper",
+  "keypoints": {
+    "neck": { "x": 0.5, "y": 0.02 },
+    "shoulderL": { "x": 0.70, "y": 0.08 },
+    "shoulderR": { "x": 0.30, "y": 0.08 },
+    "elbowL": { "x": 0.85, "y": 0.35 },
+    "elbowR": { "x": 0.15, "y": 0.35 },
+    "wristL": { "x": 0.95, "y": 0.60 },
+    "wristR": { "x": 0.05, "y": 0.60 },
+    "waist": { "x": 0.5, "y": 0.45 },
+    "hem": { "x": 0.5, "y": 0.85 }
+  }
+}

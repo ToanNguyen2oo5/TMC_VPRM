@@ -1,22 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 600">
   <defs>
-    <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stopColor="#8B4513" />
-      <stop offset="100%" stopColor="#5C4033" />
-    </linearGradient>
-    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stopColor="#FF69B4" />
-      <stop offset="100%" stopColor="#C71585" />
-    </linearGradient>
-    <linearGradient id="secondaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stopColor="#228B22" />
-      <stop offset="100%" stopColor="#006400" />
-    </linearGradient>
-  </defs>
+  <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#8B4513" />
+    <stop offset="100%" stop-color="#5C4033" />
+  </linearGradient>
+  <linearGradient id="secondaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#228B22" />
+    <stop offset="100%" stop-color="#006400" />
+  </linearGradient>
+  <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#FF69B4" />
+    <stop offset="100%" stop-color="#C71585" />
+  </linearGradient>
+</defs>
 
   <!-- Yếm đào -->
   <path d="M150 114 C162 124, 178 124, 190 114 L198 215 C180 220, 160 220, 142 215 Z" fill="url(#accentGrad)" />
-  <path d="M152 114 C162 104, 178 104, 188 114" stroke="#FF69B4" strokeWidth="2.5" fill="none" />
+  <path d="M152 114 C162 104, 178 104, 188 114" stroke="#FF69B4" stroke-width="2.5" fill="none" />
 
   <!-- Vạt sau -->
   <path d="M120 120 C140 122, 150 122, 148 210 C144 270, 118 360, 108 420 C102 415, 104 400, 114 340 C118 270, 122 170, 120 120 Z" fill="url(#primaryGrad)" />

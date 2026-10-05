@@ -1,14 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 600">
   <defs>
-    <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stopColor="#B22222" />
-      <stop offset="100%" stopColor="#800000" />
-    </linearGradient>
-    <linearGradient id="secondaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stopColor="#DAA520" />
-      <stop offset="100%" stopColor="#B8860B" />
-    </linearGradient>
-  </defs>
+  <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#FFFFFF" />
+    <stop offset="100%" stop-color="#F0F0F0" />
+  </linearGradient>
+  <linearGradient id="secondaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#FF0000" />
+    <stop offset="100%" stop-color="#CC0000" />
+  </linearGradient>
+  <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#DAA520" />
+    <stop offset="100%" stop-color="#B8860B" />
+  </linearGradient>
+</defs>
   
   <!-- Quần lụa bên trong -->
   <path d="M120 240 C110 320, 95 440, 85 540 C110 550, 130 550, 150 540 C145 440, 140 320, 138 240 Z" fill="url(#secondaryGrad)" />

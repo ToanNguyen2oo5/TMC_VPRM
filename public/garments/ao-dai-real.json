@@ -1,0 +1,17 @@
+{
+  "id": "ao-dai-real",
+  "name": "Áo Dài (Thật)",
+  "image": "/garments/ao-dai-placeholder.png",
+  "category": "dress",
+  "keypoints": {
+    "neck": { "x": 0.5, "y": 0.02 },
+    "shoulderL": { "x": 0.70, "y": 0.08 },
+    "shoulderR": { "x": 0.30, "y": 0.08 },
+    "elbowL": { "x": 0.85, "y": 0.40 },
+    "elbowR": { "x": 0.15, "y": 0.40 },
+    "wristL": { "x": 0.95, "y": 0.65 },
+    "wristR": { "x": 0.05, "y": 0.65 },
+    "waist": { "x": 0.5, "y": 0.50 },
+    "hem": { "x": 0.5, "y": 0.95 }
+  }
+}

@@ -140,6 +140,25 @@
   white-space: nowrap;
 }
 
+.webar-outfit-guidance {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 5;
+  max-width: min(92%, 520px);
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 193, 7, 0.65);
+  border-radius: 12px;
+  background: rgba(30, 22, 8, 0.86);
+  color: #fff4c2;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
 .status-indicator-dot {
   width: 8px;
   height: 8px;

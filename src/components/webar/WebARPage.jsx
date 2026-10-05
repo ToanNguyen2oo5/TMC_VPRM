@@ -24,15 +24,50 @@ export default function WebARPage({ onExit, onToast }) {
 
   // Outfit Selector State
   const [selectedOutfitId, setSelectedOutfitId] = useState('ao-dai');
-  const [selectedOutfitImage, setSelectedOutfitImage] = useState('/costumes/ao-dai.svg');
+  const [outfitTrackingState, setOutfitTrackingState] = useState('off');
 
   const OUTFITS = useMemo(() => [
-    { id: 'ao-dai', name: 'Áo Dài', image: '/costumes/ao-dai.svg' },
-    { id: 'tu-than', name: 'Tứ Thân', image: '/costumes/tu-than.svg' },
-    { id: 'nhat-binh', name: 'Nhật Bình', image: '/costumes/nhat-binh.svg' },
-    { id: 'ngu-than', name: 'Ngũ Thân', image: '/costumes/ngu-than.svg' },
-    { id: 'ba-ba', name: 'Bà Ba', image: '/costumes/ba-ba.svg' },
-    { id: 'giao-linh', name: 'Giao Lĩnh', image: '/costumes/giao-linh.svg' },
+    { 
+      id: 'ao-dai-real', name: 'Áo Dài (Thật)', image: '/garments/ao-dai-placeholder.png',
+      keypoints: {
+        neck: { x: 0.5, y: 0.02 },
+        shoulderL: { x: 0.70, y: 0.08 },
+        shoulderR: { x: 0.30, y: 0.08 },
+        elbowL: { x: 0.85, y: 0.40 },
+        elbowR: { x: 0.15, y: 0.40 },
+        wristL: { x: 0.95, y: 0.65 },
+        wristR: { x: 0.05, y: 0.65 },
+        waist: { x: 0.5, y: 0.50 },
+        hem: { x: 0.5, y: 0.95 }
+      },
+      category: 'dress', widthScale: 1.25, bodyHeightScale: 2.35, verticalOffset: 0.1
+    },
+    { 
+      id: 'ba-ba-real', name: 'Bà Ba (Thật)', image: '/garments/ba-ba-placeholder.png',
+      keypoints: {
+        neck: { x: 0.5, y: 0.02 },
+        shoulderL: { x: 0.70, y: 0.08 },
+        shoulderR: { x: 0.30, y: 0.08 },
+        elbowL: { x: 0.85, y: 0.35 },
+        elbowR: { x: 0.15, "y": 0.35 },
+        wristL: { x: 0.95, y: 0.60 },
+        wristR: { x: 0.05, y: 0.60 },
+        waist: { x: 0.5, y: 0.45 },
+        hem: { x: 0.5, y: 0.85 }
+      },
+      category: 'upper', widthScale: 1.1, bodyHeightScale: 1.05, verticalOffset: 0.1
+    },
+    // Fallback cũ (đã đổi tên)
+    { 
+      id: 'ao-dai', name: 'Áo Dài (Vector)', image: '/costumes/ao-dai.svg?v=3',
+      shoulderL: { x: 220/350, y: 122/600 }, shoulderR: { x: 134/350, y: 122/600 },
+      hemY: 540/600, coverTo: 'ankle', widthScale: 1.2
+    },
+    { 
+      id: 'tu-than', name: 'Tứ Thân (Vector)', image: '/costumes/tu-than.svg?v=3',
+      shoulderL: { x: 220/350, y: 120/600 }, shoulderR: { x: 120/350, y: 120/600 },
+      hemY: 450/600, coverTo: 'ankle', widthScale: 1.25
+    },
     { id: 'none', name: 'Không Mặc', image: null }
   ], []);
 
@@ -180,7 +215,8 @@ export default function WebARPage({ onExit, onToast }) {
             onDeviceListAvailable={setAvailableDevices}
             onCaptureReady={setCapturedPhotoUrl}
             externalCaptureTrigger={captureTrigger}
-            selectedOutfit={selectedOutfitImage ? { id: selectedOutfitId, image: selectedOutfitImage } : null}
+            selectedOutfit={OUTFITS.find(o => o.id === selectedOutfitId)}
+            onOutfitTrackingChange={setOutfitTrackingState}
           />
         ) : (
           <div className="webar-camera-disabled-card glass-panel">
@@ -205,6 +241,11 @@ export default function WebARPage({ onExit, onToast }) {
             {isDebug && <span className="fps-counter">FPS: {fps}</span>}
           </div>
         )}
+        {isCameraActive && selectedOutfitId !== 'none' && outfitTrackingState === 'stepBack' && (
+          <div className="webar-outfit-guidance" role="status">
+            Lùi ra 1–2 bước để camera thấy rõ cả hai vai và hông trước khi ướm áo.
+          </div>
+        )}
       </main>
 
       {/* 3. Bảng điều khiển chọn phụ kiện & Nút chụp ảnh */}
@@ -221,7 +262,6 @@ export default function WebARPage({ onExit, onToast }) {
                 style={{ padding: '6px 12px', fontSize: '0.9rem', borderRadius: '20px', whiteSpace: 'nowrap' }}
                 onClick={() => {
                   setSelectedOutfitId(o.id);
-                  setSelectedOutfitImage(o.image);
                 }}
               >
                 {o.name}
