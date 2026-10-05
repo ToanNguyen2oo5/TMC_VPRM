@@ -16,12 +16,23 @@ export async function generateOutfitWithCloudflare(outfitData, angle = 0, custom
 
   // Xây dựng prompt chi tiết
   const basePrompt = buildSnapshotPrompt(outfitData, angle, customizations);
-  
+
+  // Tối ưu độ dài prompt vì Cloudflare Workers AI giới hạn nghiêm ngặt prompt <= 2048 ký tự
+  let cleanPrompt = basePrompt;
+  if (cleanPrompt.length > 1750) {
+    cleanPrompt = cleanPrompt.substring(0, 1750).replace(/,[^,]*$/, '');
+  }
+
   // Tinh chỉnh prompt với các từ khóa kích thích chất lượng ảnh đỉnh cao
-  let enhancedPrompt = `${basePrompt}, 8k portrait, cinematic natural lighting, award-winning photography, ultra-detailed fabric textures, traditional Vietnamese costume masterpiece, extremely high quality`;
+  let enhancedPrompt = `${cleanPrompt}, 8k portrait, cinematic natural lighting, award-winning photography, ultra-detailed fabric textures, traditional Vietnamese costume masterpiece, photorealistic`;
   
   if (userPhotoBase64) {
     enhancedPrompt += ', preserving Vietnamese youthful facial features, natural Asian skin tone and elegant posture';
+  }
+
+  // Khống chế nghiêm ngặt tối đa 2000 ký tự (Cloudflare giới hạn <= 2048)
+  if (enhancedPrompt.length > 2000) {
+    enhancedPrompt = enhancedPrompt.substring(0, 1980).replace(/,[^,]*$/, '') + ', 8k photorealistic';
   }
 
   console.group(`⚡ [CLOUDFLARE WORKERS AI - FLUX.1 SCHNELL] - ${outfitData.ten} (Góc ${angle}°)`);
