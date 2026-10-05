@@ -157,23 +157,23 @@ export async function generateOutfitImage(userPhotoBase64, outfitData, angle = 0
   }
 
   // =========================================================================
-  // ƯU TIÊN SỐ 1: GOOGLE GEMINI API (Luôn luôn thực thi trước)
+  // ƯU TIÊN SỐ 1 (PRIORITY 1): CLOUDFLARE WORKERS AI - FLUX.1 [SCHNELL]
+  // Siêu tốc (~2-3s), độ nét cao, 10.000 neurons miễn phí/ngày, không bị lỗi 429
   // =========================================================================
-  try {
-    console.info(`🎯 [ƯU TIÊN 1] Đang gọi Google Gemini Image Generator cho: ${outfitData.ten} (Góc ${angle}°)...`);
-    return await generateWithGemini(userPhotoBase64, outfitData, angle, referenceImageBase64, customizations);
-  } catch (geminiError) {
-    const isQuotaError = geminiError.message?.includes('429') || geminiError.message?.includes('RESOURCE_EXHAUSTED');
-    if (isQuotaError) {
-      console.warn('⚠️ Google Gemini API bị giới hạn Quota = 0 (Free Tier yêu cầu Pay-as-you-go). Chi tiết:', geminiError.message);
-    } else {
-      console.warn('⚠️ Google Gemini API gặp lỗi:', geminiError.message);
+  const cfAccountId = import.meta.env.VITE_CF_ACCOUNT_ID;
+  const cfApiToken = import.meta.env.VITE_CF_API_TOKEN;
+  if (cfAccountId && cfApiToken) {
+    try {
+      console.info(`⚡ [ƯU TIÊN 1] Đang kích hoạt Cloudflare Workers AI FLUX.1 [schnell] cho: ${outfitData.ten} (Góc ${angle}°)...`);
+      return await generateOutfitWithCloudflare(outfitData, angle, customizations, userPhotoBase64);
+    } catch (cfError) {
+      console.warn('⚠️ Cloudflare Workers AI gặp lỗi hoặc hết quota, chuyển sang dự phòng:', cfError.message);
     }
   }
 
   // =========================================================================
   // DỰ PHÒNG 1 (FALLBACK 1): HUGGING FACE FLUX PuLID
-  // Chỉ kích hoạt khi Gemini thất bại VÀ người dùng có tải lên ảnh khuôn mặt
+  // Kích hoạt khi có ảnh khuôn mặt người dùng
   // =========================================================================
   if (userPhotoBase64) {
     try {
@@ -185,14 +185,14 @@ export async function generateOutfitImage(userPhotoBase64, outfitData, angle = 0
   }
 
   // =========================================================================
-  // DỰ PHÒNG 2 (FALLBACK 2): CLOUDFLARE WORKERS AI - FLUX.1 [SCHNELL]
-  // Tốc độ cao (~2-4s), sắc nét đỉnh cao, 10.000 neurons miễn phí mỗi ngày
+  // DỰ PHÒNG 2 (FALLBACK 2): GOOGLE GEMINI API
+  // Tự động kích hoạt khi có tài khoản Google hỗ trợ sinh ảnh
   // =========================================================================
   try {
-    console.info('⚡ [DỰ PHÒNG 2] Tự động kích hoạt Cloudflare Workers AI FLUX.1 [schnell] cho:', outfitData.ten);
-    return await generateOutfitWithCloudflare(outfitData, angle, customizations, userPhotoBase64);
-  } catch (cfError) {
-    console.warn('⚠️ Cloudflare Workers AI gặp lỗi hoặc chưa cấu hình:', cfError.message);
+    console.info(`🎯 [DỰ PHÒNG 2] Đang thử Google Gemini Image Generator cho: ${outfitData.ten} (Góc ${angle}°)...`);
+    return await generateWithGemini(userPhotoBase64, outfitData, angle, referenceImageBase64, customizations);
+  } catch (geminiError) {
+    console.warn('⚠️ Google Gemini API gặp lỗi hoặc hết Quota:', geminiError.message);
   }
 
   // =========================================================================

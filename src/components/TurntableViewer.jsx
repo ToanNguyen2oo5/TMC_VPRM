@@ -165,7 +165,7 @@ export default function TurntableViewer({
     const baseStage = CULTURAL_STAGES[currentStageIdx];
     const stage = baseStage.id === 3 ? {
       ...baseStage,
-      title: isUsingSampleAvatar ? `Gemini AI tạo mockup trên ${avatarName}` : 'Gemini AI may đo & ướm tà',
+      title: isUsingSampleAvatar ? `AI Di sản tạo mockup trên ${avatarName}` : 'AI Di sản may đo & ướm tà',
       desc: isUsingSampleAvatar
         ? `Dựng nếp áo và tỷ lệ chuẩn mực trên nhân vật mẫu ${avatarName}`
         : 'Bóc tách vóc dáng và dựng dáng áo chuẩn tỷ lệ trên ảnh chân dung của bạn'
@@ -181,8 +181,8 @@ export default function TurntableViewer({
           </h2>
           <p className="turntable__subtitle">
             {isUsingSampleAvatar
-              ? `Hệ thống đang kết hợp Google Gemini AI với điển chế cổ phục để tạo mockup trên ${avatarName}`
-              : 'Hệ thống đang kết hợp Google Gemini AI với điển chế cổ phục để ướm thử trang phục lên ảnh chân dung của bạn'}
+              ? `Hệ thống đang kết hợp mô hình AI thế hệ mới với điển chế cổ phục để tạo mockup trên ${avatarName}`
+              : 'Hệ thống đang kết hợp mô hình AI thế hệ mới với điển chế cổ phục để ướm thử trang phục lên ảnh chân dung của bạn'}
           </p>
         </div>
 
