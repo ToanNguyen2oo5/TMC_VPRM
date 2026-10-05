@@ -1,6 +1,7 @@
 import { GoogleGenAI } from '@google/genai';
 import { generateOutfitImageWithFaceHF } from './hfImageService';
 import { generateOutfitWithCloudflare } from './cloudflareImageService';
+import { swapFaceOnImage } from './faceSwapService';
 import { 
   getGarmentContext, 
   translateCustomizations, 
@@ -156,51 +157,57 @@ export async function generateOutfitImage(userPhotoBase64, outfitData, angle = 0
     return getDemoImage(outfitData.id, angle);
   }
 
+  let baseCostumeImage = null;
+
   // =========================================================================
-  // ƯU TIÊN SỐ 1 (PRIORITY 1): CLOUDFLARE WORKERS AI - FLUX.1 [SCHNELL]
-  // Siêu tốc (~2-3s), độ nét cao, 10.000 neurons miễn phí/ngày, không bị lỗi 429
+  // GIAI ĐOẠN 1: TẠO THÂN HÌNH & TRANG PHỤC VIỆT PHỤC CHUẨN ĐẸP 100%
   // =========================================================================
+
+  // 1. ƯU TIÊN SỐ 1: CLOUDFLARE WORKERS AI - FLUX.1 [SCHNELL] (Siêu tốc 2-3s)
   const cfAccountId = import.meta.env.VITE_CF_ACCOUNT_ID;
   const cfApiToken = import.meta.env.VITE_CF_API_TOKEN;
   if (cfAccountId && cfApiToken) {
     try {
-      console.info(`⚡ [ƯU TIÊN 1] Đang kích hoạt Cloudflare Workers AI FLUX.1 [schnell] cho: ${outfitData.ten} (Góc ${angle}°)...`);
-      return await generateOutfitWithCloudflare(outfitData, angle, customizations, userPhotoBase64);
+      console.info(`⚡ [GIAI ĐOẠN 1] Kích hoạt Cloudflare Workers AI FLUX.1 [schnell] cho: ${outfitData.ten} (Góc ${angle}°)...`);
+      baseCostumeImage = await generateOutfitWithCloudflare(outfitData, angle, customizations, userPhotoBase64);
     } catch (cfError) {
       console.warn('⚠️ Cloudflare Workers AI gặp lỗi hoặc hết quota, chuyển sang dự phòng:', cfError.message);
     }
   }
 
-  // =========================================================================
-  // DỰ PHÒNG 1 (FALLBACK 1): HUGGING FACE FLUX PuLID
-  // Kích hoạt khi có ảnh khuôn mặt người dùng
-  // =========================================================================
-  if (userPhotoBase64) {
+  // 2. DỰ PHÒNG 1: GOOGLE GEMINI API
+  if (!baseCostumeImage) {
     try {
-      console.info('🔄 [DỰ PHÒNG 1] Chuyển tiếp sang Hugging Face FLUX PuLID ghép mặt cho:', outfitData.ten);
-      return await generateOutfitImageWithFaceHF(userPhotoBase64, outfitData, angle, customizations);
-    } catch (hfError) {
-      console.warn('⚠️ Hugging Face FLUX PuLID gặp lỗi hoặc hết Quota GPU:', hfError.message);
+      console.info(`🎯 [DỰ PHÒNG 1] Đang thử Google Gemini Image Generator cho: ${outfitData.ten} (Góc ${angle}°)...`);
+      baseCostumeImage = await generateWithGemini(userPhotoBase64, outfitData, angle, referenceImageBase64, customizations);
+    } catch (geminiError) {
+      console.warn('⚠️ Google Gemini API gặp lỗi hoặc hết Quota:', geminiError.message);
     }
   }
 
-  // =========================================================================
-  // DỰ PHÒNG 2 (FALLBACK 2): GOOGLE GEMINI API
-  // Tự động kích hoạt khi có tài khoản Google hỗ trợ sinh ảnh
-  // =========================================================================
-  try {
-    console.info(`🎯 [DỰ PHÒNG 2] Đang thử Google Gemini Image Generator cho: ${outfitData.ten} (Góc ${angle}°)...`);
-    return await generateWithGemini(userPhotoBase64, outfitData, angle, referenceImageBase64, customizations);
-  } catch (geminiError) {
-    console.warn('⚠️ Google Gemini API gặp lỗi hoặc hết Quota:', geminiError.message);
+  // 3. DỰ PHÒNG 2: FLUX.1 REALISM ĐỘC LẬP
+  if (!baseCostumeImage) {
+    console.info('🚀 [DỰ PHÒNG 2] Tự động kích hoạt Model FLUX.1 Dự phòng an toàn...');
+    baseCostumeImage = await generateFallbackImage(outfitData, angle, customizations);
   }
 
   // =========================================================================
-  // DỰ PHÒNG 3 (FALLBACK 3): FLUX.1 REALISM ĐỘC LẬP (POLLINATIONS)
-  // Đảm bảo 100% ứng dụng luôn có ảnh trả về với độ nét cao
+  // GIAI ĐOẠN 2: BẢO TOÀN DANH TÍNH KHUÔN MẶT NGƯỜI DÙNG (INSIGHTFACE 95-99%)
+  // Khi người dùng tải ảnh cá nhân, ghép chính xác khuôn mặt vào thân Việt phục
   // =========================================================================
-  console.info('🚀 [DỰ PHÒNG 3] Tự động kích hoạt Model FLUX.1 Dự phòng an toàn...');
-  return await generateFallbackImage(outfitData, angle, customizations);
+  if (userPhotoBase64 && baseCostumeImage) {
+    try {
+      console.info('🎭 [GIAI ĐOẠN 2] Đang ghép chính xác khuôn mặt bạn vào bộ Việt Phục qua InsightFace Swap...');
+      const swappedImage = await swapFaceOnImage(userPhotoBase64, baseCostumeImage);
+      if (swappedImage) {
+        return swappedImage;
+      }
+    } catch (swapErr) {
+      console.warn('⚠️ Face Swap gặp sự cố, giữ nguyên ảnh chất lượng cao gốc:', swapErr.message);
+    }
+  }
+
+  return baseCostumeImage;
 }
 
 /**
