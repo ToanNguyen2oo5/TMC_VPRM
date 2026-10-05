@@ -75,9 +75,6 @@ export default function VietnamMap({ onSelectOutfitForMixer }) {
         <h2 className="section-title">
           Hành trình y phục qua <span className="text-gradient">ba miền đất nước</span>
         </h2>
-        <p className="section-subtitle">
-          Đường bờ biển hình chữ S chuẩn xác 100% tọa độ quốc gia — Chạm vào từng miền để khám phá bản sắc trang phục
-        </p>
       </div>
 
       <div className="vietnam-map-container glass-panel animate-fade-in-up">

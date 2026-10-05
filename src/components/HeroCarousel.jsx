@@ -154,26 +154,28 @@ export default function HeroCarousel({ onSelectOutfit }) {
       </div>
 
       {/* TIMELINE CONTROLS */}
-      <div className="hero-carousel__timeline-container">
-        <button className="carousel-control-btn timeline-nav-btn" onClick={handlePrev} aria-label="Previous Era">❮</button>
-        
-        <div className="timeline-track">
-          <div className="timeline-line"></div>
-          {ERAS.map((era, idx) => (
-            <div 
-              key={era.id + '_timeline'}
-              className={`timeline-point ${idx === activeIndex ? 'active' : ''}`}
-              onClick={() => setActiveIndex(idx)}
-            >
-              <div className="timeline-dot">
-                {idx === activeIndex && <div className="timeline-diamond" />}
+      <div className="hero-carousel__timeline-wrapper container">
+        <div className="hero-carousel__timeline-container">
+          <button className="carousel-control-btn timeline-nav-btn" onClick={handlePrev} aria-label="Previous Era">❮</button>
+          
+          <div className="timeline-track">
+            <div className="timeline-line"></div>
+            {ERAS.map((era, idx) => (
+              <div 
+                key={era.id + '_timeline'}
+                className={`timeline-point ${idx === activeIndex ? 'active' : ''}`}
+                onClick={() => setActiveIndex(idx)}
+              >
+                <div className="timeline-dot">
+                  {idx === activeIndex && <div className="timeline-diamond" />}
+                </div>
+                <span className="timeline-label">{era.timelineLabel}</span>
               </div>
-              <span className="timeline-label">{era.timelineLabel}</span>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        <button className="carousel-control-btn timeline-nav-btn" onClick={handleNext} aria-label="Next Era">❯</button>
+          <button className="carousel-control-btn timeline-nav-btn" onClick={handleNext} aria-label="Next Era">❯</button>
+        </div>
       </div>
     </header>
   );

@@ -759,7 +759,7 @@ export default function OutfitPreview({
 
         <div className="spec-details-grid">
           <div className="spec-detail-item">
-            <span className="item-label">Phong cách render:</span>
+            <span className="item-label">Phong cách:</span>
             <span className="item-val">
               {artStyle === 'vector' ? 'Vector Art Chi tiết' : artStyle === 'anime' ? 'Anime Cel-Shading' : 'Flat Design Tối giản'}
             </span>

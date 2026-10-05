@@ -455,7 +455,10 @@ Outfit: ${outfitDesc}
 
 ${colorsBlock}
 
-Lighting and look: direct on-camera flash as key light with harsh falloff, bright highlight on face and collarbone, soft shadow behind subject, warm golden-hour ambient light in the background. Kodak Portra 400 color rendering: warm creamy skin, pastel softness, muted saturation, gentle highlight roll-off. Visible film-like digital grain, imperfect snapshot framing. Real skin with visible micro-pores, natural and unretouched.
+Lighting and look: direct on-camera flash as key light with harsh falloff, bright highlight on face and collarbone,
+ soft shadow behind subject, warm golden-hour ambient light in the background. Kodak Portra 400 color rendering:
+  warm creamy skin, pastel softness, muted saturation, gentle highlight roll-off. Visible film-like digital grain,
+   imperfect snapshot framing. Real skin with visible micro-pores, natural and unretouched.
 
 Setting: ${settingText} Wide framing with generous headroom and footroom, feet and shoes fully visible, nothing cropped.`;
 }
