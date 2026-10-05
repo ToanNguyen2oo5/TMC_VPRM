@@ -49,52 +49,50 @@ export const REGIONS_WEATHER_CONFIG = {
 const weatherCache = {};
 const CACHE_DURATION_MS = 10 * 60 * 1000;
 
-function interpretWeatherCode(code) {
-  if (code === 0) {
-    return {
-      textVi: 'Trời quang đãng, nắng đẹp',
-      textEn: 'Clear sky, sunny',
-      icon: '☀️',
-      type: 'sunny'
-    };
+export function mapWeatherToScene(code, isDay = true) {
+  let scene, textVi, textEn;
+  if (code <= 1) {
+    scene = isDay ? 'sunny' : 'night';
+    textVi = isDay ? 'Trời quang đãng, nắng đẹp' : 'Trời đêm quang đãng';
+    textEn = isDay ? 'Clear sky, sunny' : 'Clear starry night';
+  } else if (code <= 3 || (code >= 45 && code <= 48)) {
+    scene = isDay ? 'cloudy' : 'night';
+    textVi = code === 3 ? 'Nhiều mây' : (code >= 45 ? 'Sương mù se lạnh' : 'Ít mây dịu mát');
+    textEn = code === 3 ? 'Overcast clouds' : (code >= 45 ? 'Foggy chill' : 'Partly cloudy');
+  } else if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) {
+    scene = 'rain';
+    textVi = 'Có mưa rơi';
+    textEn = 'Rainy';
+  } else if ((code >= 71 && code <= 77) || code === 85 || code === 86) {
+    scene = 'snow';
+    textVi = 'Có tuyết rơi';
+    textEn = 'Snowy';
+  } else {
+    scene = 'storm';
+    textVi = 'Dông, sấm chớp';
+    textEn = 'Thunderstorm';
   }
-  if (code >= 1 && code <= 3) {
-    return {
-      textVi: 'Ít mây, trời dịu mát',
-      textEn: 'Partly cloudy, mild',
-      icon: '⛅',
-      type: 'partly_cloudy'
-    };
+  if (!isDay && scene !== 'rain' && scene !== 'storm' && scene !== 'snow') {
+    scene = 'night';
   }
-  if (code >= 45 && code <= 48) {
-    return {
-      textVi: 'Sương mù nhẹ, se lạnh',
-      textEn: 'Foggy, gentle chill',
-      icon: '🌫️',
-      type: 'foggy'
-    };
-  }
-  if (code >= 51 && code <= 67) {
-    return {
-      textVi: 'Mưa phùn / mưa rào nhẹ',
-      textEn: 'Drizzle / gentle rain',
-      icon: '🌧️',
-      type: 'rainy'
-    };
-  }
-  if (code >= 80 && code <= 99) {
-    return {
-      textVi: 'Mưa rào rải rác',
-      textEn: 'Scattered showers',
-      icon: '⛈️',
-      type: 'stormy'
-    };
-  }
+  return { scene, textVi, textEn };
+}
+
+function interpretWeatherCode(code, isDay = true) {
+  const { scene, textVi, textEn } = mapWeatherToScene(code, isDay);
+  let icon = '☀️';
+  if (scene === 'night') icon = '🌙';
+  else if (scene === 'cloudy') icon = code === 3 ? '☁️' : '⛅';
+  else if (scene === 'rain') icon = '🌧️';
+  else if (scene === 'storm') icon = '⛈️';
+  else if (scene === 'snow') icon = '❄️';
+
   return {
-    textVi: 'Trời mát mẻ',
-    textEn: 'Pleasant weather',
-    icon: '🌤️',
-    type: 'mild'
+    textVi,
+    textEn,
+    icon,
+    type: scene === 'rain' ? 'rainy' : scene === 'storm' ? 'stormy' : scene,
+    scene
   };
 }
 
@@ -193,18 +191,19 @@ export async function getRegionWeather(regionKey = 'bac') {
   }
 
   try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${config.lat}&longitude=${config.lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Asia%2FHo_Chi_Minh`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${config.lat}&longitude=${config.lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,is_day&timezone=auto`;
     const res = await fetch(url, { signal: AbortSignal.timeout(6000) });
     if (!res.ok) throw new Error(`Weather API HTTP ${res.status}`);
     
     const json = await res.json();
     const current = json.current || {};
+    const isDay = current.is_day !== undefined ? current.is_day === 1 : true;
     const temp = Math.round(current.temperature_2m ?? config.defaultTemp);
     const humidity = Math.round(current.relative_humidity_2m ?? config.defaultHumidity);
     const weatherCode = current.weather_code ?? config.defaultWeatherCode;
     const windSpeed = Math.round(current.wind_speed_10m ?? 8);
 
-    const condition = interpretWeatherCode(weatherCode);
+    const condition = interpretWeatherCode(weatherCode, isDay);
     const recommendation = getGarmentRecommendation(temp, condition.type);
 
     const data = {
@@ -217,6 +216,8 @@ export async function getRegionWeather(regionKey = 'bac') {
       temp,
       humidity,
       windSpeed,
+      isDay,
+      scene: condition.scene,
       condition,
       recommendation,
       isRealtime: true,
@@ -231,7 +232,9 @@ export async function getRegionWeather(regionKey = 'bac') {
     return data;
   } catch (error) {
     console.warn(`Lỗi lấy thời tiết cho ${regionKey}:`, error.message);
-    const condition = interpretWeatherCode(config.defaultWeatherCode);
+    const currentHour = new Date().getHours();
+    const isDay = currentHour >= 6 && currentHour < 18;
+    const condition = interpretWeatherCode(config.defaultWeatherCode, isDay);
     const recommendation = getGarmentRecommendation(config.defaultTemp, condition.type);
     
     return {
@@ -244,6 +247,8 @@ export async function getRegionWeather(regionKey = 'bac') {
       temp: config.defaultTemp,
       humidity: config.defaultHumidity,
       windSpeed: 10,
+      isDay,
+      scene: condition.scene,
       condition,
       recommendation,
       isRealtime: false,
@@ -269,18 +274,19 @@ export async function getAllRegionsWeather() {
  */
 export async function getWeatherByCoords(lat, lon, locationName = 'Vị trí hiện tại') {
   try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Asia%2FHo_Chi_Minh`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,is_day&timezone=auto`;
     const res = await fetch(url, { signal: AbortSignal.timeout(6000) });
     if (!res.ok) throw new Error(`Weather API HTTP ${res.status}`);
     
     const json = await res.json();
     const current = json.current || {};
+    const isDay = current.is_day !== undefined ? current.is_day === 1 : true;
     const temp = Math.round(current.temperature_2m ?? 26);
     const humidity = Math.round(current.relative_humidity_2m ?? 75);
     const weatherCode = current.weather_code ?? 1;
     const windSpeed = Math.round(current.wind_speed_10m ?? 8);
 
-    const condition = interpretWeatherCode(weatherCode);
+    const condition = interpretWeatherCode(weatherCode, isDay);
     const recommendation = getGarmentRecommendation(temp, condition.type);
 
     return {
@@ -293,6 +299,8 @@ export async function getWeatherByCoords(lat, lon, locationName = 'Vị trí hi�
       temp,
       humidity,
       windSpeed,
+      isDay,
+      scene: condition.scene,
       condition,
       recommendation,
       isRealtime: true,

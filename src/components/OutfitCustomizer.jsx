@@ -495,6 +495,7 @@ export default function OutfitCustomizer({
               harmonyScore={harmonyResult.harmonyScore}
               fit={fit}
               length={length}
+              fabricTexture={material.includes('Lụa') ? 'silk' : material.includes('Gấm') ? 'brocade' : 'linen'}
             />
           </div>
 
@@ -639,7 +640,7 @@ export default function OutfitCustomizer({
                 <h4 className="preview-outfit-name">{selectedOutfit?.ten}</h4>
                 <span className="preview-outfit-era">{selectedOutfit?.vung_mien} • {material}</span>
               </div>
-              <div className="angle-mode-toggles">
+              <div className="angle-mode-toggles" style={{ display: 'none' }}>
                 <button
                   type="button"
                   className={`angle-toggle-btn ${angleMode === 'single' ? 'angle-toggle-btn--active' : ''}`}
@@ -678,11 +679,12 @@ export default function OutfitCustomizer({
                 harmonyScore={harmonyResult.harmonyScore}
                 fit={fit}
                 length={length}
+                fabricTexture={material.includes('Lụa') ? 'silk' : material.includes('Gấm') ? 'brocade' : 'linen'}
               />
             </div>
 
             {/* Avatar & Photo Upload Selector */}
-            <div className="avatar-selector-section">
+            <div className="avatar-selector-section" style={{ display: 'none' }}>
               <span className="avatar-sec-title">Nhân vật thử đồ:</span>
               <div className="avatar-sample-chips">
                 {SAMPLE_AVATARS.map(av => (
@@ -767,6 +769,7 @@ export default function OutfitCustomizer({
                 harmonyScore={harmonyResult.harmonyScore}
                 fit={fit}
                 length={length}
+                fabricTexture={material.includes('Lụa') ? 'silk' : material.includes('Gấm') ? 'brocade' : 'linen'}
               />
             </div>
           </div>

@@ -1,0 +1,124 @@
+/* AccessorySelector.css */
+
+.accessory-selector-container {
+  width: 100%;
+  padding: var(--space-2) 0;
+}
+
+.accessory-selector-scroll {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+  align-items: center;
+  overflow-x: auto;
+  padding: var(--space-2) var(--space-3);
+  scrollbar-width: none;
+}
+
+.accessory-selector-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.accessory-card-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(12px);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  min-width: 170px;
+  text-align: left;
+}
+
+.accessory-card-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(212, 160, 23, 0.4);
+  transform: translateY(-2px);
+}
+
+.accessory-card-btn.active {
+  background: linear-gradient(135deg, rgba(212, 160, 23, 0.22) 0%, rgba(192, 57, 43, 0.22) 100%);
+  border-color: var(--color-gold);
+  box-shadow: 0 0 20px var(--color-gold-glow);
+}
+
+.accessory-thumb-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.accessory-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.accessory-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.accessory-name {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.2;
+}
+
+.accessory-card-btn.active .accessory-name {
+  color: var(--color-gold);
+}
+
+.accessory-sub {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.active-glow-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-gold);
+  box-shadow: 0 0 8px var(--color-gold);
+}
+
+@media (max-width: 600px) {
+  .accessory-selector-scroll {
+    justify-content: flex-start;
+  }
+  .accessory-card-btn {
+    min-width: 145px;
+    padding: var(--space-2) var(--space-3);
+  }
+  .accessory-thumb-wrap {
+    width: 40px;
+    height: 40px;
+  }
+  .accessory-name {
+    font-size: 0.85rem;
+  }
+  .accessory-sub {
+    font-size: 0.68rem;
+  }
+}

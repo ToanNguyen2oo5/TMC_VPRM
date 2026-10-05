@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import html2canvas from 'html2canvas';
 import SceneSelector from './components/SceneSelector';
 import OutfitSuggestions from './components/OutfitSuggestions';
 import OutfitCustomizer from './components/OutfitCustomizer';
@@ -28,7 +29,8 @@ import { useTheme } from './hooks/useTheme';
 import { useTranslation } from './services/i18n.jsx';
 import HeroCarousel from './components/HeroCarousel';
 import WeatherCanvas from './components/weather/WeatherCanvas';
-import { mapConditionToWeatherType } from './components/weather/weatherThemes';
+import { getRegionWeather } from './services/weatherService';
+import WebARPage from './components/webar/WebARPage';
 import './App.css';
 
 
@@ -139,6 +141,7 @@ export default function App() {
   const [selectedWeather, setSelectedWeather] = useState('warm');
   const [selectedStyle, setSelectedStyle] = useState('classic');
   const [realtimeWeather, setRealtimeWeather] = useState(null);
+  const [activeWeatherScene, setActiveWeatherScene] = useState('sunny');
 
   // Weather states for Canvas
   const [isReducedMotion, setIsReducedMotion] = useState(() => {
@@ -149,16 +152,12 @@ export default function App() {
     }
   });
 
-  const canvasRegionKey = (selectedRegion === 'all' || selectedRegion === 'taynguyen') ? 'bac' : selectedRegion;
-  let activeWeatherType = 'clear';
-  if (realtimeWeather && realtimeWeather.condition) {
-    activeWeatherType = mapConditionToWeatherType(realtimeWeather.condition.type, realtimeWeather.temp);
-  } else {
-    // Nếu chưa load xong hoặc lỗi API, dùng default weather của vùng (mưa, nắng, sương, v.v...)
-    // theo như file prototype gốc
-    const autoMap = { 'bac': 'fog', 'trung': 'clear', 'nam': 'hot', 'taynguyen': 'fog', 'all': 'fog' };
-    activeWeatherType = autoMap[canvasRegionKey] || 'clear';
-  }
+  const handleRealtimeWeatherChange = useCallback((data) => {
+    setRealtimeWeather(data);
+    if (data?.scene) {
+      setActiveWeatherScene(data.scene);
+    }
+  }, []);
 
   // Daily Cultural Tips & Onboarding Modal state
   const [tipIndex, setTipIndex] = useState(0);
@@ -247,15 +246,31 @@ export default function App() {
     }
   }, []);
 
-  // Priority 4: Weather banner logic (Gen Z refinement)
-  const [showWeatherBanner, setShowWeatherBanner] = useState(false);
+  // Lấy thời tiết thời gian thực khi khởi động ứng dụng và cập nhật định kỳ mỗi 10 phút
   useEffect(() => {
-    // Simulate fetching weather
-    setTimeout(() => {
-      setRealtimeWeather({ temp: 15, condition: 'rainy', text: 'Hà Nội đang 15°C 🌧️' });
-      setShowWeatherBanner(true);
-    }, 1500);
-  }, []);
+    let isMounted = true;
+    const fetchLiveWeather = async () => {
+      try {
+        const regionKey = (selectedRegion === 'all' || selectedRegion === 'taynguyen') ? 'bac' : selectedRegion;
+        const data = await getRegionWeather(regionKey);
+        if (isMounted && data) {
+          setRealtimeWeather(data);
+          if (data.scene) {
+            setActiveWeatherScene(data.scene);
+          }
+        }
+      } catch (err) {
+        console.warn('Weather initial fetch failed:', err);
+      }
+    };
+
+    fetchLiveWeather();
+    const timer = setInterval(fetchLiveWeather, 10 * 60 * 1000);
+    return () => {
+      isMounted = false;
+      clearInterval(timer);
+    };
+  }, [selectedRegion]);
 
   // Compute active mixer step for Sticky Stepper (Priority 4)
   const currentMixerStep = useMemo(() => {
@@ -390,11 +405,22 @@ export default function App() {
       const currentSeed = Math.floor(Math.random() * 1000000);
       setGenerationSeed(currentSeed);
 
+      let refImg = null;
+      try {
+        const svgEl = document.querySelector('.preview-visual-stage');
+        if (svgEl) {
+          const canvas = await html2canvas(svgEl, { backgroundColor: null });
+          refImg = canvas.toDataURL('image/png').split(',')[1];
+        }
+      } catch (e) {
+        console.warn('Failed to capture vector preview', e);
+      }
+
       const frontImage = await generateOutfitImage(
         data.userPhoto,
         selectedOutfit,
         0,
-        null,
+        refImg,
         outfitCustomPayload,
         currentSeed
       );
@@ -603,6 +629,13 @@ export default function App() {
 
   return (
     <div className="app">
+      {/* HIỆU ỨNG THỜI TIẾT REAL-TIME BAO PHỦ CẢ TRANG WEB (WeatherFX) */}
+      <WeatherCanvas
+        scene={activeWeatherScene}
+        isReducedMotion={isReducedMotion}
+        isFullScreen={true}
+      />
+
       {/* Toast Notification */}
       {toastMessage && (
         <div className="toast-notification animate-bounce-in">
@@ -630,6 +663,12 @@ export default function App() {
               onClick={() => setActiveTab('mixer')}
             >
               {t('nav_mixer')}
+            </button>
+            <button
+              className={`nav-btn ${activeTab === 'webar' ? 'nav-btn--active' : ''}`}
+              onClick={() => setActiveTab('webar')}
+            >
+              ✨ Thử AR
             </button>
             <button
               className={`nav-btn ${activeTab === 'explore' ? 'nav-btn--active' : ''}`}
@@ -663,8 +702,27 @@ export default function App() {
             </button>
           </div>
 
-          {/* Quick Controls: Music, Petals, Language, Theme */}
+          {/* Quick Controls: Weather, Music, Petals, Language, Theme */}
           <div className="nav-controls">
+            {/* Live Weather Indicator Pill */}
+            {realtimeWeather && (
+              <button
+                type="button"
+                className="control-btn control-btn--weather"
+                onClick={() => {
+                  setActiveTab('mixer');
+                  setTimeout(() => {
+                    const el = document.getElementById('weatherCardFX') || document.getElementById('scene-selector');
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }, 150);
+                }}
+                title={`Thời tiết thực tế: ${realtimeWeather.city} ${realtimeWeather.temp}°C - ${realtimeWeather.condition?.textVi}. Bấm để xem chi tiết & đổi hiệu ứng!`}
+              >
+                <span className="live-dot" style={{ width: '8px', height: '8px', background: '#38ef7d' }} />
+                <span>{realtimeWeather.condition?.icon || '☀️'}</span>
+                <span className="control-btn-label">{realtimeWeather.temp}°C {realtimeWeather.city}</span>
+              </button>
+            )}
             <MusicPlayer />
             <button
               type="button"
@@ -899,6 +957,27 @@ export default function App() {
                 🤝 Mở Danh Bạ & Dự Toán
               </button>
             </div>
+
+            {/* Banner Gương Soi WebAR Thử Phụ Kiện Với Camera */}
+            <div className="home-banner-hub glass-panel animate-fade-in-up" style={{ marginTop: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+                <span style={{ fontSize: '2.5rem', flexShrink: 0 }}>🪞</span>
+                <div className="banner-text">
+                  <h3>🪞 Gương Soi WebAR: Thử Khăn Đóng, Nón Lá, Nón Quai Thao</h3>
+                  <p>Bật camera để phụ kiện cổ phục bám theo khuôn mặt bạn theo thời gian thực (Real-time Face Tracking) và chụp ảnh lưu lại khoảnh khắc di sản.</p>
+                </div>
+              </div>
+              <button
+                className="btn btn-primary"
+                style={{ background: 'linear-gradient(135deg, #d4a017 0%, #c0392b 100%)' }}
+                onClick={() => {
+                  setActiveTab('webar');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              >
+                ✨ Mở Gương WebAR
+              </button>
+            </div>
           </section>
         </div>
       )}
@@ -906,7 +985,6 @@ export default function App() {
       {/* VIEW 2: MIX & MATCH (PHỐI ĐỒ 5 BƯỚC) */}
       {activeTab === 'mixer' && (
         <div className="mixer-view">
-          <WeatherCanvas regionKey={canvasRegionKey} weatherType={activeWeatherType} isReducedMotion={isReducedMotion} />
           <main className="container main-content" style={{ position: 'relative', zIndex: 10 }}>
             {/* Sticky Stepper (Priority 4) */}
             <StickyStepper currentStep={currentMixerStep} stepTitle={mixerStepTitle} />
@@ -921,7 +999,9 @@ export default function App() {
             onWeatherSelect={setSelectedWeather}
             selectedStyle={selectedStyle}
             onStyleSelect={setSelectedStyle}
-            onRealtimeWeatherChange={setRealtimeWeather}
+            onRealtimeWeatherChange={handleRealtimeWeatherChange}
+            activeWeatherScene={activeWeatherScene}
+            onWeatherSceneChange={setActiveWeatherScene}
           />
 
           {/* Step 2: Outfit Suggestions */}
@@ -934,7 +1014,7 @@ export default function App() {
               selectedRegion={selectedRegion}
               onRegionSelect={handleRegionSelect}
               realtimeWeather={realtimeWeather}
-              onRealtimeWeatherChange={setRealtimeWeather}
+              onRealtimeWeatherChange={handleRealtimeWeatherChange}
             />
           </div>
 
@@ -1071,10 +1151,19 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Reset button */}
-                <div className="reset-section text-center">
+                {/* Reset and Edit buttons */}
+                <div className="reset-section text-center" style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
                   <button
+                    type="button"
                     className="btn btn-secondary btn-lg"
+                    onClick={() => {
+                      uploadRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }}
+                  >
+                    ✏️ Điều chỉnh màu & phụ kiện
+                  </button>
+                  <button
+                    className="btn btn-primary btn-lg"
                     onClick={handleReset}
                     id="reset-btn"
                   >
@@ -1085,6 +1174,19 @@ export default function App() {
             )}
           </div>
         </main>
+        </div>
+      )}
+
+      {/* VIEW: WEBAR ACCESSORY TRY-ON */}
+      {activeTab === 'webar' && (
+        <div className="container" style={{ position: 'relative', zIndex: 10 }}>
+          <WebARPage
+            onExit={() => {
+              setActiveTab('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onToast={showToast}
+          />
         </div>
       )}
 

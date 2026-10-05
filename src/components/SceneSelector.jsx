@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from '../services/i18n';
 import { getRegionWeather, getWeatherByCoords } from '../services/weatherService';
+import { WeatherFXEngine, WEATHER_FX_SCENES } from './weather/weatherFxEngine';
 import './SceneSelector.css';
 
 const SCENES_DATA = {
@@ -80,7 +81,9 @@ export default function SceneSelector({
   onWeatherSelect,
   selectedStyle = 'classic',
   onStyleSelect,
-  onRealtimeWeatherChange
+  onRealtimeWeatherChange,
+  activeWeatherScene = 'sunny',
+  onWeatherSceneChange
 }) {
   const { lang, t } = useTranslation();
   const scenes = SCENES_DATA[lang] || SCENES_DATA.vi;
@@ -91,8 +94,45 @@ export default function SceneSelector({
   const [activeWeatherTab, setActiveWeatherTab] = useState('bac');
   const [liveWeather, setLiveWeather] = useState(null);
   const [isWeatherLoading, setIsWeatherLoading] = useState(true);
-  const [isManualWeather, setIsManualWeather] = useState(false);
   const [isCustomExpanded, setIsCustomExpanded] = useState(false);
+
+  const cardCanvasRef = useRef(null);
+  const cardEngineRef = useRef(null);
+
+  // Khởi tạo mini-canvas WeatherFX trong card thời tiết (như prototype weather-fx_1.html)
+  useEffect(() => {
+    const canvas = cardCanvasRef.current;
+    if (!canvas) return;
+
+    const initialScene = activeWeatherScene || liveWeather?.scene || 'sunny';
+    const engine = new WeatherFXEngine(canvas, {
+      initialScene,
+      isFullScreen: false,
+      isReducedMotion: false
+    });
+    cardEngineRef.current = engine;
+
+    const handleResize = () => {
+      if (cardEngineRef.current) cardEngineRef.current.resize();
+    };
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      engine.destroy();
+      cardEngineRef.current = null;
+    };
+  }, []);
+
+  // Cập nhật mini canvas khi cảnh thời tiết thay đổi
+  useEffect(() => {
+    if (cardEngineRef.current) {
+      const targetScene = activeWeatherScene || liveWeather?.scene;
+      if (targetScene) {
+        cardEngineRef.current.setScene(targetScene);
+      }
+    }
+  }, [activeWeatherScene, liveWeather?.scene]);
 
   // Auto-expand advanced filters once a scene is selected
   useEffect(() => {
@@ -122,6 +162,7 @@ export default function SceneSelector({
             const data = await getWeatherByCoords(pos.coords.latitude, pos.coords.longitude, 'Vị trí của bạn');
             if (data) {
               setLiveWeather(data);
+              if (data.scene && onWeatherSceneChange) onWeatherSceneChange(data.scene);
               if (onRealtimeWeatherChange) onRealtimeWeatherChange(data);
             }
             setIsWeatherLoading(false);
@@ -130,6 +171,7 @@ export default function SceneSelector({
             console.warn('GPS error, falling back to Hanoi:', err);
             getRegionWeather('bac').then(fallback => {
               setLiveWeather(fallback);
+              if (fallback?.scene && onWeatherSceneChange) onWeatherSceneChange(fallback.scene);
               if (onRealtimeWeatherChange) onRealtimeWeatherChange(fallback);
               setIsWeatherLoading(false);
             });
@@ -141,13 +183,14 @@ export default function SceneSelector({
 
       const data = await getRegionWeather(tabKey);
       setLiveWeather(data);
+      if (data?.scene && onWeatherSceneChange) onWeatherSceneChange(data.scene);
       if (onRealtimeWeatherChange) onRealtimeWeatherChange(data);
     } catch (err) {
       console.warn('Weather fetch error:', err);
     } finally {
       setIsWeatherLoading(false);
     }
-  }, [onRealtimeWeatherChange]);
+  }, [onRealtimeWeatherChange, onWeatherSceneChange]);
 
   useEffect(() => {
     fetchWeather(activeWeatherTab);
@@ -236,24 +279,29 @@ export default function SceneSelector({
         <div className="progressive-expanded-section animate-fade-in">
           {/* 2. THỜI TIẾT REAL-TIME & PHONG CÁCH (2 CỘT) */}
           <div className="selector-sub-grid animate-fade-in-up">
-        {/* Thời tiết Real-time */}
+        {/* Thời tiết Real-time & WeatherFX Canvas (Phong cách weather-fx_1.html) */}
         <div className="selector-sub-col glass-panel weather-realtime-panel">
           <div className="weather-col-header">
             <label className="group-block-title" style={{ margin: 0 }}>
-              <span>🌦️</span> {lang === 'en' ? 'Live Weather & AI Advice:' : 'Thời tiết Real-time & Gợi ý:'}
+              <span>🌦️</span> {lang === 'en' ? 'Live Weather & Web Atmosphere:' : 'Thời tiết Real-time & Nền trang web:'}
             </label>
-            {liveWeather?.isRealtime && (
-              <span className="live-weather-badge">
-                <span className="live-dot" /> Trực tiếp {liveWeather.lastUpdated}
+            <div className="weather-header-badges">
+              <span className="live-coverage-badge" title="Hiệu ứng thời tiết đang bao phủ toàn bộ trang web">
+                🌐 Nền toàn trang
               </span>
-            )}
+              {liveWeather?.isRealtime && (
+                <span className="live-weather-badge">
+                  <span className="live-dot" /> Trực tiếp {liveWeather.lastUpdated}
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Region Tabs */}
           <div className="weather-reg-pills">
             {[
               { id: 'bac', label: 'Bắc Bộ', city: 'Hà Nội', icon: '🏔️' },
-              { id: 'trung', label: 'Trung Bộ', city: 'Huế', icon: '🌊' },
+              { id: 'trung', label: 'Trung Bộ', city: 'Đà Nẵng', icon: '🌊' },
               { id: 'nam', label: 'Nam Bộ', city: 'TP.HCM', icon: '🌴' },
               { id: 'gps', label: 'GPS', city: 'Vị trí bạn', icon: '📍' },
             ].map(reg => (
@@ -273,77 +321,95 @@ export default function SceneSelector({
             ))}
           </div>
 
-          {/* Realtime Weather Metric Card */}
-          {isWeatherLoading ? (
-            <div className="weather-live-loading">
-              <span className="skeleton-pulse">⚡ Đang cập nhật khí tượng trực tiếp...</span>
-            </div>
-          ) : liveWeather ? (
-            <div className="weather-live-card animate-fade-in">
-              <div className="weather-live-top">
-                <div className="weather-live-metric">
-                  <span className="weather-live-icon">{liveWeather.condition.icon}</span>
-                  <div className="weather-live-numbers">
-                    <span className="weather-live-temp">{liveWeather.temp}°C</span>
-                    <span className="weather-live-city">{liveWeather.city}</span>
+          {/* WeatherFX Card: Sinh động với Canvas + Gradient + Chỉ số thời tiết */}
+          <div className="weather-card-fx" id="weatherCardFX">
+            <canvas ref={cardCanvasRef} className="weather-card-canvas" />
+            <div className="weather-card-veil" />
+            <div className="weather-card-content">
+              {isWeatherLoading ? (
+                <div className="weather-card-loading">
+                  <span className="skeleton-pulse">⚡ Đang cập nhật trạm khí tượng trực tiếp...</span>
+                </div>
+              ) : liveWeather ? (
+                <>
+                  <div className="weather-card-top-row">
+                    <div className="weather-card-temp-col">
+                      <span className="weather-card-temp">{liveWeather.temp}°C</span>
+                      <div className="weather-card-info">
+                        <span className="weather-card-city">{liveWeather.city}</span>
+                        <span className="weather-card-desc">{liveWeather.condition?.textVi}</span>
+                      </div>
+                    </div>
+                    <div className="weather-card-stats-col">
+                      <span>💧 Độ ẩm: <strong>{liveWeather.humidity}%</strong></span>
+                      <span>💨 Gió: <strong>{liveWeather.windSpeed} km/h</strong></span>
+                      <span className="weather-card-sync-status">
+                        ✨ Cảnh hiện tại: <strong>{WEATHER_FX_SCENES[activeWeatherScene]?.nameVi || 'Nắng đẹp'}</strong>
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <div className="weather-live-stats">
-                  <span className="condition-text">{liveWeather.condition.textVi}</span>
-                  <span className="condition-sub">Độ ẩm: {liveWeather.humidity}% • Gió: {liveWeather.windSpeed} km/h</span>
-                </div>
-              </div>
 
-              {/* AI Garment Advice Callout */}
-              <div className="weather-advice-callout">
-                <div className="advice-title-row">
-                  <span className="advice-badge">💡 Mẹo mặc đẹp hôm nay:</span>
-                  {liveWeather.recommendation.recommendedFabricsVi && (
-                    <span className="advice-fabric">
-                      Vải: {liveWeather.recommendation.recommendedFabricsVi.join(', ')}
-                    </span>
-                  )}
-                </div>
-                <p className="advice-desc">{liveWeather.recommendation.adviceVi}</p>
-                {liveWeather.recommendation.practicalFieldTipsVi?.[0] && (
-                  <p className="advice-tip">
-                    🎯 <em>Mẹo thực tế: {liveWeather.recommendation.practicalFieldTipsVi[0]}</em>
-                  </p>
-                )}
-              </div>
+                  {/* AI Garment Advice Callout */}
+                  <div className="weather-advice-callout">
+                    <div className="advice-title-row">
+                      <span className="advice-badge">💡 Gợi ý chất liệu di sản hôm nay:</span>
+                      {liveWeather.recommendation?.recommendedFabricsVi && (
+                        <span className="advice-fabric">
+                          {liveWeather.recommendation.recommendedFabricsVi.join(', ')}
+                        </span>
+                      )}
+                    </div>
+                    <p className="advice-desc">{liveWeather.recommendation?.adviceVi}</p>
+                    {liveWeather.recommendation?.practicalFieldTipsVi?.[0] && (
+                      <p className="advice-tip">
+                        🎯 <em>Mẹo thực tế: {liveWeather.recommendation.practicalFieldTipsVi[0]}</em>
+                      </p>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className="weather-card-loading">Không tải được dữ liệu khí tượng</div>
+              )}
             </div>
-          ) : null}
-
-          {/* Toggle manual simulation */}
-          <div className="weather-toggle-row">
-            <button
-              type="button"
-              className="weather-sim-toggle"
-              onClick={() => setIsManualWeather(!isManualWeather)}
-            >
-              {isManualWeather ? '✕ Thu gọn (Dùng thời tiết thực)' : '⚙️ Hoặc mô phỏng thời tiết khác cho buổi chụp...'}
-            </button>
           </div>
 
-          {/* Manual Climate Buttons */}
-          {isManualWeather && (
-            <div className="sub-options-grid animate-fade-in" style={{ marginTop: '0.75rem' }}>
-              {weathers.map(w => (
+          {/* Cụm chuyển đổi hiệu ứng thời tiết / mô phỏng bao phủ trang web */}
+          <div className="weather-sim-bar">
+            <div className="weather-sim-header">
+              <span className="sim-title">🎨 Thử các hiệu ứng thời tiết bao phủ web:</span>
+              <button
+                type="button"
+                className="btn-reset-realtime"
+                onClick={() => fetchWeather(activeWeatherTab)}
+                title="Khôi phục thời tiết thực tế từ trạm khí tượng Open-Meteo"
+              >
+                🔄 Khôi phục thực tế
+              </button>
+            </div>
+            <div className="weather-scenes-pill-grid">
+              {[
+                { id: 'sunny', label: 'Nắng đẹp', icon: '☀️' },
+                { id: 'cloudy', label: 'Nhiều mây', icon: '☁️' },
+                { id: 'rain', label: 'Trời mưa', icon: '🌧️' },
+                { id: 'storm', label: 'Dông sét', icon: '⛈️' },
+                { id: 'snow', label: 'Có tuyết', icon: '❄️' },
+                { id: 'night', label: 'Đêm sao', icon: '🌙' },
+              ].map(sc => (
                 <button
-                  key={w.id}
+                  key={sc.id}
                   type="button"
-                  className={`sub-opt-btn ${selectedWeather === w.id ? 'sub-opt-btn--active' : ''}`}
-                  onClick={() => onWeatherSelect && onWeatherSelect(w.id)}
+                  className={`weather-scene-pill ${activeWeatherScene === sc.id ? 'weather-scene-pill--active' : ''}`}
+                  onClick={() => {
+                    if (onWeatherSceneChange) onWeatherSceneChange(sc.id);
+                  }}
+                  title={`Chuyển toàn bộ nền trang web sang hiệu ứng ${sc.label}`}
                 >
-                  <span className="sub-opt-icon">{w.icon}</span>
-                  <div className="sub-opt-info">
-                    <strong>{w.name}</strong>
-                    <small>{w.tip}</small>
-                  </div>
+                  <span className="scene-pill-icon">{sc.icon}</span>
+                  <span className="scene-pill-label">{sc.label}</span>
                 </button>
               ))}
             </div>
-          )}
+          </div>
         </div>
 
         {/* Phong cách */}

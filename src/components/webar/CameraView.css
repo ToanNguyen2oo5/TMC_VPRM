@@ -1,0 +1,156 @@
+/* CameraView.css */
+
+.camera-view-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 480px;
+  background: #000;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(212, 160, 23, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Video thực tế từ Webcam */
+.camera-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.camera-video.mirrored {
+  transform: scaleX(-1);
+}
+
+/* Canvas lớp phủ phụ kiện */
+.camera-overlay-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Trạng thái tải camera */
+.camera-loading-overlay,
+.camera-error-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 18, 0.88);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  text-align: center;
+  z-index: 10;
+  color: var(--color-text-primary);
+}
+
+.camera-spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(212, 160, 23, 0.25);
+  border-top-color: var(--color-gold);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  margin-bottom: var(--space-4);
+}
+
+.camera-loading-overlay p {
+  font-size: 0.95rem;
+  color: var(--color-text-secondary);
+}
+
+.camera-error-overlay .error-icon {
+  font-size: 2.75rem;
+  margin-bottom: var(--space-2);
+}
+
+.camera-error-overlay h4 {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  color: #ff6b6b;
+  margin-bottom: var(--space-2);
+}
+
+.camera-error-overlay p {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  max-width: 360px;
+  line-height: 1.5;
+  margin-bottom: var(--space-4);
+}
+
+.camera-error-overlay .error-actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.camera-troubleshoot-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(212, 160, 23, 0.4);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  max-width: 380px;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.camera-troubleshoot-box ul {
+  margin-top: 6px;
+  padding-left: 18px;
+}
+
+.camera-troubleshoot-box li {
+  margin-bottom: 4px;
+}
+
+.camera-gesture-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 18, 0.9);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  text-align: center;
+  z-index: 10;
+  color: var(--color-text-primary);
+}
+
+.camera-gesture-overlay .gesture-icon {
+  font-size: 3rem;
+  margin-bottom: var(--space-2);
+}
+
+.camera-gesture-overlay h4 {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  color: var(--color-gold);
+  margin-bottom: var(--space-2);
+}
+
+.camera-gesture-overlay p {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  max-width: 340px;
+  margin-bottom: var(--space-4);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+

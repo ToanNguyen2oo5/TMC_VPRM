@@ -14,11 +14,14 @@ export default function OutfitPreview({
   selectedAccessories = [],
   harmonyScore = 85,
   fit = 'Vừa vặn',
-  length = 'Dài (chấm gót)'
+  length = 'Dài (chấm gót)',
+  fabricTexture = 'silk'
 }) {
   const [activeTab, setActiveTab] = useState('mannequin'); // 'mannequin' | 'heritage'
-  const [artStyle, setArtStyle] = useState('vector'); // 'vector' | 'anime' | 'flat'
-  const [fabricTexture, setFabricTexture] = useState('silk'); // 'silk' | 'brocade' | 'linen'
+  const artStyle = 'vector';
+  const isFlat = false;
+  const isAnime = false;
+  const isVector = true;
   const [hoveredPart, setHoveredPart] = useState(null);
 
   if (!selectedOutfit) {
@@ -29,15 +32,10 @@ export default function OutfitPreview({
     );
   }
 
-  // Danh sách ID phụ kiện đang chọn
+  // Lấy ID trang phục
   const accIds = selectedAccessories.map(a => typeof a === 'string' ? a : a.id);
   const hasAccessory = (idSubstr) => accIds.some(id => id.includes(idSubstr));
   const outfitId = selectedOutfit.id || 'ao_dai_hue';
-
-  // Điều chỉnh fill style theo Art Style
-  const isFlat = artStyle === 'flat';
-  const isAnime = artStyle === 'anime';
-  const isVector = artStyle === 'vector';
 
   // Render SVG Silhouette Mannequin tương ứng với từng loại trang phục
   const renderMannequinSvg = () => {
@@ -617,7 +615,7 @@ export default function OutfitPreview({
   return (
     <div className="outfit-preview-card glass-panel animate-fade-in-up">
       {/* Header Preview & Switch Tabs */}
-      <div className="preview-top-bar">
+      <div className="preview-top-bar" style={{ display: 'none' }}>
         <div className="preview-heading">
           <span className="live-pulse-dot" />
           <h4>Minh họa Vector & CSS</h4>
@@ -639,66 +637,7 @@ export default function OutfitPreview({
         </div>
       </div>
 
-      {/* THANH CÔNG CỤ CHỌN PHONG CÁCH & CHẤT LIỆU (Style & Texture Toolbar) */}
-      {activeTab === 'mannequin' && (
-        <div className="preview-toolbar">
-          {/* Bộ chọn Art Style */}
-          <div className="toolbar-group">
-            <span className="toolbar-label">Phong cách:</span>
-            <div className="toolbar-buttons">
-              <button 
-                className={`toolbar-btn ${artStyle === 'vector' ? 'toolbar-btn--active' : ''}`}
-                onClick={() => setArtStyle('vector')}
-                title="Vector Art mượt mà với chiều sâu và ánh lụa"
-              >
-                🌟 Vector Art
-              </button>
-              <button 
-                className={`toolbar-btn ${artStyle === 'anime' ? 'toolbar-btn--active' : ''}`}
-                onClick={() => setArtStyle('anime')}
-                title="Anime Cel-shading với mảng bóng đổ sắc nét và mắt long lanh"
-              >
-                🌸 Anime
-              </button>
-              <button 
-                className={`toolbar-btn ${artStyle === 'flat' ? 'toolbar-btn--active' : ''}`}
-                onClick={() => setArtStyle('flat')}
-                title="Đồ họa phẳng tối giản kiểu poster văn hóa"
-              >
-                🎨 Flat Design
-              </button>
-            </div>
-          </div>
-
-          {/* Bộ chọn Chất liệu Vải */}
-          <div className="toolbar-group">
-            <span className="toolbar-label">Chất liệu:</span>
-            <div className="toolbar-buttons">
-              <button 
-                className={`toolbar-btn toolbar-btn--sm ${fabricTexture === 'silk' ? 'toolbar-btn--active' : ''}`}
-                onClick={() => setFabricTexture('silk')}
-                title="Lụa tơ tằm óng ả"
-              >
-                🪡 Lụa trơn
-              </button>
-              <button 
-                className={`toolbar-btn toolbar-btn--sm ${fabricTexture === 'brocade' ? 'toolbar-btn--active' : ''}`}
-                onClick={() => setFabricTexture('brocade')}
-                title="Gấm hoa thêu chỉ kim tuyến"
-              >
-                🧵 Gấm hoa
-              </button>
-              <button 
-                className={`toolbar-btn toolbar-btn--sm ${fabricTexture === 'linen' ? 'toolbar-btn--active' : ''}`}
-                onClick={() => setFabricTexture('linen')}
-                title="Vải đũi / The thô mộc với bộ lọc SVG feTurbulence"
-              >
-                🌾 Đũi thô
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Đã gỡ bỏ thanh công cụ chọn Phong cách & Chất liệu */}
 
       {/* Sân khấu Minh họa Trực quan (Stage) */}
       <div className="preview-visual-stage">
@@ -757,20 +696,7 @@ export default function OutfitPreview({
           </div>
         </div>
 
-        <div className="spec-details-grid">
-          <div className="spec-detail-item">
-            <span className="item-label">Phong cách:</span>
-            <span className="item-val">
-              {artStyle === 'vector' ? 'Vector Art Chi tiết' : artStyle === 'anime' ? 'Anime Cel-Shading' : 'Flat Design Tối giản'}
-            </span>
-          </div>
-          <div className="spec-detail-item">
-            <span className="item-label">Chất liệu mô phỏng:</span>
-            <span className="item-val">
-              {fabricTexture === 'silk' ? 'Lụa tơ tằm óng' : fabricTexture === 'brocade' ? 'Gấm thêu kim tuyến' : 'Đũi / The (feTurbulence)'}
-            </span>
-          </div>
-        </div>
+        <div className="spec-details-grid" style={{ display: 'none' }}></div>
 
         {/* Phụ kiện đang đeo */}
         <div className="spec-active-accessories">

@@ -9,6 +9,7 @@ export default function MobileBottomNav({
   const navItems = [
     { id: 'home', label: 'Trang chủ', icon: '🏠' },
     { id: 'mixer', label: 'Phối đồ', icon: '👘' },
+    { id: 'webar', label: 'Thử AR', icon: '🪞' },
     { id: 'explore', label: 'Khám phá', icon: '🔍' },
     { id: 'compare', label: 'So sánh', icon: '⚖️', badge: compareCount },
     { id: 'lookbook', label: 'Lookbook', icon: '📚', badge: lookbookCount },

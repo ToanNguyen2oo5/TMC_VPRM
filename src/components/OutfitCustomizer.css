@@ -1097,3 +1097,9 @@
     padding: 12px 14px;
   }
 }
+
+
+/* Fix for column heights */
+.customizer-col { max-height: 85vh; overflow-y: auto; scrollbar-width: thin; }
+.customizer-col::-webkit-scrollbar { width: 4px; }
+.customizer-col::-webkit-scrollbar-thumb { background: rgba(200, 200, 200, 0.2); border-radius: 4px; }

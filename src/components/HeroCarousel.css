@@ -2,7 +2,8 @@
 
 .hero-carousel {
   position: relative;
-  min-height: 85vh;
+  min-height: 100vh;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -44,8 +45,24 @@
 
 [data-theme="light"] .hero-carousel__bg::after {
   background: linear-gradient(to bottom,
-      rgba(249, 246, 240, 0.5) 0%,
-      rgba(249, 246, 240, 0.95) 100%);
+      rgba(249, 246, 240, 0.8) 0%,
+      rgba(249, 246, 240, 0.96) 100%);
+}
+
+[data-theme="light"] .hero-carousel__title {
+  color: #1a120b !important;
+  text-shadow: 0 1px 18px rgba(255, 255, 255, 0.95);
+}
+
+[data-theme="light"] .hero-carousel__desc {
+  color: #382a1e !important;
+}
+
+[data-theme="light"] .hero-carousel__badge-highlight {
+  background: rgba(156, 110, 0, 0.12) !important;
+  border-color: #9c6e00 !important;
+  color: #7a5500 !important;
+  box-shadow: 0 0 12px rgba(156, 110, 0, 0.2) !important;
 }
 
 .hero-carousel__ambient-glow {

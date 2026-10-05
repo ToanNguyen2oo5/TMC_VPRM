@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weather FX demo</title>
+<style>
+  body{margin:0;background:#12161b;font-family:system-ui,sans-serif;color:#fff;padding:40px 20px}
+  /* ===== CARD THỜI TIẾT ===== */
+  .weather-card{position:relative;overflow:hidden;max-width:1100px;margin:0 auto;border-radius:20px;
+    border:1px solid rgba(255,255,255,.12);min-height:220px;background:#1b2430}
+  .weather-card canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;transition:opacity .6s}
+  .weather-card::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(0,0,0,.1))}
+  .weather-content{position:relative;z-index:2;padding:22px 26px;display:flex;gap:30px;align-items:center;flex-wrap:wrap;
+    text-shadow:0 1px 6px rgba(0,0,0,.35)}
+  .temp{font-size:64px;font-weight:300;line-height:1}
+  select{padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.35);color:#fff}
+</style>
+</head>
+<body>
+
+<div class="weather-card" id="weatherCard">
+  <canvas></canvas>
+  <div class="weather-content">
+    <div>
+      <select id="region">
+        <option value="21.03,105.85,Hà Nội">Miền Bắc (Hà Nội)</option>
+        <option value="16.05,108.20,Đà Nẵng">Miền Trung (Đà Nẵng)</option>
+        <option value="10.82,106.63,TP.HCM">Miền Nam (TP.HCM)</option>
+      </select>
+      <div id="meta" style="margin-top:10px;font-size:13px;opacity:.85">Đang tải…</div>
+    </div>
+    <div class="temp" id="temp">26°C</div>
+    <div id="desc">Trời quang đãng, nắng đẹp</div>
+  </div>
+</div>
+
+<script>
+/* ================= WeatherFX ================= */
+class WeatherFX {
+  static SCENES = {
+    sunny:  { sky:['#1f7fd6','#8fd0fa'], clouds:{n:5, a:.55, c:'255,255,255'} },
+    cloudy: { sky:['#55677a','#a3b1bf'], clouds:{n:10,a:.7,  c:'235,240,245'} },
+    rain:   { sky:['#27313d','#4d5d6d'], clouds:{n:10,a:.75, c:'120,132,145'}, rain:120 },
+    storm:  { sky:['#171b22','#343e4b'], clouds:{n:12,a:.85, c:'80,90,102'},  rain:220, lightning:true },
+    snow:   { sky:['#667b91','#c2cfdb'], clouds:{n:8, a:.6,  c:'230,236,242'}, snow:90 },
+    night:  { sky:['#070b24','#232f66'], clouds:{n:3, a:.25, c:'120,140,200'}, stars:90 },
+  };
+
+  constructor(card){
+    this.card = card;
+    this.cv = card.querySelector('canvas');
+    this.ctx = this.cv.getContext('2d');
+    this.t = 0; this.flash = 0; this.nextFlash = 120;
+    new ResizeObserver(() => this.resize()).observe(card);
+    this.resize();
+    this.set('sunny');
+    const loop = () => { this.draw(); requestAnimationFrame(loop); };
+    loop();
+  }
+
+  resize(){
+    const d = Math.min(devicePixelRatio || 1, 2);
+    this.w = this.card.clientWidth; this.h = this.card.clientHeight;
+    this.cv.width = this.w * d; this.cv.height = this.h * d;
+    this.ctx.setTransform(d,0,0,d,0,0);
+    if (this.type) this.build();
+  }
+
+  set(type){
+    if (!WeatherFX.SCENES[type] || type === this.type) return;
+    this.cv.style.opacity = 0;                       // mờ dần rồi hiện cảnh mới
+    setTimeout(() => { this.type = type; this.build(); this.cv.style.opacity = 1; }, 250);
+  }
+
+  build(){
+    const s = WeatherFX.SCENES[this.type], R = Math.random, {w,h} = this;
+    this.s = s;
+    this.clouds = Array.from({length:s.clouds.n}, () => ({
+      x:R()*w*1.4-w*.2, y:R()*h*.7, r:50+R()*70, v:.1+R()*.25, p:R()*6 }));
+    this.drops  = Array.from({length:s.rain||0}, () => ({x:R()*w, y:R()*h, l:10+R()*16, v:9+R()*8}));
+    this.flakes = Array.from({length:s.snow||0}, () => ({x:R()*w, y:R()*h, r:1+R()*2.6, v:.5+R()*1.2, p:R()*6}));
+    this.stars  = Array.from({length:s.stars||0}, () => ({x:R()*w, y:R()*h*.85, r:.4+R()*1.3, p:R()*6}));
+  }
+
+  draw(){
+    if (!this.s) return;
+    const {ctx:c, w, h, s} = this; this.t += .016;
+    // nền trời
+    const g = c.createLinearGradient(0,0,0,h);
+    g.addColorStop(0, s.sky[0]); g.addColorStop(1, s.sky[1]);
+    c.fillStyle = g; c.fillRect(0,0,w,h);
+
+    if (this.type === 'sunny') this.sun();
+    if (this.type === 'night') this.moonStars();
+    this.drawClouds();
+    if (this.drops.length)  this.rain();
+    if (this.flakes.length) this.snow();
+    if (s.lightning) this.lightning();
+  }
+
+  sun(){
+    const c = this.ctx, x = this.w*.14, y = this.h*.28, p = 1 + Math.sin(this.t*1.2)*.06;
+    c.save(); c.translate(x,y); c.rotate(this.t*.08);
+    for (let i=0;i<14;i++){                      // tia nắng xoay chậm
+      c.rotate(Math.PI*2/14);
+      const rg = c.createLinearGradient(0,0,0,this.w*.6);
+      rg.addColorStop(0,'rgba(255,240,180,.28)'); rg.addColorStop(1,'rgba(255,240,180,0)');
+      c.fillStyle = rg; c.beginPath(); c.moveTo(-6,0); c.lineTo(6,0); c.lineTo(34,this.w*.6); c.lineTo(-34,this.w*.6); c.fill();
+    }
+    c.restore();
+    const rg = c.createRadialGradient(x,y,0,x,y,150*p);   // quầng sáng mặt trời
+    rg.addColorStop(0,'rgba(255,252,225,1)'); rg.addColorStop(.18,'rgba(255,235,150,.9)');
+    rg.addColorStop(.5,'rgba(255,210,100,.25)'); rg.addColorStop(1,'rgba(255,200,80,0)');
+    c.fillStyle = rg; c.fillRect(0,0,this.w,this.h);
+  }
+
+  moonStars(){
+    const c = this.ctx;
+    for (const s of this.stars){
+      c.globalAlpha = .4 + .6*Math.abs(Math.sin(this.t*1.3+s.p));
+      c.fillStyle = '#fff'; c.beginPath(); c.arc(s.x,s.y,s.r,0,7); c.fill();
+    }
+    c.globalAlpha = 1;
+    const x=this.w*.85, y=this.h*.3, rg = c.createRadialGradient(x,y,0,x,y,70);
+    rg.addColorStop(0,'rgba(255,255,235,1)'); rg.addColorStop(.3,'rgba(240,240,210,.9)');
+    rg.addColorStop(.35,'rgba(200,210,255,.25)'); rg.addColorStop(1,'rgba(200,210,255,0)');
+    c.fillStyle = rg; c.fillRect(x-80,y-80,160,160);
+  }
+
+  drawClouds(){
+    const c = this.ctx, {a, c:col} = this.s.clouds;
+    for (const k of this.clouds){
+      k.x += k.v; if (k.x - k.r*2 > this.w) k.x = -k.r*2;
+      for (let i=0;i<4;i++){                      // mỗi đám mây = 4 vệt tròn mờ
+        const cx = k.x + i*k.r*.55, cy = k.y + Math.sin(this.t*.4+k.p+i)*5, r = k.r*(1-i*.1);
+        const rg = c.createRadialGradient(cx,cy,0,cx,cy,r);
+        rg.addColorStop(0,`rgba(${col},${a*.55})`); rg.addColorStop(1,`rgba(${col},0)`);
+        c.fillStyle = rg; c.fillRect(cx-r,cy-r,r*2,r*2);
+      }
+    }
+  }
+
+  rain(){
+    const c = this.ctx; c.strokeStyle = 'rgba(200,220,255,.45)'; c.lineWidth = 1.2; c.beginPath();
+    for (const d of this.drops){
+      c.moveTo(d.x,d.y); c.lineTo(d.x-d.l*.2, d.y+d.l);
+      d.y += d.v; d.x -= d.v*.2;
+      if (d.y > this.h){ d.y = -20; d.x = Math.random()*(this.w+80); }
+    }
+    c.stroke();
+  }
+
+  snow(){
+    const c = this.ctx; c.fillStyle = 'rgba(255,255,255,.9)';
+    for (const f of this.flakes){
+      f.y += f.v; f.x += Math.sin(this.t+f.p)*.5;
+      if (f.y > this.h){ f.y = -5; f.x = Math.random()*this.w; }
+      c.beginPath(); c.arc(f.x,f.y,f.r,0,7); c.fill();
+    }
+  }
+
+  lightning(){
+    if (--this.nextFlash <= 0){ this.flash = 1; this.nextFlash = 150 + Math.random()*300; }
+    if (this.flash > .01){
+      this.ctx.fillStyle = `rgba(220,230,255,${this.flash*.55})`;
+      this.ctx.fillRect(0,0,this.w,this.h); this.flash *= .88;
+    }
+  }
+}
+
+/* ================= THỜI TIẾT THỰC (Open-Meteo, miễn phí, không cần key) ================= */
+const fx = new WeatherFX(document.getElementById('weatherCard'));
+const $ = id => document.getElementById(id);
+
+// Mã WMO -> cảnh hiệu ứng + mô tả
+function mapWeather(code, isDay){
+  let scene, text;
+  if (code <= 1)                       { scene = 'sunny';  text = isDay ? 'Trời quang đãng, nắng đẹp' : 'Trời đêm quang đãng'; }
+  else if (code <= 3 || code <= 48)    { scene = 'cloudy'; text = code === 3 ? 'Nhiều mây' : (code>=45 ? 'Sương mù' : 'Ít mây'); }
+  else if (code <= 67 || (code>=80 && code<=82)) { scene = 'rain'; text = 'Có mưa'; }
+  else if (code <= 77 || code===85 || code===86) { scene = 'snow'; text = 'Có tuyết'; }
+  else                                 { scene = 'storm';  text = 'Dông, sấm chớp'; }
+  if (!isDay && scene !== 'rain' && scene !== 'storm' && scene !== 'snow') scene = 'night';
+  return {scene, text};
+}
+
+async function loadWeather(){
+  const [lat, lon, name] = $('region').value.split(',');
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}`
+      + `&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code,is_day&timezone=auto`;
+    const d = (await (await fetch(url)).json()).current;
+    const {scene, text} = mapWeather(d.weather_code, d.is_day === 1);
+    fx.set(scene);                                         // <-- nền đổi theo thời tiết hiện tại
+    $('temp').textContent = Math.round(d.temperature_2m) + '°C';
+    $('desc').textContent = name + ' – ' + text;
+    $('meta').textContent = `Độ ẩm: ${d.relative_humidity_2m}% • Gió: ${Math.round(d.wind_speed_10m)} km/h • Cập nhật: `
+      + new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
+  } catch(e){
+    $('meta').textContent = 'Không tải được dữ liệu thời tiết';
+  }
+}
+
+$('region').addEventListener('change', loadWeather);
+loadWeather();
+setInterval(loadWeather, 10 * 60 * 1000);                  // tự cập nhật mỗi 10 phút
+</script>
+</body>
+</html>

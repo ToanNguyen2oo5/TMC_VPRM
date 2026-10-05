@@ -1,0 +1,264 @@
+/* WebARPage.css */
+
+.webar-page-layout {
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-4) var(--space-8);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* 1. Header WebAR */
+.webar-top-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-4);
+  margin-bottom: var(--space-3);
+  z-index: 10;
+}
+
+.webar-header-title {
+  text-align: center;
+}
+
+.webar-header-title h2 {
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.webar-header-badge {
+  font-size: 0.72rem;
+  color: var(--color-gold);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.webar-header-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.webar-icon-tool-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: all var(--transition-fast);
+}
+
+.webar-icon-tool-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: var(--color-gold);
+}
+
+.webar-icon-tool-btn.active {
+  background: rgba(212, 160, 23, 0.25);
+  border-color: var(--color-gold);
+  box-shadow: 0 0 10px var(--color-gold-glow);
+}
+
+/* 2. Khung Viewport Camera */
+.webar-viewport-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 680px;
+  height: 60vh;
+  min-height: 420px;
+  max-height: 650px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-4);
+}
+
+.webar-camera-disabled-card {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  text-align: center;
+  border-radius: var(--radius-xl);
+}
+
+.webar-camera-disabled-card .disabled-icon {
+  font-size: 3rem;
+  margin-bottom: var(--space-3);
+  opacity: 0.6;
+}
+
+.webar-camera-disabled-card h3 {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.webar-camera-disabled-card p {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: var(--space-4);
+}
+
+/* Thanh trạng thái AI Pill */
+.webar-status-pill {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: rgba(10, 10, 18, 0.75);
+  backdrop-filter: blur(12px);
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  z-index: 5;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
+}
+
+.status-indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-starting .status-indicator-dot {
+  background: #ffaa00;
+  box-shadow: 0 0 8px #ffaa00;
+}
+
+.status-noFace .status-indicator-dot {
+  background: #999;
+}
+
+.status-tracking .status-indicator-dot {
+  background: #00e676;
+  box-shadow: 0 0 10px #00e676;
+}
+
+.status-error .status-indicator-dot {
+  background: #ff5252;
+  box-shadow: 0 0 8px #ff5252;
+}
+
+.fps-counter {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: var(--color-gold);
+  padding-left: 8px;
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* 3. Bảng điều khiển Footer */
+.webar-control-bar {
+  width: 100%;
+  max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-xl);
+  background: rgba(18, 18, 30, 0.85);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(212, 160, 23, 0.3);
+}
+
+.webar-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Nút chụp ảnh Shutter Button */
+.webar-shutter-btn {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-gold) 0%, #b8860b 100%);
+  border: 3px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 25px var(--color-gold-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  padding: 0;
+}
+
+.webar-shutter-btn:hover:not(:disabled) {
+  transform: scale(1.06);
+  box-shadow: 0 0 35px var(--color-gold-glow);
+}
+
+.webar-shutter-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.webar-shutter-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(1);
+}
+
+.shutter-inner-ring {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shutter-icon {
+  font-size: 1.45rem;
+}
+
+@media (max-width: 600px) {
+  .webar-page-layout {
+    padding: var(--space-2) var(--space-2) calc(var(--space-12) + 20px);
+  }
+  .webar-viewport-wrapper {
+    height: 54vh;
+    min-height: 360px;
+  }
+  .webar-control-bar {
+    padding: var(--space-3);
+  }
+  .webar-shutter-btn {
+    width: 60px;
+    height: 60px;
+  }
+  .shutter-inner-ring {
+    width: 46px;
+    height: 46px;
+  }
+}

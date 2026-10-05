@@ -802,6 +802,33 @@ button {
   white-space: nowrap;
 }
 
+.control-btn--weather {
+  background: rgba(30, 144, 255, 0.12);
+  border-color: rgba(30, 144, 255, 0.35);
+  color: #70baff;
+  gap: 6px;
+  padding: 5px 11px;
+}
+
+.control-btn--weather:hover {
+  background: rgba(30, 144, 255, 0.22);
+  border-color: #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+}
+
+[data-theme="light"] .control-btn--weather {
+  background: rgba(30, 144, 255, 0.1);
+  border-color: rgba(30, 144, 255, 0.3);
+  color: #0284c7;
+}
+
+[data-theme="light"] .control-btn--weather:hover {
+  background: rgba(30, 144, 255, 0.18);
+  border-color: #0284c7;
+  color: #0369a1;
+}
+
 .control-btn--lang {
   padding: 5px 9px;
   font-weight: 700;

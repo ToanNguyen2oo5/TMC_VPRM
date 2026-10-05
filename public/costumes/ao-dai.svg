@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 600">
+  <defs>
+    <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#B22222" />
+      <stop offset="100%" stopColor="#800000" />
+    </linearGradient>
+    <linearGradient id="secondaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#DAA520" />
+      <stop offset="100%" stopColor="#B8860B" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Quần lụa bên trong -->
+  <path d="M120 240 C110 320, 95 440, 85 540 C110 550, 130 550, 150 540 C145 440, 140 320, 138 240 Z" fill="url(#secondaryGrad)" />
+  <path d="M220 240 C230 320, 245 440, 255 540 C230 550, 210 550, 190 540 C195 440, 200 320, 202 240 Z" fill="url(#secondaryGrad)" />
+
+  <!-- Tà áo dài thướt tha -->
+  <path d="M134 122 C132 160, 136 200, 138 242 C140 280, 122 360, 120 472 C158 480, 182 480, 220 472 C218 360, 200 280, 202 242 C204 200, 208 160, 206 122 Z" fill="url(#primaryGrad)" />
+  
+  <!-- Cổ áo -->
+  <path d="M155 106 C155 120, 185 120, 185 106 Z" fill="url(#primaryGrad)" />
+  
+  <!-- Ống tay áo raglan -->
+  <path d="M134 122 C105 160, 90 220, 85 270 C95 275, 110 270, 115 260 C125 210, 138 160, 138 142 Z" fill="url(#primaryGrad)" />
+  <path d="M206 122 C235 160, 250 220, 255 270 C245 275, 230 270, 225 260 C215 210, 202 160, 202 142 Z" fill="url(#primaryGrad)" />
+</svg>

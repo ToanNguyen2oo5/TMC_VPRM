@@ -1,0 +1,185 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 600">
+      <defs>
+          {/* 1. BỘ LỌC SVG SỢI VẢI HỮU CƠ (feTurbulence & feDisplacementMap) */}
+          <filter id="organicFabricTexture" x="-10%" y="-10%" width="120%" height="120%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.65 0.5" numOctaves="4" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.2" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+            <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.16 0" result="coloredNoise" />
+            <feComposite in="displaced" in2="coloredNoise" operator="in" result="textured" />
+            <feBlend in="displaced" in2="textured" mode="multiply" />
+          </filter>
+
+          {/* 2. GRADIENTS ĐA TẦNG CHO VECTOR ART & CEL-SHADING ANIME */}
+          {/* Primary Gradient (Tà áo chính) */}
+          <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            {isFlat ? (
+              <>
+                <stop offset="0%" stopColor="#B22222" />
+                <stop offset="100%" stopColor="#B22222" />
+              </>
+            ) : isAnime ? (
+              <>
+                <stop offset="0%" stopColor="#B22222" />
+                <stop offset="65%" stopColor="#B22222" />
+                <stop offset="66%" stopColor="#000000" stopOpacity="0.22" />
+                <stop offset="100%" stopColor="#000000" stopOpacity="0.28" />
+              </>
+            ) : (
+              <>
+                <stop offset="0%" stopColor="#B22222" stopOpacity="0.95" />
+                <stop offset="35%" stopColor="#ffffff" stopOpacity="0.12" />
+                <stop offset="70%" stopColor="#B22222" stopOpacity="1" />
+                <stop offset="100%" stopColor="#000000" stopOpacity="0.28" />
+              </>
+            )}
+          </linearGradient>
+
+          {/* Secondary Gradient (Quần lụa) */}
+          <linearGradient id="secondaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            {isFlat ? (
+              <>
+                <stop offset="0%" stopColor="#DAA520" />
+                <stop offset="100%" stopColor="#DAA520" />
+              </>
+            ) : isAnime ? (
+              <>
+                <stop offset="0%" stopColor="#DAA520" />
+                <stop offset="68%" stopColor="#DAA520" />
+                <stop offset="69%" stopColor="#000000" stopOpacity="0.2" />
+                <stop offset="100%" stopColor="#000000" stopOpacity="0.25" />
+              </>
+            ) : (
+              <>
+                <stop offset="0%" stopColor="#DAA520" stopOpacity="0.92" />
+                <stop offset="50%" stopColor="#DAA520" stopOpacity="1" />
+                <stop offset="100%" stopColor="#000000" stopOpacity="0.25" />
+              </>
+            )}
+          </linearGradient>
+
+          {/* Accent Gradient (Yếm / Thắt lưng / Cổ áo) */}
+          <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            {isFlat ? (
+              <>
+                <stop offset="0%" stopColor="#DAA520" />
+                <stop offset="100%" stopColor="#DAA520" />
+              </>
+            ) : isAnime ? (
+              <>
+                <stop offset="0%" stopColor="#DAA520" />
+                <stop offset="70%" stopColor="#DAA520" />
+                <stop offset="71%" stopColor="#000000" stopOpacity="0.2" />
+                <stop offset="100%" stopColor="#000000" stopOpacity="0.25" />
+              </>
+            ) : (
+              <>
+                <stop offset="0%" stopColor="#DAA520" stopOpacity="1" />
+                <stop offset="50%" stopColor="#ffffff" stopOpacity="0.2" />
+                <stop offset="100%" stopColor="#000000" stopOpacity="0.22" />
+              </>
+            )}
+          </linearGradient>
+
+          {/* Gradient Nếp Gấp Vải 3D (Fabric Folds Shadow) */}
+          <linearGradient id="foldShadowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="rgba(0,0,0,0.3)" />
+            <stop offset="45%" stopColor="rgba(0,0,0,0.05)" />
+            <stop offset="100%" stopColor="rgba(255,255,255,0.18)" />
+          </linearGradient>
+
+          {/* Gradient Ánh Lụa Óng Ả (Silk Luster Highlight) */}
+          <linearGradient id="silkLusterGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+            <stop offset="50%" stopColor="rgba(255,255,255,0.4)" />
+            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+          </linearGradient>
+
+          <radialGradient id="silverGleam" cx="45%" cy="45%" r="55%">
+            <stop offset="0%" stopColor="#ffffff" />
+            <stop offset="60%" stopColor="#cbd5e0" />
+            <stop offset="100%" stopColor="#64748b" />
+          </radialGradient>
+
+          {/* Bóng đổ tiếp xúc sàn */}
+          <radialGradient id="floorShadow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="rgba(0,0,0,0.55)" />
+            <stop offset="70%" stopColor="rgba(0,0,0,0.2)" />
+            <stop offset="100%" stopColor="rgba(0,0,0,0)" />
+          </radialGradient>
+
+          {/* 3. HỌA TIẾT VẢI (PATTERNS) */}
+          {/* Họa tiết Gấm thêu kim tuyến hoàng gia */}
+          <pattern id="brocadePattern" width="28" height="28" patternUnits="userSpaceOnUse">
+            <circle cx="14" cy="14" r="5" fill="none" stroke="#DAA520" strokeWidth="0.8" opacity="0.5" />
+            <path d="M14 6 C17 9, 21 9, 22 14 C21 19, 17 19, 14 22 C11 19, 7 19, 6 14 C7 9, 11 9, 14 6 Z" fill="none" stroke="#DAA520" strokeWidth="0.7" opacity="0.6" />
+            <circle cx="14" cy="14" r="1.5" fill="#DAA520" opacity="0.75" />
+          </pattern>
+
+          {/* Họa tiết Dệt kim tơ tằm (Micro Silk Weave) */}
+          <pattern id="silkWeavePattern" width="6" height="6" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="0" x2="6" y2="6" stroke="#ffffff" strokeWidth="0.5" opacity="0.12" />
+            <line x1="6" y1="0" x2="0" y2="6" stroke="#000000" strokeWidth="0.4" opacity="0.1" />
+          </pattern>
+
+          {/* Họa tiết Khăn Rằn Nam Bộ (Gingham Check) */}
+          <pattern id="scarfPattern" width="8" height="8" patternUnits="userSpaceOnUse">
+            <rect width="4" height="4" fill="#ffffff" />
+            <rect x="4" width="4" height="4" fill="#2d3748" />
+            <rect y="4" width="4" height="4" fill="#2d3748" />
+            <rect x="4" y="4" width="4" height="4" fill="#ffffff" />
+          </pattern>
+        </defs>
+      <g id="costume-nhat-binh" filter="none">
+            {/* Thân áo khoác rộng vương giả (Primary Color) */}
+            <path 
+              d="M112 124 C140 126, 200 126, 228 124 C236 220, 244 340, 242 455 C200 465, 140 465, 98 455 C96 340, 104 220, 112 124 Z" 
+              fill="url(#primaryGrad)" 
+              stroke="#2d1810" 
+              strokeWidth="#2d1810"
+            />
+
+            {/* Họa tiết gấm chìm */}
+            "none"
+
+            {/* Bản viền cổ Nhật Bình hình chữ nhật ngũ sắc trước ngực (Accent Color) */}
+            <rect 
+              x="150" 
+              y="112" 
+              width="40" 
+              height="155" 
+              rx="3"
+              fill="url(#accentGrad)" 
+              stroke="#DAA520" 
+              strokeWidth="2.5" 
+            />
+            {/* Hoa văn rồng mây kim tuyến trên dải cổ */}
+            <line x1="170" y1="112" x2="170" y2="267" stroke="#ffffff" strokeWidth="1.5" strokeDasharray="3 3" />
+            <circle cx="170" cy="140" r="4" fill="#DAA520" stroke="#fff" strokeWidth="0.8" />
+            <circle cx="170" cy="172" r="4" fill="#DAA520" stroke="#fff" strokeWidth="0.8" />
+            <circle cx="170" cy="204" r="4" fill="#DAA520" stroke="#fff" strokeWidth="0.8" />
+            <circle cx="170" cy="236" r="4" fill="#DAA520" stroke="#fff" strokeWidth="0.8" />
+
+            {/* Dải ngũ sắc viền tay áo (Ngũ hành: Lục, Vàng, Xanh, Trắng, Đỏ) */}
+            <g id="sleeve-left">
+              <path d="M118 125 C92 180, 70 230, 62 250 C74 256, 88 255, 96 248 C104 220, 126 170, 136 142 Z" fill="url(#primaryGrad)" />
+              <rect x="62" y="244" width="26" height="3" fill="#e53e3e" transform="rotate(22 62 244)" />
+              <rect x="64" y="248" width="26" height="3" fill="#ecc94b" transform="rotate(22 64 248)" />
+              <rect x="66" y="252" width="26" height="3" fill="#3182ce" transform="rotate(22 66 252)" />
+            </g>
+            <g id="sleeve-right">
+              <path d="M222 125 C248 180, 270 230, 278 250 C266 256, 252 255, 244 248 C236 220, 214 170, 204 142 Z" fill="url(#primaryGrad)" />
+              <rect x="254" y="254" width="26" height="3" fill="#e53e3e" transform="rotate(-22 254 254)" />
+              <rect x="252" y="250" width="26" height="3" fill="#ecc94b" transform="rotate(-22 252 250)" />
+              <rect x="250" y="246" width="26" height="3" fill="#3182ce" transform="rotate(-22 250 246)" />
+            </g>
+
+            {/* Nếp gấp tà áo Nhật Bình */}
+            {!isFlat && (
+              
+                <path d="M145 280 C140 340, 135 400, 132 452" stroke="rgba(0,0,0,0.22)" strokeWidth="1.5" fill="none" />
+                <path d="M195 280 C200 340, 205 400, 208 452" stroke="rgba(0,0,0,0.22)" strokeWidth="1.5" fill="none" />
+                <path d="M148 275 C144 335, 140 395, 138 450" stroke="url(#silkLusterGrad)" strokeWidth="3" fill="none" opacity="0.5" />
+              
+            )}
+          </g>
+    </svg>
