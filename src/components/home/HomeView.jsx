@@ -44,28 +44,18 @@ export default function HomeView({ EVENT_SHORTCUTS, handleQuickEventSelect, hand
         }
       });
 
-      // 3. Pinned Section
-      const pinSection = document.querySelector('.story-pin-section');
-      if (pinSection) {
-        const pinTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: '.story-pin-section',
-            start: 'top top',
-            end: '+=150%',
-            pin: true,
-            scrub: 1,
-          }
-        });
-
-        pinTl.to('.pin-image-wrapper', {
-          scale: 1,
-          clipPath: 'inset(0% 0% 0% 0%)',
-          borderRadius: '0px',
-          ease: 'power2.inOut'
-        })
-        .to('.pin-text-1', { opacity: 0, y: -15, duration: 0.5 }, 0)
-        .fromTo('.pin-text-2', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.5 }, 0.5);
-      }
+      // 3. Landmark Columns Entrance
+      gsap.from('.landmark-column', {
+        y: 40,
+        opacity: 0.8,
+        duration: 0.8,
+        stagger: 0.08,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.story-pin-section',
+          start: 'top 85%'
+        }
+      });
 
       // 4. Sequential Shortcuts
       gsap.from('.event-shortcut-card', {
@@ -100,24 +90,9 @@ export default function HomeView({ EVENT_SHORTCUTS, handleQuickEventSelect, hand
     <div ref={container} className="home-view" onMouseMove={handleMouseMove}>
       <HeroCarousel onSelectOutfit={handleSelectFromOtherViews} />
 
-      {/* GSAP Pinned Story Section */}
+      {/* Heritage Landmarks Showcase */}
       <section className={`story-pin-section ${!isMotionEnabled ? 'static-story-section' : ''}`}>
         <div className="pin-content-wrapper">
-           <div className="pin-text-container">
-              <span className="pin-kicker">VIỆT PHỤC REMIX · DI SẢN SỐNG</span>
-              <div className="pin-heading-wrap">
-                <h2 className="pin-text-1">Khám Phá Di Sản</h2>
-                <h2 className="pin-text-2">Qua Lăng Kính Thời Đại</h2>
-              </div>
-              <p className="pin-hero-copy">Từ nét xưa đến chất riêng của bạn.</p>
-              <button
-                type="button"
-                className="pin-hero-cta"
-                onClick={() => document.querySelector('.event-shortcuts-section')?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                Khám phá bộ sưu tập <span aria-hidden="true">→</span>
-              </button>
-           </div>
            <div className="pin-image-wrapper glass-panel">
               <div className="landmark-columns" aria-label="Hành trình danh lam Việt Nam">
                 {[

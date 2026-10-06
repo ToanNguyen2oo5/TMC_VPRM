@@ -1,7 +1,7 @@
 .story-pin-section {
   position: relative;
-  height: 125vh;
-  min-height: 820px;
+  height: 100vh;
+  min-height: 680px;
   width: 100vw;
   margin-left: calc(50% - 50vw);
   display: flex;
@@ -10,98 +10,29 @@
   overflow: hidden;
   background: radial-gradient(circle at 50% 35%, #2b2119 0%, var(--color-bg-primary) 62%);
   z-index: 10;
+  padding: 0;
 }
 
 .pin-content-wrapper {
   position: relative;
   width: 100vw;
   max-width: none;
-  height: 125vh;
-  min-height: 820px;
+  height: 100%;
+  min-height: 680px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.pin-text-container {
-  position: absolute;
-  top: clamp(1.5rem, 5vh, 3.5rem);
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(92%, 860px);
-  z-index: 20;
-  text-align: center;
-  pointer-events: none;
-  padding: 0.5rem 1rem;
-}
-
-.pin-heading-wrap {
-  position: relative;
-  display: grid;
-  place-items: center;
-  min-height: clamp(2.6rem, 6vw, 5.2rem);
-  margin: 0.25rem 0;
-}
-
-.pin-heading-wrap .pin-text-1,
-.pin-heading-wrap .pin-text-2 {
-  grid-area: 1 / 1;
-  font-family: var(--font-serif);
-  font-size: clamp(2rem, 5.2vw, 4.2rem);
-  font-weight: 700;
-  margin: 0;
-  pointer-events: none;
-  color: #f6dfaa;
-  text-shadow: 0 4px 28px rgba(0, 0, 0, 0.85);
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-}
-
-.pin-text-2 { color: #fff4d4; }
-
-.pin-kicker {
-  display: block;
-  margin-bottom: 0.7rem;
-  color: #e5b95c;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.24em;
-}
-
-.pin-hero-copy {
-  margin: 1rem 0 1.15rem;
-  color: rgba(255,255,255,.82);
-  font-size: clamp(0.95rem, 1.6vw, 1.2rem);
-}
-
-.pin-hero-cta {
-  pointer-events: auto;
-  border: 1px solid rgba(255,230,160,.8);
-  border-radius: 999px;
-  padding: 0.75rem 1.35rem;
-  color: #241a10;
-  background: linear-gradient(110deg, #dba849, #f8e2a7);
-  font-size: 0.86rem;
-  font-weight: 800;
-  box-shadow: 0 8px 28px rgba(214,163,66,.35);
-  cursor: pointer;
-  transition: transform .25s ease, box-shadow .25s ease;
-}
-
-.pin-hero-cta:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 12px 34px rgba(214,163,66,.55); }
-
 .pin-image-wrapper {
   position: absolute;
-  left: 50%;
-  width: 100vw;
-  height: 125vh;
-  min-height: 820px;
-  max-width: none;
-  max-height: none;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   border-radius: 0;
   overflow: hidden;
-  clip-path: inset(0% 0% 0% 0%);
-  transform: scale(1);
+  clip-path: none;
+  transform: none;
   box-shadow: none;
 }
 
@@ -237,35 +168,26 @@
 
 /* Fallback for when motion is reduced */
 .static-story-section {
-  height: auto;
-  padding: 4rem 1rem;
+  height: 100vh;
+  min-height: 680px;
+  padding: 0;
 }
 .static-story-section .pin-content-wrapper {
-  height: auto;
-  flex-direction: column;
-  gap: 2rem;
-}
-.static-story-section .pin-text-container {
-  position: relative;
-  top: 0;
-  left: 0;
-  text-align: center;
-  transform: none;
+  height: 100%;
+  width: 100%;
 }
 .static-story-section .pin-image-wrapper {
-  position: relative;
+  position: absolute;
+  inset: 0;
   transform: none;
   clip-path: none;
   max-width: 100%;
 }
 
 @media (max-width: 700px) {
-  .story-pin-section { height: 115vh; min-height: 720px; }
-  .pin-content-wrapper { height: 115vh; min-height: 720px; }
-  .pin-text-container { top: clamp(145px, 19vh, 205px); width: 94%; }
-  .pin-kicker { font-size: .58rem; letter-spacing: .16em; }
-  .pin-text-1, .pin-text-2 { font-size: clamp(2rem, 10vw, 3.2rem); }
-  .pin-image-wrapper { width: 100vw; height: 115vh; min-height: 720px; border-radius: 0; }
+  .story-pin-section { height: 100vh; min-height: 600px; }
+  .pin-content-wrapper { height: 100%; min-height: 600px; }
+  .pin-image-wrapper { width: 100vw; height: 100%; min-height: 600px; border-radius: 0; }
   .landmark-columns { grid-template-columns: repeat(5, 72vw); overflow-x: auto; scroll-snap-type: x mandatory; }
   .landmark-column { scroll-snap-align: center; }
   .pin-floating-tag { font-size: .52rem; padding: .42rem .55rem; }
@@ -287,9 +209,12 @@
   min-height: 100vh !important;
   max-width: none !important;
   margin: 0 !important;
+  align-items: flex-start;
+  justify-content: flex-start;
 }
 
 .home-view .story-pin-section .pin-image-wrapper {
+  position: absolute !important;
   inset: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
@@ -300,10 +225,4 @@
   border-radius: 0 !important;
   top: 0 !important;
   bottom: auto !important;
-}
-
-/* Section hình ảnh thuần: không chừa khoảng trống cho copy đã bỏ */
-.home-view .story-pin-section .pin-content-wrapper {
-  align-items: flex-start;
-  justify-content: flex-start;
 }
