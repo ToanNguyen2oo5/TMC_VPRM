@@ -23,31 +23,13 @@ export class CostumeRenderer {
   }
 
   render(ctx, pose, config, _timestamp) {
-    if (!ctx || !pose || !config || !pose.hasReliableTorso) {
-      this.currentOpacity = Math.max(0, this.currentOpacity - 0.1);
-      if (this.currentOpacity <= 0) return;
-    } else {
-      this.currentOpacity = Math.min(1, this.currentOpacity + 0.1);
-    }
+    if (!ctx || !pose || !config || !pose.hasReliableTorso) return;
 
     ctx.save();
     ctx.globalCompositeOperation = 'source-over';
     
-    // Fade out when turning too much (yaw > 45 degrees)
-    let yawFactor = 1;
-    let yawFade = 1;
-    if (pose && pose.shoulderYawRad !== undefined) {
-      const absYaw = Math.abs(pose.shoulderYawRad);
-      yawFactor = Math.cos(pose.shoulderYawRad); // Squeeze horizontally
-      if (absYaw > Math.PI / 3.5) {
-        yawFade = Math.max(0, 1 - (absYaw - Math.PI / 3.5) * 2);
-      }
-    }
-    
-    ctx.globalAlpha = this.currentOpacity * yawFade;
-
     const img = this.getOrLoadImage(config);
-    if (img && img.complete && img.naturalWidth > 0 && pose) {
+    if (img && img.complete && img.naturalWidth > 0) {
       const canvasWidth = ctx.canvas.width;
       const canvasHeight = ctx.canvas.height;
       
@@ -90,9 +72,6 @@ export class CostumeRenderer {
         scaleX = (shoulderPixelW * 1.2) / img.naturalWidth;
         scaleY = scaleX;
       }
-
-      // Apply yaw squeeze
-      scaleX *= Math.max(0.4, Math.abs(yawFactor));
 
       ctx.translate(pxX, pxY);
       ctx.rotate(pose.shoulderRollRad);

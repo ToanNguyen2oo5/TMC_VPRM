@@ -364,8 +364,7 @@ export default function CameraView({
                 shoulderWidth: (bodyPose.shoulderWidth * videoW * scale) / canvas.width,
                 torsoHeight: (bodyPose.torsoHeight * videoH * scale) / canvas.height,
                 // Phép phản chiếu theo trục dọc cũng đảo dấu góc nghiêng.
-                shoulderRollRad: isMirrored ? -bodyPose.shoulderRollRad : bodyPose.shoulderRollRad,
-                shoulderYawRad: isMirrored ? -bodyPose.shoulderYawRad : bodyPose.shoulderYawRad
+                shoulderRollRad: isMirrored ? -bodyPose.shoulderRollRad : bodyPose.shoulderRollRad
             };
         }
 
