@@ -26,6 +26,7 @@ export class CostumeRenderer {
     if (!ctx || !pose || !config || !pose.hasReliableTorso) return;
 
     ctx.save();
+    ctx.globalCompositeOperation = 'source-over';
     
     const img = this.getOrLoadImage(config);
     if (img && img.complete && img.naturalWidth > 0) {

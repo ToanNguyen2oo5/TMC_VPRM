@@ -11,9 +11,15 @@ export default function HomeView({ EVENT_SHORTCUTS, handleQuickEventSelect, hand
   const container = useRef(null);
   const tier = useDeviceTier();
 
+  const [isMotionEnabled, setIsMotionEnabled] = React.useState(true);
+
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (tier === 'low' || prefersReducedMotion) return;
+    if (tier === 'low' || prefersReducedMotion) {
+      setIsMotionEnabled(false);
+      return;
+    }
+    setIsMotionEnabled(true);
 
     let ctx = gsap.context(() => {
       // 1. Hero Text Reveal (Masking)
@@ -95,11 +101,11 @@ export default function HomeView({ EVENT_SHORTCUTS, handleQuickEventSelect, hand
       <HeroCarousel onSelectOutfit={handleSelectFromOtherViews} />
 
       {/* GSAP Pinned Story Section */}
-      <section className="story-pin-section">
+      <section className={`story-pin-section ${!isMotionEnabled ? 'static-story-section' : ''}`}>
         <div className="pin-content-wrapper">
            <div className="pin-text-container">
               <h2 className="pin-text-1 text-gradient">Khám Phá Di Sản</h2>
-              <h2 className="pin-text-2 text-gradient" style={{ position: 'absolute', top: 0 }}>Qua Lăng Kính Thời Đại</h2>
+              <h2 className="pin-text-2 text-gradient" style={isMotionEnabled ? { position: 'absolute', top: 0 } : {}}>Qua Lăng Kính Thời Đại</h2>
            </div>
            <div className="pin-image-wrapper glass-panel">
               <img src="/images/hero_costumes_trio.jpg" alt="Việt Phục" className="pin-image" />

@@ -98,3 +98,27 @@
   position: relative;
   z-index: 1;
 }
+
+/* Fallback for when motion is reduced */
+.static-story-section {
+  height: auto;
+  padding: 4rem 1rem;
+}
+.static-story-section .pin-content-wrapper {
+  height: auto;
+  flex-direction: column;
+  gap: 2rem;
+}
+.static-story-section .pin-text-container {
+  position: relative;
+  top: 0;
+  left: 0;
+  text-align: center;
+}
+.static-story-section .pin-image-wrapper {
+  position: relative;
+  transform: none;
+  clip-path: none;
+  max-width: 100%;
+}
+
