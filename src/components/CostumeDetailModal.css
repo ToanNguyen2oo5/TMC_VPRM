@@ -9,12 +9,13 @@
   align-items: center;
   justify-content: center;
   padding: 1.25rem;
+  overflow-y: auto;
 }
 
 .costume-modal-card {
   width: 100%;
   max-width: 680px;
-  max-height: 90vh;
+  max-height: min(88vh, 780px);
   background: var(--color-bg-secondary, #1F1916);
   border: 1.5px solid var(--color-gold);
   border-radius: var(--radius-xl, 20px);
@@ -37,6 +38,7 @@
   align-items: flex-start;
   justify-content: space-between;
   border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
 }
 
 .costume-modal-title {
@@ -80,9 +82,31 @@
 .costume-modal-body {
   padding: 1.5rem 1.75rem;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 1.35rem;
+}
+
+.costume-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.costume-modal-body::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+
+.costume-modal-body::-webkit-scrollbar-thumb {
+  background: rgba(200, 161, 90, 0.35);
+  border-radius: 4px;
+}
+
+.costume-modal-body::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold);
 }
 
 .costume-modal-section {
@@ -228,6 +252,12 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  flex-shrink: 0;
+  background: var(--color-bg-secondary, #1F1916);
+}
+
+[data-theme="light"] .costume-modal-footer {
+  background: #FBF7F0;
 }
 
 .modal-action-btn {

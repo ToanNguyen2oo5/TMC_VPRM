@@ -26,7 +26,7 @@ export async function enhanceFaceOnImage(imageBase64OrUrl) {
 
   try {
     let targetBlob;
-    if (imageBase64OrUrl.startsWith("http")) {
+    if (imageBase64OrUrl.startsWith("http") || imageBase64OrUrl.startsWith("/")) {
       const resp = await fetch(imageBase64OrUrl);
       targetBlob = await resp.blob();
     } else {

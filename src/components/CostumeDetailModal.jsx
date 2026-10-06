@@ -21,8 +21,15 @@ export default function CostumeDetailModal({ outfit, isOpen, onClose, onSelectFo
   const meta = COSTUME_META[outfit.id] || null;
 
   return (
-    <div className="costume-modal-overlay animate-fade-in" role="dialog" aria-modal="true">
-      <div className="costume-modal-card animate-scale-up">
+    <div
+      className="costume-modal-overlay animate-fade-in"
+      role="dialog"
+      aria-modal="true"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="costume-modal-card animate-scale-up" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="costume-modal-header">
           <div>

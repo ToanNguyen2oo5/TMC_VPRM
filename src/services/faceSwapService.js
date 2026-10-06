@@ -35,7 +35,7 @@ export async function swapFaceOnImage(userPhotoBase64, targetImageBase64OrUrl) {
     const userBlob = base64ToBlob(userPhotoBase64, 'image/jpeg');
     
     let targetBlob;
-    if (targetImageBase64OrUrl.startsWith('http')) {
+    if (targetImageBase64OrUrl.startsWith('http') || targetImageBase64OrUrl.startsWith('/')) {
       const resp = await fetch(targetImageBase64OrUrl);
       targetBlob = await resp.blob();
     } else {

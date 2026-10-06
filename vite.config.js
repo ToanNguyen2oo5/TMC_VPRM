@@ -25,6 +25,11 @@ export default defineConfig(({ mode }) => {
           target: 'https://api.cloudflare.com',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/cloudflare-ai/, '')
+        },
+        '/pollinations-ai': {
+          target: 'https://image.pollinations.ai',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/pollinations-ai/, '')
         }
       }
     }

@@ -12,7 +12,12 @@ function getAI() {
   return ai;
 }
 
-const TEXT_MODEL = 'gemini-2.5-flash';
+const TEXT_MODELS = [
+  'gemini-3.5-flash-lite',
+  'gemini-3.5-flash',
+  'gemini-2.5-flash',
+  'gemini-flash-latest'
+];
 
 /**
  * Schema cho structured output của culture card
@@ -48,10 +53,7 @@ const CULTURE_CARD_SCHEMA = {
  * @returns {Promise<object>} { ten, y_nghia_dien_giai, boi_canh_de_xuat, fun_fact }
  */
 export async function generateCultureDescription(outfitData) {
-  try {
-    const genAI = getAI();
-
-    const prompt = `Bạn là một content creator Gen Z viết về văn hóa Việt Nam. 
+  const prompt = `Bạn là một content creator Gen Z viết về văn hóa Việt Nam. 
 Hãy diễn đạt lại thông tin trang phục truyền thống dưới đây bằng giọng văn trẻ trung, thân thiện, dễ hiểu — nhưng vẫn tôn trọng giá trị văn hóa.
 
 QUAN TRỌNG: Chỉ dùng thông tin có trong dữ liệu bên dưới. TUYỆT ĐỐI KHÔNG tự bịa thêm sự kiện lịch sử, nhân vật, hoặc mốc thời gian không có trong nguồn.
@@ -67,27 +69,38 @@ Dữ liệu gốc:
 
 Hãy viết lại theo format yêu cầu. Giọng văn: vui tươi, gần gũi Gen Z nhưng không quá suồng sã, vẫn giữ sự tôn trọng văn hóa.`;
 
-    const response = await genAI.models.generateContent({
-      model: TEXT_MODEL,
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
-        responseSchema: CULTURE_CARD_SCHEMA,
-        temperature: 0.7,
-      }
-    });
+  try {
+    const genAI = getAI();
 
-    const text = response.candidates[0].content.parts[0].text;
-    return JSON.parse(text);
+    for (const model of TEXT_MODELS) {
+      try {
+        const response = await genAI.models.generateContent({
+          model: model,
+          contents: prompt,
+          config: {
+            responseMimeType: 'application/json',
+            responseSchema: CULTURE_CARD_SCHEMA,
+            temperature: 0.7,
+          }
+        });
+
+        const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (text) {
+          return JSON.parse(text);
+        }
+      } catch (modelErr) {
+        console.warn(`⚠️ Model ${model} bận hoặc gặp sự cố (${modelErr.message}), thử model tiếp theo...`);
+      }
+    }
   } catch (error) {
     console.error('Lỗi khi sinh mô tả văn hóa:', error);
-
-    // Fallback: trả về dữ liệu gốc nếu API lỗi
-    return {
-      ten: outfitData.ten,
-      y_nghia_dien_giai: outfitData.y_nghia,
-      boi_canh_de_xuat: `Phù hợp cho: ${outfitData.boi_canh_phu_hop.join(', ')}`,
-      fun_fact: `Trang phục đặc trưng vùng ${outfitData.vung_mien} với màu sắc ${outfitData.mau_dac_trung[0]}.`
-    };
   }
+
+  // Fallback: trả về dữ liệu gốc nếu API lỗi
+  return {
+    ten: outfitData.ten,
+    y_nghia_dien_giai: outfitData.y_nghia,
+    boi_canh_de_xuat: `Phù hợp cho: ${outfitData.boi_canh_phu_hop.join(', ')}`,
+    fun_fact: `Trang phục đặc trưng vùng ${outfitData.vung_mien} với màu sắc ${outfitData.mau_dac_trung[0]}.`
+  };
 }
