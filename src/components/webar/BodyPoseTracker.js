@@ -175,6 +175,12 @@ export class BodyPoseTracker {
         ? rawRoll + Math.PI
         : rawRoll;
 
+    // Tính Yaw (xoay ngang) dựa trên trục Z của 2 vai
+    const dz = rightShoulder.z - leftShoulder.z;
+    // dx đã tính ở trên. dz và dx ở cùng hệ toạ độ tương đối.
+    // Nếu dz dương, vai phải xa hơn vai trái -> người xoay sang trái màn hình.
+    const shoulderYawRad = Math.atan2(dz, dx);
+
     return {
       raw: landmarks,
       leftShoulder,
@@ -191,6 +197,7 @@ export class BodyPoseTracker {
       shoulderWidth,
       torsoHeight,
       shoulderRollRad,
+      shoulderYawRad,
       hasReliableTorso
     };
   }
