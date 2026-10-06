@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from '../services/i18n';
+import { motion } from 'framer-motion';
+import { springs } from '../motion/tokens';
 import './StickyStepper.css';
 
 export default function StickyStepper({ currentStep = 1, stepTitle = '' }) {
@@ -41,9 +43,11 @@ export default function StickyStepper({ currentStep = 1, stepTitle = '' }) {
           </div>
 
           <div className="stepper-bar-track">
-            <div
+            <motion.div
               className="stepper-bar-progress"
-              style={{ width: `${current.percent}%` }}
+              initial={{ width: 0 }}
+              animate={{ width: `${current.percent}%` }}
+              transition={springs.liquid}
             />
           </div>
 

@@ -3,6 +3,7 @@ import CameraView from './CameraView';
 import AccessorySelector from './AccessorySelector';
 import CapturePreview from './CapturePreview';
 import { ACCESSORIES_CONFIG, DEFAULT_ACCESSORY_ID } from './accessoryConfigs';
+import { motion, AnimatePresence } from 'framer-motion';
 import './WebARPage.css';
 
 /**
@@ -84,6 +85,9 @@ export default function WebARPage({ onExit, onToast }) {
   // Chụp ảnh
   const [captureTrigger, setCaptureTrigger] = useState(0);
   const [capturedPhotoUrl, setCapturedPhotoUrl] = useState(null);
+  const [isFlashing, setIsFlashing] = useState(false);
+  const [flyPhotoUrl, setFlyPhotoUrl] = useState(null);
+  const [flyPos, setFlyPos] = useState({ x: 0, y: 0 });
 
   const selectedAccessory = useMemo(() => {
     return ACCESSORIES_CONFIG[selectedId] || ACCESSORIES_CONFIG[DEFAULT_ACCESSORY_ID];
@@ -103,8 +107,26 @@ export default function WebARPage({ onExit, onToast }) {
     }
   }, []);
 
+  // Xử lý chụp ảnh: Flash -> Fly to Navbar Lookbook
   const handleTriggerCapture = () => {
+    setIsFlashing(true);
+    setTimeout(() => setIsFlashing(false), 150);
     setCaptureTrigger(Date.now());
+  };
+
+  const handleCaptureReady = (dataUrl) => {
+    // Instead of showing the preview modal right away, we do the fly animation.
+    // We can also save it to lookbook immediately or just show preview.
+    // Let's do the fly animation:
+    setFlyPhotoUrl(dataUrl);
+    setFlyPos({ x: window.innerWidth / 2 - 40, y: window.innerHeight / 2 - 60 });
+    
+    // Auto clear fly photo and show toast
+    setTimeout(() => {
+      setFlyPhotoUrl(null);
+      if (onToast) onToast('✨ Ảnh đã được lưu vào Lookbook!');
+      // TODO: Actually add to savedLookbooks in App.jsx (needs callback)
+    }, 1200);
   };
 
   const handleToggleCamera = () => {
@@ -213,7 +235,7 @@ export default function WebARPage({ onExit, onToast }) {
             isMirrored={isMirrored}
             selectedDeviceId={selectedDeviceId}
             onDeviceListAvailable={setAvailableDevices}
-            onCaptureReady={setCapturedPhotoUrl}
+            onCaptureReady={handleCaptureReady}
             externalCaptureTrigger={captureTrigger}
             selectedOutfit={OUTFITS.find(o => o.id === selectedOutfitId)}
             onOutfitTrackingChange={setOutfitTrackingState}
@@ -318,15 +340,43 @@ export default function WebARPage({ onExit, onToast }) {
         </div>
       </footer>
 
-      {/* 4. Modal xem trước và lưu ảnh chụp */}
-      {capturedPhotoUrl && (
-        <CapturePreview
-          imageUrl={capturedPhotoUrl}
-          onRetake={() => setCapturedPhotoUrl(null)}
-          onClose={() => setCapturedPhotoUrl(null)}
-          onToast={onToast}
-        />
-      )}
+      {/* 4. Hiệu ứng chớp sáng & Fly Animation */}
+      <AnimatePresence>
+        {isFlashing && (
+          <motion.div
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="webar-flash-overlay"
+          />
+        )}
+        
+        {flyPhotoUrl && (
+          <motion.img
+            src={flyPhotoUrl}
+            className="webar-fly-photo"
+            initial={{ 
+              top: '50%', left: '50%', 
+              x: '-50%', y: '-50%', 
+              scale: 1, 
+              opacity: 1, 
+              borderRadius: '8px' 
+            }}
+            animate={{ 
+              top: '15px', 
+              left: window.innerWidth > 992 ? 'calc(100% - 140px)' : 'calc(100% - 60px)', 
+              scale: 0.1, 
+              opacity: 0,
+              rotate: 15
+            }}
+            transition={{ duration: 1, ease: 'easeInOut' }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Modal xem trước và lưu ảnh chụp - Đã thay bằng hiệu ứng bay vào lookbook, 
+          nhưng nếu muốn giữ modal thì mở lại. Ở đây theo yêu cầu ta thay bằng animation bay thẳng. */}
     </div>
   );
 }

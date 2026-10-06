@@ -3,6 +3,8 @@ import { fileToBase64 } from '../services/geminiImageService';
 import { PRESET_PALETTES, TRADITIONAL_COLORS, calculateColorHarmony } from '../services/colorHarmonyService';
 import { evaluateCulturalWarnings } from '../services/culturalWarningService';
 import { ACCESSORIES } from '../data/accessoriesData';
+import { motion } from 'framer-motion';
+import { springs } from '../motion/tokens';
 import OutfitPreview from './OutfitPreview';
 import UserPhotoUploadModal from './UserPhotoUploadModal';
 import './OutfitCustomizer.css';
@@ -273,11 +275,17 @@ export default function OutfitCustomizer({
         {compatibleAccessories.map(acc => {
           const isPicked = selectedAccessories.includes(acc.id);
           return (
-            <button
+            <motion.button
               key={acc.id}
               type="button"
               className={`acc-card-btn ${isPicked ? 'acc-card-btn--active' : ''}`}
               onClick={() => handleToggleAccessory(acc.id)}
+              drag
+              dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }}
+              dragElastic={0.6}
+              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02 }}
+              transition={springs.bouncy}
             >
               <span className="acc-card-icon">{acc.icon}</span>
               <div className="acc-card-details">
@@ -285,7 +293,7 @@ export default function OutfitCustomizer({
                 <span className="acc-card-desc">{acc.categoryName}</span>
               </div>
               <span className="acc-card-toggle">{isPicked ? '✓' : '+'}</span>
-            </button>
+            </motion.button>
           );
         })}
       </div>

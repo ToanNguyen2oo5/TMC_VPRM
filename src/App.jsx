@@ -32,6 +32,9 @@ import WeatherCanvas from './components/weather/WeatherCanvas';
 import { getRegionWeather } from './services/weatherService';
 import WebARPage from './components/webar/WebARPage';
 import LiquidNavbar from './motion/LiquidNavbar';
+import SilkOverlay from './components/transitions/SilkOverlay';
+import { useSmoothScroll } from './motion/useSmoothScroll';
+import StorytellingHero from './components/home/HomeView';
 import './App.css';
 
 
@@ -116,7 +119,31 @@ export default function App() {
   };
 
   // Navigation: 'home' | 'mixer' | 'explore' | 'compare' | 'lookbook' | 'culture'
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, _setActiveTab] = useState('home');
+  const [pendingTab, setPendingTab] = useState(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const setActiveTab = useCallback((newTab) => {
+    if (newTab === activeTab) return;
+    if (newTab === 'webar' || activeTab === 'webar') {
+      _setActiveTab(newTab);
+      return;
+    }
+    setPendingTab(newTab);
+    setIsTransitioning(true);
+  }, [activeTab]);
+
+  const handleSilkHalfway = useCallback(() => {
+    if (pendingTab) {
+      _setActiveTab(pendingTab);
+    }
+  }, [pendingTab]);
+
+  const handleSilkComplete = useCallback(() => {
+    setIsTransitioning(false);
+    setPendingTab(null);
+    window.scrollTo({ top: 0 });
+  }, []);
 
   // Logo Variant: 'emblem' | 'crest'
   const [logoVariant] = useState(() => {
@@ -152,6 +179,8 @@ export default function App() {
       return false;
     }
   });
+
+  useSmoothScroll(activeTab !== 'webar');
 
   const handleRealtimeWeatherChange = useCallback((data) => {
     setRealtimeWeather(data);
@@ -630,6 +659,13 @@ export default function App() {
 
   return (
     <div className="app">
+      <SilkOverlay 
+        isAnimating={isTransitioning} 
+        pendingTab={pendingTab} 
+        onHalfway={handleSilkHalfway} 
+        onComplete={handleSilkComplete} 
+      />
+
       {/* HIỆU ỨNG THỜI TIẾT REAL-TIME BAO PHỦ CẢ TRANG WEB (WeatherFX) */}
       <WeatherCanvas
         scene={activeWeatherScene}
@@ -665,44 +701,12 @@ export default function App() {
       {/* VIEW 1: HOME */}
       {activeTab === 'home' && (
         <div className="home-view">
-          {/* Hero Section: Era Slider Carousel */}
-          <HeroCarousel onSelectOutfit={handleSelectFromOtherViews} />
-
-          {/* 1. BỐN THẺ LỐI TẮT THEO SỰ KIỆN */}
-          <section className="container event-shortcuts-section animate-fade-in-up">
-            <div className="section-header text-center" style={{ marginBottom: '1.25rem' }}>
-              <span className="section-badge">{t('event_shortcuts_badge')}</span>
-              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.5rem', margin: '0.25rem 0' }}>
-                {t('event_shortcuts_title')}<span className="text-gradient">{t('event_shortcuts_question')}</span>
-              </h3>
-            </div>
-            <div className="event-shortcuts-grid">
-              {EVENT_SHORTCUTS.map(sc => {
-                const scTitle = sc.id === 'tet' ? t('event_tet_title') :
-                  sc.id === 'tot-nghiep' ? t('event_grad_title') :
-                    sc.id === 'dam-cuoi' ? t('event_wedding_title') :
-                      t('event_yearbook_title');
-                const scDesc = sc.id === 'tet' ? t('event_tet_desc') :
-                  sc.id === 'tot-nghiep' ? t('event_grad_desc') :
-                    sc.id === 'dam-cuoi' ? t('event_wedding_desc') :
-                      t('event_yearbook_desc');
-                return (
-                  <button
-                    key={sc.id}
-                    type="button"
-                    className="event-shortcut-card glass-panel"
-                    onClick={() => handleQuickEventSelect(sc.id)}
-                  >
-                    <span className="shortcut-icon">{sc.icon}</span>
-                    <div className="shortcut-text">
-                      <h4>{scTitle}</h4>
-                      <p>{scDesc}</p>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </section>
+          <StorytellingHero 
+            EVENT_SHORTCUTS={EVENT_SHORTCUTS}
+            handleQuickEventSelect={handleQuickEventSelect}
+            handleSelectFromOtherViews={handleSelectFromOtherViews}
+            t={t}
+          />
 
           {/* 2. DẢI KHÁM PHÁ THEO VÙNG MIỀN */}
           <section className="container regional-explore-strip animate-fade-in-up">
