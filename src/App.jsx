@@ -31,6 +31,7 @@ import HeroCarousel from './components/HeroCarousel';
 import WeatherCanvas from './components/weather/WeatherCanvas';
 import { getRegionWeather } from './services/weatherService';
 import WebARPage from './components/webar/WebARPage';
+import LiquidNavbar from './motion/LiquidNavbar';
 import './App.css';
 
 
@@ -643,121 +644,23 @@ export default function App() {
         </div>
       )}
 
-      {/* TOP NAVIGATION BAR */}
-      <nav className="top-navbar glass-panel">
-        <div className="container navbar-container">
-          <div className="nav-brand" onClick={() => setActiveTab('home')} title="Việt Phục Remix">
-            <AppLogo size="sm" variant={logoVariant} />
-            <span className="brand-name">Việt Phục <span className="text-gradient">Remix</span></span>
-          </div>
-
-          <div className="nav-links">
-            <button
-              className={`nav-btn ${activeTab === 'home' ? 'nav-btn--active' : ''}`}
-              onClick={() => setActiveTab('home')}
-            >
-              {t('nav_home')}
-            </button>
-            <button
-              className={`nav-btn ${activeTab === 'mixer' ? 'nav-btn--active' : ''}`}
-              onClick={() => setActiveTab('mixer')}
-            >
-              {t('nav_mixer')}
-            </button>
-            <button
-              className={`nav-btn ${activeTab === 'webar' ? 'nav-btn--active' : ''}`}
-              onClick={() => setActiveTab('webar')}
-            >
-              ✨ Thử AR
-            </button>
-            <button
-              className={`nav-btn ${activeTab === 'explore' ? 'nav-btn--active' : ''}`}
-              onClick={() => setActiveTab('explore')}
-            >
-              {t('nav_explore')}
-            </button>
-            <button
-              className={`nav-btn ${activeTab === 'compare' ? 'nav-btn--active' : ''}`}
-              onClick={() => setActiveTab('compare')}
-            >
-              {t('nav_compare')}
-              {comparedOutfits.length > 0 && (
-                <span className="nav-badge">{comparedOutfits.length}</span>
-              )}
-            </button>
-            <button
-              className={`nav-btn ${activeTab === 'lookbook' ? 'nav-btn--active' : ''}`}
-              onClick={() => setActiveTab('lookbook')}
-            >
-              {t('nav_lookbook')}
-              {savedLookbooks.length > 0 && (
-                <span className="nav-badge">{savedLookbooks.length}</span>
-              )}
-            </button>
-            <button
-              className={`nav-btn ${activeTab === 'culture' ? 'nav-btn--active' : ''}`}
-              onClick={() => setActiveTab('culture')}
-            >
-              {t('nav_culture')}
-            </button>
-          </div>
-
-          {/* Quick Controls: Weather, Music, Petals, Language, Theme */}
-          <div className="nav-controls">
-            {/* Live Weather Indicator Pill */}
-            {realtimeWeather && (
-              <button
-                type="button"
-                className="control-btn control-btn--weather"
-                onClick={() => {
-                  setActiveTab('mixer');
-                  setTimeout(() => {
-                    const el = document.getElementById('weatherCardFX') || document.getElementById('scene-selector');
-                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                  }, 150);
-                }}
-                title={`Thời tiết thực tế: ${realtimeWeather.city} ${realtimeWeather.temp}°C - ${realtimeWeather.condition?.textVi}. Bấm để xem chi tiết & đổi hiệu ứng!`}
-              >
-                <span className="live-dot" style={{ width: '8px', height: '8px', background: '#38ef7d' }} />
-                <span>{realtimeWeather.condition?.icon || '☀️'}</span>
-                <span className="control-btn-label">{realtimeWeather.temp}°C {realtimeWeather.city}</span>
-              </button>
-            )}
-            <MusicPlayer />
-            <button
-              type="button"
-              className={`control-btn ${petalsEnabled ? 'control-btn--active' : ''}`}
-              onClick={handleTogglePetals}
-              title={petalsEnabled ? t('nav_petals_on') : t('nav_petals_off')}
-            >
-              <span>🌸</span>
-              <span className="control-btn-label">{t('nav_petals_short')}</span>
-            </button>
-            <button
-              type="button"
-              className="control-btn control-btn--lang"
-              onClick={() => {
-                toggleLang();
-                showToast(lang === 'vi' ? '🇬🇧 Switched to English' : '🇻🇳 Đã chuyển sang Tiếng Việt');
-              }}
-              title={t('lang_switch_tooltip')}
-              aria-label="Switch language"
-            >
-              <span>{lang === 'vi' ? '🇻🇳' : '🇬🇧'}</span>
-              <span>{lang.toUpperCase()}</span>
-            </button>
-            <button
-              type="button"
-              className="control-btn"
-              onClick={toggleTheme}
-              title={theme === 'dark' ? 'Chế độ Giấy dó (Sáng)' : 'Chế độ Sơn mài (Tối)'}
-            >
-              <span>{theme === 'dark' ? '🌙' : '☀️'}</span>
-              <span className="control-btn-label">{theme === 'dark' ? t('theme_dark') : t('theme_light')}</span>
-            </button>
-          </div>
-        </div>
-      </nav>
+      {/* TOP NAVIGATION BAR - LIQUID GLASS */}
+      <LiquidNavbar 
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        logoVariant={logoVariant}
+        t={t}
+        comparedOutfits={comparedOutfits}
+        savedLookbooks={savedLookbooks}
+        realtimeWeather={realtimeWeather}
+        petalsEnabled={petalsEnabled}
+        handleTogglePetals={handleTogglePetals}
+        lang={lang}
+        toggleLang={toggleLang}
+        theme={theme}
+        toggleTheme={toggleTheme}
+        showToast={showToast}
+      />
 
       {/* VIEW 1: HOME */}
       {activeTab === 'home' && (

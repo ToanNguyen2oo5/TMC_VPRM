@@ -1,3 +1,5 @@
+import { motion } from 'framer-motion';
+import { springs } from '../motion/tokens';
 import './MobileBottomNav.css';
 
 export default function MobileBottomNav({
@@ -9,7 +11,7 @@ export default function MobileBottomNav({
   const navItems = [
     { id: 'home', label: 'Trang chủ', icon: '🏠' },
     { id: 'mixer', label: 'Phối đồ', icon: '👘' },
-    { id: 'webar', label: 'Thử AR', icon: '🪞' },
+    { id: 'webar', label: 'Thử AR', icon: '✨' },
     { id: 'explore', label: 'Khám phá', icon: '🔍' },
     { id: 'compare', label: 'So sánh', icon: '⚖️', badge: compareCount },
     { id: 'lookbook', label: 'Lookbook', icon: '📚', badge: lookbookCount },
@@ -30,14 +32,29 @@ export default function MobileBottomNav({
               aria-current={isActive ? 'page' : undefined}
               id={`mobile-nav-${item.id}`}
             >
-              <div className="mobile-nav-item__icon-wrapper">
-                <span className="mobile-nav-item__icon">{item.icon}</span>
-                {item.badge > 0 && (
-                  <span className="mobile-nav-item__badge">{item.badge}</span>
-                )}
+              {isActive && (
+                <motion.div 
+                  layoutId="mobileActiveTabDroplet"
+                  className="mobile-nav-droplet"
+                  transition={springs.liquid}
+                />
+              )}
+              <div className="mobile-nav-item__content">
+                <div className="mobile-nav-item__icon-wrapper">
+                  <span className="mobile-nav-item__icon">{item.icon}</span>
+                  {item.badge > 0 && (
+                    <motion.span 
+                      initial={{ scale: 0 }} 
+                      animate={{ scale: 1 }} 
+                      transition={springs.bouncy}
+                      className="mobile-nav-item__badge"
+                    >
+                      {item.badge}
+                    </motion.span>
+                  )}
+                </div>
+                <span className="mobile-nav-item__label">{item.label}</span>
               </div>
-              <span className="mobile-nav-item__label">{item.label}</span>
-              {isActive && <span className="mobile-nav-item__indicator" />}
             </button>
           );
         })}

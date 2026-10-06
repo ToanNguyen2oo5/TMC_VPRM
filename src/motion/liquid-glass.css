@@ -1,0 +1,119 @@
+.liquid-navbar-wrapper {
+  position: fixed;
+  top: 12px;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.liquid-glass-navbar {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: calc(100% - 24px);
+  max-width: 1280px;
+  background: rgba(28, 25, 23, 0.65);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  border-radius: 999px;
+  padding: 6px 16px;
+  transition: all 0.3s ease;
+}
+
+/* Fallback for Chromium to use refraction SVG filter */
+@supports (backdrop-filter: blur(1px)) {
+  .liquid-glass-navbar {
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+  }
+}
+
+[data-theme="light"] .liquid-glass-navbar {
+  background: rgba(249, 246, 240, 0.75);
+  border: 1px solid rgba(218, 165, 32, 0.25);
+  box-shadow: 0 4px 20px rgba(70, 50, 40, 0.08);
+}
+
+.liquid-nav-links {
+  display: flex;
+  gap: 4px;
+  position: relative;
+}
+
+.liquid-nav-btn {
+  position: relative;
+  background: transparent;
+  border: none;
+  padding: 8px 16px;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+  z-index: 1;
+}
+
+.liquid-nav-btn:hover {
+  color: var(--color-text-primary);
+}
+
+.liquid-nav-btn.active {
+  color: var(--color-gold);
+}
+
+.nav-btn-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-btn-droplet {
+  position: absolute;
+  inset: 0;
+  background: rgba(218, 165, 32, 0.15);
+  border: 1px solid rgba(218, 165, 32, 0.4);
+  border-radius: 999px;
+  z-index: 0;
+}
+
+.nav-controls-group {
+  position: relative;
+}
+
+.liquid-nav-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.liquid-more-menu {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background: rgba(28, 25, 23, 0.85);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 150px;
+}
+
+[data-theme="light"] .liquid-more-menu {
+  background: rgba(249, 246, 240, 0.9);
+  border-color: rgba(218, 165, 32, 0.2);
+}
+
+.liquid-more-menu .control-btn {
+  width: 100%;
+  justify-content: flex-start;
+}
