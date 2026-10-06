@@ -730,6 +730,8 @@ export default function App() {
         scene={activeWeatherScene}
         isReducedMotion={isReducedMotion}
         isFullScreen={true}
+        wind={realtimeWeather?.windSpeed}
+        humidity={realtimeWeather?.humidity}
       />
 
       {/* Toast Notification */}

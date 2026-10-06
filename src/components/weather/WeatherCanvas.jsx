@@ -6,7 +6,9 @@ import './WeatherCanvas.css';
 export default function WeatherCanvas({
   scene = 'sunny',
   isReducedMotion = false,
-  isFullScreen = true
+  isFullScreen = true,
+  wind,
+  humidity
 }) {
   const canvasRef = useRef(null);
   const engineRef = useRef(null);
@@ -19,7 +21,9 @@ export default function WeatherCanvas({
     const engine = new WeatherFXEngine(canvas, {
       initialScene: scene,
       isFullScreen,
-      isReducedMotion
+      isReducedMotion,
+      wind,
+      humidity
     });
     engineRef.current = engine;
 
@@ -44,6 +48,19 @@ export default function WeatherCanvas({
       engineRef.current.setScene(scene);
     }
   }, [scene]);
+
+  // Cập nhật gió và độ ẩm
+  useEffect(() => {
+    if (engineRef.current && typeof wind === 'number') {
+      engineRef.current.setWind(wind);
+    }
+  }, [wind]);
+
+  useEffect(() => {
+    if (engineRef.current && typeof humidity === 'number') {
+      engineRef.current.setHumidity(humidity);
+    }
+  }, [humidity]);
 
   // Cập nhật chế độ giảm chuyển động
   useEffect(() => {

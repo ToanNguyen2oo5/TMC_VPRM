@@ -1,18 +1,23 @@
 :root {
   /* Color Palette - Fashion Editorial (Đen Sơn Mài) */
-  --color-bg-primary: #1C1917; /* Đen sơn mài */
+  --color-bg-primary: #1C1917;
+  /* Đen sơn mài */
   --color-bg-secondary: rgba(255, 255, 255, 0.03);
   --color-bg-tertiary: rgba(255, 255, 255, 0.05);
 
-  --color-text-primary: #F7F3EC; /* Trắng ngà giấy dó */
+  --color-text-primary: #F7F3EC;
+  /* Trắng ngà giấy dó */
   --color-text-secondary: rgba(247, 243, 236, 0.7);
   --color-text-muted: rgba(247, 243, 236, 0.5);
 
   /* Accents */
-  --color-gold: #C9A15A; /* Vàng đồng */
+  --color-gold: #C9A15A;
+  /* Vàng đồng */
   --color-gold-glow: rgba(201, 161, 90, 0.4);
-  --color-red-hue: #7A1F2B; /* Đỏ trầm */
-  --color-blue-hue: #2B3A55; /* Chàm indigo */
+  --color-red-hue: #7A1F2B;
+  /* Đỏ trầm */
+  --color-blue-hue: #2B3A55;
+  /* Chàm indigo */
 
   --color-border: rgba(247, 243, 236, 0.1);
   --color-border-hover: rgba(201, 161, 90, 0.3);
@@ -70,7 +75,12 @@ body {
 }
 
 /* Typography Overrides */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-serif);
   font-weight: 500;
   letter-spacing: -0.02em;
@@ -181,7 +191,7 @@ button {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: 
+  background:
     radial-gradient(circle at 75% 35%, rgba(218, 165, 32, 0.15) 0%, transparent 60%),
     radial-gradient(circle at 15% 20%, rgba(139, 0, 0, 0.22) 0%, transparent 50%),
     linear-gradient(to bottom, rgba(14, 11, 16, 0.65) 0%, rgba(14, 11, 16, 0.94) 85%, #0e0b10 100%);
@@ -289,6 +299,7 @@ button {
   0% {
     box-shadow: 0 4px 20px rgba(218, 165, 32, 0.4);
   }
+
   100% {
     box-shadow: 0 4px 30px rgba(218, 165, 32, 0.75), 0 0 15px rgba(255, 215, 0, 0.5);
   }
@@ -362,6 +373,7 @@ button {
   0% {
     transform: translateY(0px);
   }
+
   100% {
     transform: translateY(-8px);
   }
@@ -442,9 +454,20 @@ button {
 }
 
 @keyframes pulseDot {
-  0% { transform: scale(0.9); opacity: 0.7; }
-  50% { transform: scale(1.3); opacity: 1; }
-  100% { transform: scale(0.9); opacity: 0.7; }
+  0% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
 }
 
 .stage-pin--left {
@@ -535,6 +558,7 @@ button {
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-50%);
   }
@@ -622,34 +646,43 @@ button {
     padding: 1.5rem 0 0;
     text-align: center;
   }
+
   .hero__left {
     align-items: center;
     text-align: center;
   }
+
   .hero--hybrid .hero__title,
   .hero--hybrid .hero__desc {
     text-align: center;
   }
+
   .hero__actions {
     justify-content: center;
   }
+
   .hero__tech-chips {
     justify-content: center;
   }
+
   .hero__stats-grid {
     margin: 0 auto;
   }
+
   .stage-pin {
     padding: 3px 8px;
     font-size: 0.65rem;
   }
+
   .stage-pin--left {
     top: 12%;
     left: 2%;
   }
+
   .stage-pin--center {
     top: 4%;
   }
+
   .stage-pin--right {
     top: 14%;
     right: 2%;
@@ -661,12 +694,15 @@ button {
     gap: 0.5rem;
     padding: 0.75rem 0.5rem;
   }
+
   .hero-stat-number {
     font-size: 1.4rem;
   }
+
   .hero-stat-label {
     font-size: 0.7rem;
   }
+
   .hero-stat-sub {
     font-size: 0.62rem;
   }
@@ -690,8 +726,13 @@ button {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 /* Spinner */
@@ -705,7 +746,9 @@ button {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Asymmetric Split Layout for Results */
@@ -902,7 +945,8 @@ button {
   align-items: center;
   gap: 0.35rem;
   flex-shrink: 0;
-  overflow: visible; /* Show all items, no horizontal scroll track */
+  overflow: visible;
+  /* Show all items, no horizontal scroll track */
 }
 
 .nav-btn {
@@ -947,10 +991,12 @@ button {
   .navbar-container {
     padding: 0 0.75rem;
   }
+
   .nav-btn {
     padding: 0.38rem 0.55rem;
     font-size: 0.8rem;
   }
+
   .control-btn-label {
     display: none;
   }
@@ -960,6 +1006,7 @@ button {
   body {
     padding-bottom: 72px;
   }
+
   .top-navbar .navbar-container {
     height: 56px;
     min-height: 56px;
@@ -969,23 +1016,28 @@ button {
     justify-content: space-between;
     align-items: center;
   }
+
   .nav-brand {
     order: 1;
     cursor: pointer;
   }
+
   .brand-name {
     font-size: 1.05rem;
   }
+
   .nav-controls {
     order: 2;
     gap: 4px;
   }
+
   .control-btn {
     min-height: 40px;
     min-width: 40px;
     padding: 6px 8px;
     font-size: 0.76rem;
   }
+
   /* Ẩn dải tab cuộn ngang bị cắt nhãn trên mobile, đã có MobileBottomNav */
   .nav-links {
     display: none;
@@ -1010,8 +1062,15 @@ button {
 }
 
 @keyframes slideInRight {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 /* Home Highlights Section */
@@ -1273,9 +1332,8 @@ button {
     background: var(--color-bg-primary);
     border-bottom: 1px solid var(--color-border);
   }
+
   .result-sidebar {
     padding-top: 1rem;
   }
 }
-
-

@@ -15,7 +15,8 @@ export default function OutfitPreview({
   harmonyScore = 85,
   fit = 'Vừa vặn',
   length = 'Dài (chấm gót)',
-  fabricTexture = 'silk'
+  fabricTexture = 'silk',
+  variant = 'default'
 }) {
   const [activeTab, setActiveTab] = useState('mannequin'); // 'mannequin' | 'heritage'
   const artStyle = 'vector';
@@ -612,6 +613,19 @@ export default function OutfitPreview({
       </svg>
     );
   };
+
+  if (variant === 'stage') {
+    return (
+      <div className="stage-outfit-container">
+        {renderMannequinSvg()}
+        {hoveredPart && (
+          <div className="hover-part-badge animate-fade-in">
+            {hoveredPart}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="outfit-preview-card glass-panel animate-fade-in-up">

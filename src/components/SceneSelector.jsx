@@ -97,6 +97,7 @@ export default function SceneSelector({
   const [isCustomExpanded, setIsCustomExpanded] = useState(false);
 
   const cardCanvasRef = useRef(null);
+  const cardGlassCanvasRef = useRef(null);
   const cardEngineRef = useRef(null);
 
   // Khởi tạo mini-canvas WeatherFX trong card thời tiết (như prototype weather-fx_1.html)
@@ -108,7 +109,10 @@ export default function SceneSelector({
     const engine = new WeatherFXEngine(canvas, {
       initialScene,
       isFullScreen: false,
-      isReducedMotion: false
+      isReducedMotion: false,
+      glassCanvas: cardGlassCanvasRef.current,
+      wind: liveWeather?.windSpeed,
+      humidity: liveWeather?.humidity
     });
     cardEngineRef.current = engine;
 
@@ -124,15 +128,21 @@ export default function SceneSelector({
     };
   }, []);
 
-  // Cập nhật mini canvas khi cảnh thời tiết thay đổi
+  // Cập nhật mini canvas khi cảnh thời tiết hoặc chỉ số khí tượng thay đổi
   useEffect(() => {
     if (cardEngineRef.current) {
       const targetScene = activeWeatherScene || liveWeather?.scene;
       if (targetScene) {
         cardEngineRef.current.setScene(targetScene);
       }
+      if (liveWeather?.windSpeed != null) {
+        cardEngineRef.current.setWind(liveWeather.windSpeed);
+      }
+      if (liveWeather?.humidity != null) {
+        cardEngineRef.current.setHumidity(liveWeather.humidity);
+      }
     }
-  }, [activeWeatherScene, liveWeather?.scene]);
+  }, [activeWeatherScene, liveWeather?.scene, liveWeather?.windSpeed, liveWeather?.humidity]);
 
   // Auto-expand advanced filters once a scene is selected
   useEffect(() => {
@@ -323,6 +333,7 @@ export default function SceneSelector({
           {/* WeatherFX Card: Sinh động với Canvas + Gradient + Chỉ số thời tiết */}
           <div className="weather-card-fx" id="weatherCardFX">
             <canvas ref={cardCanvasRef} className="weather-card-canvas" />
+            <canvas ref={cardGlassCanvasRef} className="weather-card-glass-canvas" />
             <div className="weather-card-veil" />
             <div className="weather-card-content">
               {isWeatherLoading ? (
@@ -391,6 +402,7 @@ export default function SceneSelector({
                 { id: 'cloudy', label: 'Nhiều mây', icon: '☁️' },
                 { id: 'rain', label: 'Trời mưa', icon: '🌧️' },
                 { id: 'storm', label: 'Dông sét', icon: '⛈️' },
+                { id: 'sunset', label: 'Hoàng hôn', icon: '🌅' },
                 { id: 'snow', label: 'Có tuyết', icon: '❄️' },
                 { id: 'night', label: 'Đêm sao', icon: '🌙' },
               ].map(sc => (

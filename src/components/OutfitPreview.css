@@ -477,3 +477,22 @@
   color: #718096;
   font-style: italic;
 }
+
+/* Stage Variant for Studio Stage */
+.stage-outfit-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: transparent;
+}
+
+.stage-outfit-container .mannequin-svg {
+  width: auto;
+  height: 100%;
+  max-height: min(48vh, 430px);
+  filter: drop-shadow(0 16px 28px rgba(0, 0, 0, 0.55));
+}
+

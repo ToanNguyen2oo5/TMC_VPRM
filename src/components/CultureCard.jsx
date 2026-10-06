@@ -52,7 +52,7 @@ export default function CultureCard({ outfit, customizations, useDemoData = fals
   const scores = (() => {
     let authentic = 95;
     let remix = 5;
-    
+
     if (customizations) {
       if (customizations.fit && customizations.fit !== 'Vừa vặn') {
         authentic -= 15;
@@ -77,8 +77,8 @@ export default function CultureCard({ outfit, customizations, useDemoData = fals
   const showFullDetails = isHovered || isExpanded;
 
   return (
-    <div 
-      className={`culture-card glass-panel animate-fade-in-up ${showFullDetails ? 'culture-card--expanded' : ''}`} 
+    <div
+      className={`culture-card glass-panel animate-fade-in-up ${showFullDetails ? 'culture-card--expanded' : ''}`}
       id="culture-card"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -96,7 +96,7 @@ export default function CultureCard({ outfit, customizations, useDemoData = fals
             </div>
             <span className="persona-authenticity-pill" style={{ background: '#8b0000', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem' }}>{costumeMeta.authenticityTag}</span>
           </div>
-          
+
           <div className="persona-stages" style={{ marginTop: '1rem' }}>
             <div style={{ marginBottom: '0.75rem' }}>
               <span style={{ display: 'inline-block', background: '#DAA520', color: '#000', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold', marginBottom: '4px' }}>GIAI ĐOẠN 1/4</span>
@@ -109,7 +109,7 @@ export default function CultureCard({ outfit, customizations, useDemoData = fals
               <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>Cân bằng Kim - Mộc - Thủy - Hỏa - Thổ mang lại cát tường</div>
             </div>
           </div>
-          
+
           <p className="persona-praise" style={{ fontStyle: 'italic', fontSize: '0.9rem', marginTop: '1rem' }}>"{costumeMeta.funPraise}"</p>
           <div className="persona-meta-chips" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '1rem' }}>
             <span className="persona-chip" style={{ fontSize: '0.8rem', background: 'rgba(255,255,255,0.1)', padding: '4px 8px', borderRadius: '4px' }}>🔮 {costumeMeta.element}</span>
@@ -141,7 +141,7 @@ export default function CultureCard({ outfit, customizations, useDemoData = fals
         <div className="culture-card__scores-header">
           <span className="scores-subtitle">Đánh giá chuẩn mực & sáng tạo</span>
         </div>
-        
+
         <div className="score-item">
           <div className="score-label">
             <span>Nguyên bản di sản</span>

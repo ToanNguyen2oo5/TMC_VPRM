@@ -3,10 +3,9 @@ import { fileToBase64 } from '../services/geminiImageService';
 import { PRESET_PALETTES, TRADITIONAL_COLORS, calculateColorHarmony } from '../services/colorHarmonyService';
 import { evaluateCulturalWarnings } from '../services/culturalWarningService';
 import { ACCESSORIES } from '../data/accessoriesData';
-import { motion } from 'framer-motion';
-import { springs } from '../motion/tokens';
 import OutfitPreview from './OutfitPreview';
 import UserPhotoUploadModal from './UserPhotoUploadModal';
+import StudioLayout from './StudioLayout';
 import './OutfitCustomizer.css';
 
 const SAMPLE_AVATARS = [
@@ -16,10 +15,10 @@ const SAMPLE_AVATARS = [
 ];
 
 const MATERIALS = [
-  { id: 'lua_to_tam', name: 'Lụa tơ tằm Vạn Phúc', icon: '', desc: 'Mềm mại, óng ả, rủ tà tha thướt' },
-  { id: 'gam_cung_dinh', name: 'Gấm hoa chìm Cung đình', icon: '', desc: 'Dày dặn, vương giả, uy nghiêm hoàng tộc' },
-  { id: 'vai_dui_tho', name: 'Vải đũi / thô mộc tự nhiên', icon: '', desc: 'Bình dị, thoáng khí, mộc mạc Bắc Bộ' },
-  { id: 'taffeta_ren', name: 'Taffeta / Organza cách tân', icon: '', desc: 'Giữ phom hiện đại, trẻ trung Gen Z' }
+  { id: 'lua_to_tam', name: 'Lụa tơ tằm Vạn Phúc', icon: '✨', desc: 'Mềm mại, óng ả, rủ tà tha thướt' },
+  { id: 'gam_cung_dinh', name: 'Gấm hoa chìm Cung đình', icon: '👑', desc: 'Dày dặn, vương giả, uy nghiêm hoàng tộc' },
+  { id: 'vai_dui_tho', name: 'Vải đũi / thô mộc tự nhiên', icon: '🌿', desc: 'Bình dị, thoáng khí, mộc mạc Bắc Bộ' },
+  { id: 'taffeta_ren', name: 'Taffeta / Organza cách tân', icon: '🌸', desc: 'Giữ phom hiện đại, trẻ trung Gen Z' }
 ];
 
 export default function OutfitCustomizer({ 
@@ -28,20 +27,17 @@ export default function OutfitCustomizer({
   selectedScene, 
   isGenerating 
 }) {
-  // Mobile Bottom Sheet Active Tab: 'colors' | 'materials' | 'accessories' | 'fit' | 'summary'
-  const [mobileTab, setMobileTab] = useState('colors');
-
-  // Bottom Sheet expansion on mobile: 'half' (default ~58vh) | 'full' (~85vh) | 'peek' (~25vh)
-  const [sheetSnap, setSheetSnap] = useState('half');
-
-  // Fullscreen Preview Modal state (Priority 1)
+  // Fullscreen Preview Modal state
   const [isFullscreenPreview, setIsFullscreenPreview] = useState(false);
 
-  // User Photo Upload Guidance Modal state (Priority 6)
+  // User Photo Upload Guidance Modal state
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
-  // Left Column Tab State on Desktop: 'colors' | 'materials' | 'accessories' | 'fit'
+  // Left Column Tab State: 'colors' | 'materials' | 'accessories' | 'fit'
   const [selectorTab, setSelectorTab] = useState('colors');
+
+  // Stage View: 'front' | 'zoom'
+  const [stageView, setStageView] = useState('front');
 
   // Upload & Avatar states
   const [preview, setPreview] = useState(null);
@@ -55,10 +51,6 @@ export default function OutfitCustomizer({
   const [sleeve] = useState('Dài tay');
   const [height, setHeight] = useState('162');
   const [material, setMaterial] = useState('Lụa tơ tằm Vạn Phúc');
-  const [isHeritageExpanded, setIsHeritageExpanded] = useState(false);
-
-  // Angle Mode: 'single' | 'multi'
-  const [angleMode, setAngleMode] = useState('single');
 
   // Color Palette State
   const defaultPalette = useMemo(() => PRESET_PALETTES[0], []);
@@ -151,49 +143,47 @@ export default function OutfitCustomizer({
       },
       accessories: selectedAccObjects,
       evalScores: harmonyResult,
-      angleMode
+      angleMode: 'single'
     });
   };
 
   // Reusable selector content
   const renderColorsPane = () => (
-    <div className="selector-pane animate-fade-in">
-      <label className="pane-section-label">Bảng phối màu gợi ý ngũ hành:</label>
-      <div className="preset-palettes-grid">
+    <div className="vp-pane-block animate-fade-in">
+      <span className="vp-pane-title">Bảng phối gợi ý ngũ hành:</span>
+      <div className="vp-preset-grid">
         {PRESET_PALETTES.map(p => (
           <button
             key={p.id}
             type="button"
-            className={`preset-palette-btn ${selectedPresetId === p.id ? 'preset-palette-btn--active' : ''}`}
+            className={`vp-preset-btn ${selectedPresetId === p.id ? 'is-active' : ''}`}
             onClick={() => handleSelectPresetPalette(p)}
           >
-            <div className="palette-preview-dots">
+            <div className="vp-preset-dots">
               <span style={{ background: p.primary }} />
               <span style={{ background: p.secondary }} />
               <span style={{ background: p.accent }} />
             </div>
-            <span className="palette-name">{p.name}</span>
+            <span className="vp-preset-name">{p.name}</span>
           </button>
         ))}
       </div>
 
-      <label className="pane-section-label" style={{ marginTop: '1.25rem' }}>
-        8 Sắc màu truyền thống Việt Nam:
-      </label>
-      <div className="trad-colors-grid">
+      <span className="vp-pane-title">8 Sắc màu truyền thống:</span>
+      <div className="vp-trad-grid">
         {TRADITIONAL_COLORS.slice(0, 8).map(c => (
           <button
             key={c.id}
             type="button"
-            className={`trad-color-chip ${primaryColor.toLowerCase() === c.hex.toLowerCase() ? 'trad-color-chip--active' : ''}`}
+            className={`vp-trad-btn ${primaryColor.toLowerCase() === c.hex.toLowerCase() ? 'is-active' : ''}`}
             onClick={() => {
               setPrimaryColor(c.hex);
               setSelectedPresetId(null);
             }}
             title={`${c.name} (${c.element}): ${c.meaning}`}
           >
-            <span className="trad-chip-dot" style={{ background: c.hex }} />
-            <div className="trad-chip-text">
+            <span className="vp-trad-dot" style={{ background: c.hex }} />
+            <div className="vp-trad-info">
               <strong>{c.name}</strong>
               <small>{c.element}</small>
             </div>
@@ -202,41 +192,38 @@ export default function OutfitCustomizer({
       </div>
 
       {/* Tự tinh chỉnh từng phần */}
-      <div className="custom-colors-row" style={{ marginTop: '1.25rem' }}>
-        <div className="color-picker-box">
+      <div className="vp-custom-colors">
+        <div className="vp-color-picker-box">
           <label>Tà áo chính</label>
-          <div className="picker-input-wrap">
+          <div className="vp-color-input-wrap">
             <input 
               type="color" 
               value={primaryColor} 
               onChange={(e) => { setPrimaryColor(e.target.value); setSelectedPresetId(null); }}
-              className="color-wheel"
             />
-            <span className="hex-val">{primaryColor}</span>
+            <span className="vp-color-hex">{primaryColor}</span>
           </div>
         </div>
-        <div className="color-picker-box">
+        <div className="vp-color-picker-box">
           <label>Quần lụa / Cổ</label>
-          <div className="picker-input-wrap">
+          <div className="vp-color-input-wrap">
             <input 
               type="color" 
               value={secondaryColor} 
               onChange={(e) => { setSecondaryColor(e.target.value); setSelectedPresetId(null); }}
-              className="color-wheel"
             />
-            <span className="hex-val">{secondaryColor}</span>
+            <span className="vp-color-hex">{secondaryColor}</span>
           </div>
         </div>
-        <div className="color-picker-box">
+        <div className="vp-color-picker-box">
           <label>Viền / Yếm</label>
-          <div className="picker-input-wrap">
+          <div className="vp-color-input-wrap">
             <input 
               type="color" 
               value={accentColor} 
               onChange={(e) => { setAccentColor(e.target.value); setSelectedPresetId(null); }}
-              className="color-wheel"
             />
-            <span className="hex-val">{accentColor}</span>
+            <span className="vp-color-hex">{accentColor}</span>
           </div>
         </div>
       </div>
@@ -244,22 +231,22 @@ export default function OutfitCustomizer({
   );
 
   const renderMaterialsPane = () => (
-    <div className="selector-pane animate-fade-in">
-      <label className="pane-section-label">Chất liệu dệt truyền thống:</label>
-      <div className="materials-list">
+    <div className="vp-pane-block animate-fade-in">
+      <span className="vp-pane-title">Chất liệu dệt truyền thống:</span>
+      <div className="vp-materials-list">
         {MATERIALS.map(m => (
           <button
             key={m.id}
             type="button"
-            className={`material-item-btn ${material === m.name ? 'material-item-btn--active' : ''}`}
+            className={`vp-material-item ${material === m.name ? 'is-active' : ''}`}
             onClick={() => setMaterial(m.name)}
           >
-            <span className="material-icon">{m.icon}</span>
-            <div className="material-info">
+            <span style={{ fontSize: '18px' }}>{m.icon}</span>
+            <div className="vp-material-body">
               <strong>{m.name}</strong>
               <p>{m.desc}</p>
             </div>
-            {material === m.name && <span className="material-check">✓</span>}
+            {material === m.name && <span className="vp-material-check">✓</span>}
           </button>
         ))}
       </div>
@@ -267,33 +254,29 @@ export default function OutfitCustomizer({
   );
 
   const renderAccessoriesPane = () => (
-    <div className="selector-pane animate-fade-in">
-      <label className="pane-section-label">
-        Phụ kiện phối kèm ({compatibleAccessories.length} mẫu tương thích):
-      </label>
-      <div className="accessories-selector-grid">
+    <div className="vp-pane-block animate-fade-in">
+      <span className="vp-pane-title">
+        Phụ kiện phối kèm ({compatibleAccessories.length} mẫu):
+      </span>
+      <div className="vp-accessories-grid">
         {compatibleAccessories.map(acc => {
           const isPicked = selectedAccessories.includes(acc.id);
           return (
-            <motion.button
+            <button
               key={acc.id}
               type="button"
-              className={`acc-card-btn ${isPicked ? 'acc-card-btn--active' : ''}`}
+              className={`vp-accessory-btn ${isPicked ? 'is-active' : ''}`}
               onClick={() => handleToggleAccessory(acc.id)}
-              drag
-              dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }}
-              dragElastic={0.6}
-              whileTap={{ scale: 0.95 }}
-              whileHover={{ scale: 1.02 }}
-              transition={springs.bouncy}
             >
-              <span className="acc-card-icon">{acc.icon}</span>
-              <div className="acc-card-details">
-                <span className="acc-card-name">{acc.name}</span>
-                <span className="acc-card-desc">{acc.categoryName}</span>
+              <div className="vp-accessory-main">
+                <span className="vp-accessory-icon">{acc.icon}</span>
+                <div className="vp-accessory-text">
+                  <strong>{acc.name}</strong>
+                  <small>{acc.categoryName}</small>
+                </div>
               </div>
-              <span className="acc-card-toggle">{isPicked ? '✓' : '+'}</span>
-            </motion.button>
+              <span className="vp-accessory-badge">{isPicked ? '✓' : '+'}</span>
+            </button>
           );
         })}
       </div>
@@ -301,15 +284,15 @@ export default function OutfitCustomizer({
   );
 
   const renderFitPane = () => (
-    <div className="selector-pane animate-fade-in">
-      <div className="form-group-block">
-        <label className="pane-section-label">Độ ôm tà áo:</label>
-        <div className="options-pill-group">
+    <div className="vp-pane-block animate-fade-in">
+      <div className="vp-fit-group">
+        <span className="vp-pane-title">Độ ôm tà áo:</span>
+        <div className="vp-pills">
           {['Vừa vặn', 'Thoải mái', 'Ôm nhẹ'].map(opt => (
             <button
               key={opt}
               type="button"
-              className={`option-pill ${fit === opt ? 'option-pill--active' : ''}`}
+              className={`vp-pill-btn ${fit === opt ? 'is-active' : ''}`}
               onClick={() => setFit(opt)}
             >
               {opt}
@@ -318,14 +301,14 @@ export default function OutfitCustomizer({
         </div>
       </div>
 
-      <div className="form-group-block" style={{ marginTop: '1rem' }}>
-        <label className="pane-section-label">Độ dài tà áo:</label>
-        <div className="options-pill-group">
+      <div className="vp-fit-group">
+        <span className="vp-pane-title">Độ dài tà áo:</span>
+        <div className="vp-pills">
           {['Dài (chấm gót)', 'Lửng (ngang bắp chân)', 'Ngắn (cách tân)'].map(opt => (
             <button
               key={opt}
               type="button"
-              className={`option-pill ${length === opt ? 'option-pill--active' : ''}`}
+              className={`vp-pill-btn ${length === opt ? 'is-active' : ''}`}
               onClick={() => setLength(opt)}
             >
               {opt}
@@ -334,13 +317,13 @@ export default function OutfitCustomizer({
         </div>
       </div>
 
-      <div className="form-group-block" style={{ marginTop: '1rem' }}>
-        <label className="pane-section-label">Chiều cao của bạn (cm):</label>
+      <div className="vp-fit-group">
+        <span className="vp-pane-title">Chiều cao của bạn (cm):</span>
         <input
           type="number"
           value={height}
           onChange={(e) => setHeight(e.target.value)}
-          className="height-number-input"
+          className="vp-height-input"
           min="140"
           max="200"
         />
@@ -348,440 +331,150 @@ export default function OutfitCustomizer({
     </div>
   );
 
-  const renderSummaryPane = () => (
-    <div className="selector-pane animate-fade-in">
-      {/* 1. Điểm hài hòa màu sắc */}
-      <div className="harmony-score-box">
-        <div className="harmony-score-header">
-          <span className="score-label">Độ Hài Hòa Màu Sắc</span>
-          <span className="score-value" style={{ color: harmonyResult.harmonyScore >= 80 ? '#3F7D58' : '#C8A15A' }}>
-            {harmonyResult.harmonyScore} / 100
-          </span>
-        </div>
-        <div className="score-meter-bar">
-          <div
-            className="score-meter-fill"
-            style={{
-              width: `${harmonyResult.harmonyScore}%`,
-              background: harmonyResult.harmonyScore >= 80 
-                ? 'linear-gradient(90deg, #C8A15A, #3F7D58)' 
-                : 'linear-gradient(90deg, #A4262C, #C8A15A)'
-            }}
-          />
-        </div>
-        <p className="score-reason-text">
-          {harmonyResult.explanation || 'Tông màu chính và màu phụ có độ tương phản nhã nhặn, tôn vinh ngũ hành truyền thống.'}
-        </p>
+  // Controls JSX (Left column)
+  const controlsNode = (
+    <div>
+      <div className="vp-control-tabs" role="tablist">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={selectorTab === 'colors'}
+          className={`vp-control-tab-btn ${selectorTab === 'colors' ? 'is-active' : ''}`}
+          onClick={() => setSelectorTab('colors')}
+        >
+          Màu sắc
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={selectorTab === 'materials'}
+          className={`vp-control-tab-btn ${selectorTab === 'materials' ? 'is-active' : ''}`}
+          onClick={() => setSelectorTab('materials')}
+        >
+          Chất liệu
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={selectorTab === 'accessories'}
+          className={`vp-control-tab-btn ${selectorTab === 'accessories' ? 'is-active' : ''}`}
+          onClick={() => setSelectorTab('accessories')}
+        >
+          Phụ kiện ({selectedAccessories.length})
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={selectorTab === 'fit'}
+          className={`vp-control-tab-btn ${selectorTab === 'fit' ? 'is-active' : ''}`}
+          onClick={() => setSelectorTab('fit')}
+        >
+          Phom dáng
+        </button>
       </div>
 
-      {/* 2. Cảnh báo văn hóa thân thiện (Cultural Warnings) */}
-      <div className="cultural-warnings-section">
-        <label className="pane-section-label">
-          Nhận định văn hóa:
-        </label>
-        {culturalWarnings.length === 0 ? (
-          <div className="no-warning-card">
-            <p>Tuyệt vời! Set đồ phối hợp hài hòa, chuẩn mực và tôn trọng bản sắc di sản.</p>
-          </div>
-        ) : (
-          <div className="warnings-list">
-            {culturalWarnings.map((w, idx) => (
-              <div key={idx} className={`warning-item-card warning-item-card--${w.type}`}>
-                <div className="warning-item-header">
-                  <span className="warning-type-tag">
-                    {w.type === 'warning' ? 'Lưu ý' : w.type === 'caution' ? 'Cân nhắc' : 'Thông tin'}
-                  </span>
-                  <strong>{w.title}</strong>
-                </div>
-                <p className="warning-item-msg">{w.message}</p>
-                {w.suggestion && (
-                  <div className="warning-suggestion-box">
-                    <span>Gợi ý: {w.suggestion}</span>
-                    {w.fixAction && (
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-ghost warning-fix-btn"
-                        onClick={() => handleApplyWarningFix(w)}
-                      >
-                        Áp dụng gợi ý
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+      <div className="vp-control-body">
+        {selectorTab === 'colors' && renderColorsPane()}
+        {selectorTab === 'materials' && renderMaterialsPane()}
+        {selectorTab === 'accessories' && renderAccessoriesPane()}
+        {selectorTab === 'fit' && renderFitPane()}
       </div>
-
-      {/* 3. Tóm tắt trang phục & ý nghĩa dạng Accordion gọn gàng */}
-      {selectedOutfit?.y_nghia && (
-        <div className="outfit-heritage-accordion">
-          <button
-            type="button"
-            className="heritage-accordion-toggle"
-            onClick={() => setIsHeritageExpanded(!isHeritageExpanded)}
-            aria-expanded={isHeritageExpanded}
-          >
-            <span>{isHeritageExpanded ? 'Thu gọn ý nghĩa di sản' : 'Đọc ý nghĩa & quy chế di sản'}</span>
-            <span className="accordion-arrow">{isHeritageExpanded ? '▲' : '▼'}</span>
-          </button>
-          {isHeritageExpanded && (
-            <div className="heritage-accordion-content animate-fade-in">
-              <p className="heritage-summary-text">
-                {selectedOutfit.y_nghia}
-              </p>
-              {selectedOutfit.citations && selectedOutfit.citations.length > 0 ? (
-                <div style={{ marginTop: '0.6rem', display: 'flex', flexDirection: 'column', gap: '4px', borderTop: '1px dashed rgba(218,165,32,0.25)', paddingTop: '6px' }}>
-                  <small style={{ color: 'var(--color-gold)', fontWeight: 700 }}>📚 Tư liệu khảo chứng:</small>
-                  {selectedOutfit.citations.map((cite, i) => (
-                    <div key={i} style={{ fontSize: '0.76rem', color: 'rgba(255,255,255,0.75)' }}>
-                      • <strong>{cite.sourceName}</strong> {cite.author && `— ${cite.author}`} {cite.pages && `(${cite.pages})`}
-                      {cite.url && (
-                        <a
-                          href={cite.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ color: '#DAA520', marginLeft: '6px', textDecoration: 'underline' }}
-                        >
-                          [Tra cứu ↗]
-                        </a>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              ) : selectedOutfit.nguon_tham_khao && (
-                <small className="heritage-source-text">
-                  Nguồn: {selectedOutfit.nguon_tham_khao}
-                </small>
-              )}
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 
+  // Stage JSX (Center mannequin)
+  const stageNode = (
+    <OutfitPreview
+      selectedOutfit={selectedOutfit}
+      primaryColor={primaryColor}
+      secondaryColor={secondaryColor}
+      accentColor={accentColor}
+      selectedAccessories={compatibleAccessories.filter(a => selectedAccessories.includes(a.id))}
+      harmonyScore={harmonyResult.harmonyScore}
+      fit={fit}
+      length={length}
+      fabricTexture={material.includes('Lụa') ? 'silk' : material.includes('Gấm') ? 'brocade' : 'linen'}
+      variant="stage"
+    />
+  );
+
+  // Meaning & Sources
+  const meaningNode = selectedOutfit?.y_nghia ? (
+    <p>{selectedOutfit.y_nghia}</p>
+  ) : null;
+
+  const sourcesNode = selectedOutfit?.citations && selectedOutfit.citations.length > 0 ? (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+      <strong style={{ color: 'var(--vang-nhat)', fontSize: '11.5px' }}>📚 Tư liệu khảo chứng:</strong>
+      {selectedOutfit.citations.map((cite, i) => (
+        <div key={i} style={{ fontSize: '11px', color: 'var(--chu-mo)' }}>
+          • <strong>{cite.sourceName}</strong> {cite.author && `— ${cite.author}`} {cite.pages && `(${cite.pages})`}
+          {cite.url && (
+            <a
+              href={cite.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: 'var(--vang)', marginLeft: '6px', textDecoration: 'underline' }}
+            >
+              [Tra cứu ↗]
+            </a>
+          )}
+        </div>
+      ))}
+    </div>
+  ) : selectedOutfit?.nguon_tham_khao ? (
+    <small style={{ color: 'var(--chu-mo)' }}>
+      Nguồn: {selectedOutfit.nguon_tham_khao}
+    </small>
+  ) : null;
+
+  const paletteList = [
+    { label: 'Tà áo chính', color: primaryColor },
+    { label: 'Quần lụa / Cổ', color: secondaryColor },
+    { label: 'Viền / Yếm', color: accentColor },
+  ];
+
+  const accessoriesList = compatibleAccessories
+    .filter(a => selectedAccessories.includes(a.id))
+    .map(a => `${a.icon || '✨'} ${a.name}`);
+
   return (
     <section className="outfit-customizer" id="outfit-customizer">
-      {/* ========================================================
-          MOBILE SPLIT LAYOUT (PRIORITY 1)
-          Upper ~42vh: Fixed Mannequin Preview (Always visible)
-          Lower ~58vh: Bottom Sheet with internal scrolling
-          ======================================================== */}
-      <div className="customizer-mobile-split">
-        {/* Sticky Upper Preview Area (40-45% viewport height) */}
-        <div className="mobile-preview-sticky">
-          {/* Floating Summary Chip over mannequin */}
-          <div className="mobile-floating-chip">
-            <span className="floating-chip-dot" />
-            <span className="floating-chip-text">
-              Hài hòa {harmonyResult.harmonyScore}/100 {culturalWarnings.length > 0 ? `· ${culturalWarnings.length} lưu ý` : '· Chuẩn mực'}
-            </span>
-          </div>
+      <StudioLayout
+        outfitName={selectedOutfit?.ten || "Áo dài truyền thống"}
+        subtitle={`${selectedOutfit?.vung_mien || "Cả ba miền"} • ${material}`}
+        harmony={harmonyResult.harmonyScore}
+        harmonyNote={harmonyResult.explanation}
+        culturalWarnings={culturalWarnings}
+        onApplyWarningFix={handleApplyWarningFix}
+        facePhoto={preview}
+        onPickFace={() => setIsUploadModalOpen(true)}
+        onClearFace={() => {
+          setPreview(null);
+          setUserPhoto(null);
+          setSelectedAvatar('female_1');
+        }}
+        models={SAMPLE_AVATARS}
+        activeModel={selectedAvatar}
+        onPickModel={(id) => {
+          setSelectedAvatar(id);
+          setPreview(null);
+          setUserPhoto(null);
+        }}
+        palette={paletteList}
+        accessories={accessoriesList}
+        view={stageView}
+        onViewChange={(v) => setStageView(v)}
+        onFullscreen={() => setIsFullscreenPreview(true)}
+        controls={controlsNode}
+        stage={stageNode}
+        meaning={meaningNode}
+        sources={sourcesNode}
+        onGenerate={handleFinishAndGenerate}
+        isGenerating={isGenerating}
+      />
 
-          {/* Fullscreen zoom button */}
-          <button
-            type="button"
-            className="mobile-fullscreen-btn"
-            onClick={() => setIsFullscreenPreview(true)}
-            title="Phóng to toàn màn hình"
-            aria-label="Phóng to"
-          >
-            🔍 Phóng to
-          </button>
-
-          {/* Live Mannequin */}
-          <div className="mobile-mannequin-wrapper">
-            <OutfitPreview
-              selectedOutfit={selectedOutfit}
-              primaryColor={primaryColor}
-              secondaryColor={secondaryColor}
-              accentColor={accentColor}
-              selectedAccessories={compatibleAccessories.filter(a => selectedAccessories.includes(a.id))}
-              harmonyScore={harmonyResult.harmonyScore}
-              fit={fit}
-              length={length}
-              fabricTexture={material.includes('Lụa') ? 'silk' : material.includes('Gấm') ? 'brocade' : 'linen'}
-            />
-          </div>
-
-          {/* Quick Avatar / Photo Upload pill at bottom of preview */}
-          <div className="mobile-avatar-pill-bar">
-            <span className="mobile-outfit-tag">{selectedOutfit?.ten}</span>
-            <button
-              type="button"
-              className="mobile-photo-guide-btn"
-              onClick={() => setIsUploadModalOpen(true)}
-            >
-              {preview ? 'Đã chọn ảnh' : 'Thử ảnh của bạn'}
-            </button>
-          </div>
-        </div>
-
-        {/* Bottom Sheet for Selectors (Lower Half) */}
-        <div className={`mobile-bottom-sheet mobile-bottom-sheet--${sheetSnap}`}>
-          {/* Drag / Snap Handle */}
-          <div
-            className="bottom-sheet-drag-handle"
-            onClick={() => setSheetSnap(prev => prev === 'half' ? 'full' : 'half')}
-            title="Chạm để mở rộng hoặc thu gọn"
-          >
-            <span className="drag-bar" />
-          </div>
-
-          {/* Bottom Sheet Navigation Tabs */}
-          <div className="mobile-sheet-tabs">
-            <button
-              type="button"
-              className={`mobile-sheet-tab ${mobileTab === 'colors' ? 'mobile-sheet-tab--active' : ''}`}
-              onClick={() => setMobileTab('colors')}
-            >
-              Màu sắc
-            </button>
-            <button
-              type="button"
-              className={`mobile-sheet-tab ${mobileTab === 'materials' ? 'mobile-sheet-tab--active' : ''}`}
-              onClick={() => setMobileTab('materials')}
-            >
-              Chất liệu
-            </button>
-            <button
-              type="button"
-              className={`mobile-sheet-tab ${mobileTab === 'accessories' ? 'mobile-sheet-tab--active' : ''}`}
-              onClick={() => setMobileTab('accessories')}
-            >
-              Phụ kiện ({selectedAccessories.length})
-            </button>
-            <button
-              type="button"
-              className={`mobile-sheet-tab ${mobileTab === 'fit' ? 'mobile-sheet-tab--active' : ''}`}
-              onClick={() => setMobileTab('fit')}
-            >
-              Phom dáng
-            </button>
-            <button
-              type="button"
-              className={`mobile-sheet-tab ${mobileTab === 'summary' ? 'mobile-sheet-tab--active' : ''}`}
-              onClick={() => setMobileTab('summary')}
-            >
-              Đánh giá
-            </button>
-          </div>
-
-          {/* Scrollable Bottom Sheet Body */}
-          <div className="mobile-sheet-body">
-            {mobileTab === 'colors' && renderColorsPane()}
-            {mobileTab === 'materials' && renderMaterialsPane()}
-            {mobileTab === 'accessories' && renderAccessoriesPane()}
-            {mobileTab === 'fit' && renderFitPane()}
-            {mobileTab === 'summary' && renderSummaryPane()}
-          </div>
-
-          {/* Persistent Finish CTA on mobile sheet */}
-          <div className="mobile-sheet-footer">
-            <button
-              type="button"
-              className="btn btn-primary btn-block cta-finish-btn"
-              onClick={handleFinishAndGenerate}
-              disabled={isGenerating}
-            >
-              {isGenerating ? '⏳ Tơ lụa đang dệt...' : preview ? '✨ Tạo ảnh AI (Ghép mặt bạn)' : '✨ Tạo ảnh AI (Dùng mẫu)'}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* ========================================================
-          DESKTOP 3-COLUMN LAYOUT
-          (Visible on viewport width >= 992px)
-          ======================================================== */}
-      <div className="customizer-3col-layout">
-        
-        {/* CỘT 1 (TRÁI): BẢNG CHỌN */}
-        <div className="customizer-col customizer-col--left glass-panel animate-fade-in-up">
-          <div className="selector-tabs-header">
-            <button
-              type="button"
-              className={`selector-tab-btn ${selectorTab === 'colors' ? 'selector-tab-btn--active' : ''}`}
-              onClick={() => setSelectorTab('colors')}
-            >
-              Màu sắc
-            </button>
-            <button
-              type="button"
-              className={`selector-tab-btn ${selectorTab === 'materials' ? 'selector-tab-btn--active' : ''}`}
-              onClick={() => setSelectorTab('materials')}
-            >
-              Chất liệu
-            </button>
-            <button
-              type="button"
-              className={`selector-tab-btn ${selectorTab === 'accessories' ? 'selector-tab-btn--active' : ''}`}
-              onClick={() => setSelectorTab('accessories')}
-            >
-              Phụ kiện ({selectedAccessories.length})
-            </button>
-            <button
-              type="button"
-              className={`selector-tab-btn ${selectorTab === 'fit' ? 'selector-tab-btn--active' : ''}`}
-              onClick={() => setSelectorTab('fit')}
-            >
-              Phom dáng
-            </button>
-          </div>
-
-          <div className="selector-tab-content">
-            {selectorTab === 'colors' && renderColorsPane()}
-            {selectorTab === 'materials' && renderMaterialsPane()}
-            {selectorTab === 'accessories' && renderAccessoriesPane()}
-            {selectorTab === 'fit' && renderFitPane()}
-          </div>
-        </div>
-
-        {/* CỘT 2 (GIỮA): KHUNG XEM TRƯỚC */}
-        <div className="customizer-col customizer-col--center animate-fade-in-up">
-          <div className="center-preview-card glass-panel">
-            <div className="preview-top-bar">
-              <div>
-                <h4 className="preview-outfit-name">{selectedOutfit?.ten}</h4>
-                <span className="preview-outfit-era">{selectedOutfit?.vung_mien} • {material}</span>
-              </div>
-              <div className="angle-mode-toggles">
-                <button
-                  type="button"
-                  className={`angle-toggle-btn ${angleMode === 'single' ? 'angle-toggle-btn--active' : ''}`}
-                  onClick={() => setAngleMode('single')}
-                  title="Chính diện"
-                >
-                  Chính diện
-                </button>
-                <button
-                  type="button"
-                  className={`angle-toggle-btn ${angleMode === 'multi' ? 'angle-toggle-btn--active' : ''}`}
-                  onClick={() => setAngleMode('multi')}
-                  title="4 góc 360°"
-                >
-                  360° Đa góc
-                </button>
-                <button
-                  type="button"
-                  className="angle-toggle-btn"
-                  onClick={() => setIsFullscreenPreview(true)}
-                  title="Phóng to xem chi tiết"
-                >
-                  🔍 Phóng to
-                </button>
-              </div>
-            </div>
-
-            {/* Upload ảnh cá nhân được đặt trước mannequin để luôn thấy ngay khi mở trang */}
-            <div className="avatar-selector-section avatar-selector-section--prominent">
-              <div className="avatar-upload-heading">Ảnh người mẫu</div>
-              <button
-                type="button"
-                className={`avatar-upload-btn avatar-upload-btn--primary ${preview ? 'avatar-upload-btn--active' : ''}`}
-                onClick={() => setIsUploadModalOpen(true)}
-              >
-                {preview ? 'Đã chọn ảnh cá nhân · Chỉnh lại' : 'Tải ảnh cá nhân lên'}
-              </button>
-              <span className="avatar-upload-help">Kéo, phóng to/thu nhỏ ảnh trong khung rồi tạo ảnh AI.</span>
-              <div className="avatar-sample-chips avatar-sample-chips--compact" aria-label="Nhân vật mẫu">
-                {SAMPLE_AVATARS.map(av => (
-                  <button
-                    key={av.id}
-                    type="button"
-                    className={`avatar-sample-btn ${selectedAvatar === av.id ? 'avatar-sample-btn--active' : ''}`}
-                    onClick={() => {
-                      setSelectedAvatar(av.id);
-                      setPreview(null);
-                      setUserPhoto(null);
-                    }}
-                  >
-                    {av.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Khung ma-nơ-canh và Khung khuôn mặt bên cạnh */}
-            <div className={`preview-dual-stage ${preview ? 'preview-dual-stage--with-face' : ''}`}>
-              {preview && (
-                <div className="face-preview-frame">
-                  <div className="face-frame-header">
-                    <span className="face-frame-title">👤 Mặt của bạn</span>
-                    <button
-                      type="button"
-                      className="face-frame-remove-btn"
-                      onClick={() => {
-                        setPreview(null);
-                        setUserPhoto(null);
-                        setSelectedAvatar('female_1');
-                      }}
-                      title="Gỡ ảnh này"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                  <div className="face-frame-body">
-                    <img src={preview} alt="Ảnh khuôn mặt của bạn" className="face-frame-img" />
-                    <div className="face-frame-badge">✨ Sẵn sàng ghép mặt</div>
-                  </div>
-                  <button
-                    type="button"
-                    className="face-frame-change-btn"
-                    onClick={() => setIsUploadModalOpen(true)}
-                  >
-                    🔄 Đổi ảnh khác
-                  </button>
-                </div>
-              )}
-
-              <div className="mannequin-frame-wrap">
-                <OutfitPreview
-                  selectedOutfit={selectedOutfit}
-                  primaryColor={primaryColor}
-                  secondaryColor={secondaryColor}
-                  accentColor={accentColor}
-                  selectedAccessories={compatibleAccessories.filter(a => selectedAccessories.includes(a.id))}
-                  harmonyScore={harmonyResult.harmonyScore}
-                  fit={fit}
-                  length={length}
-                  fabricTexture={material.includes('Lụa') ? 'silk' : material.includes('Gấm') ? 'brocade' : 'linen'}
-                />
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        {/* CỘT 3 (PHẢI): BẢNG TÓM TẮT & CẢNH BÁO */}
-        <div className="customizer-col customizer-col--right glass-panel animate-fade-in-up">
-          <h3 className="summary-col-title">
-            Tóm tắt phối đồ
-          </h3>
-
-          {renderSummaryPane()}
-
-          {/* CTA */}
-          <div className="customizer-cta-wrap">
-            <button
-              type="button"
-              className="btn btn-primary btn-block btn-lg cta-finish-btn"
-              onClick={handleFinishAndGenerate}
-              disabled={isGenerating}
-            >
-              {isGenerating ? '⏳ Tơ lụa đang dệt...' : preview ? '✨ Tạo ảnh AI (Ghép mặt bạn)' : '✨ Tạo ảnh AI (Dùng mẫu)'}
-            </button>
-            <small className="cta-subtip">
-              Poster nghệ thuật & Tùy chọn so sánh phương án sẽ sẵn sàng ở Bước 4
-            </small>
-          </div>
-        </div>
-
-      </div>
-
-      {/* Fullscreen Mannequin Modal (Priority 1) */}
+      {/* Fullscreen Mannequin Modal */}
       {isFullscreenPreview && (
         <div className="fullscreen-preview-overlay animate-fade-in" role="dialog">
           <div className="fullscreen-preview-dialog animate-scale-up">
@@ -815,7 +508,7 @@ export default function OutfitCustomizer({
         </div>
       )}
 
-      {/* User Photo Upload Guidance Modal (Priority 6) */}
+      {/* User Photo Upload Guidance Modal */}
       <UserPhotoUploadModal
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
