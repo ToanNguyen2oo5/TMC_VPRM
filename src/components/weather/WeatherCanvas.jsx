@@ -7,6 +7,7 @@ export default function WeatherCanvas({
   scene = 'sunny',
   isReducedMotion = false,
   isFullScreen = true,
+  paused = false,
   wind,
   humidity
 }) {
@@ -22,6 +23,7 @@ export default function WeatherCanvas({
       initialScene: scene,
       isFullScreen,
       isReducedMotion,
+      isPaused: paused,
       wind,
       humidity
     });
@@ -69,8 +71,19 @@ export default function WeatherCanvas({
     }
   }, [isReducedMotion]);
 
+  // Cập nhật trạng thái tạm dừng (tiết kiệm GPU khi WebAR hoặc route khác cần toàn bộ tài nguyên)
+  useEffect(() => {
+    if (engineRef.current) {
+      engineRef.current.setPaused(paused);
+    }
+  }, [paused]);
+
   return (
-    <div className={`weather-system-container ${isFullScreen ? 'weather-system-container--fullscreen' : ''}`} aria-hidden="true">
+    <div
+      className={`weather-system-container ${isFullScreen ? 'weather-system-container--fullscreen' : ''}`}
+      style={{ display: paused ? 'none' : 'block' }}
+      aria-hidden="true"
+    >
       <canvas ref={canvasRef} className="weather-canvas" />
       <div className="weather-canvas-vignette" />
     </div>

@@ -19,7 +19,7 @@ export default function SilkOverlay({ isAnimating, pendingTab, onHalfway, onComp
     import('ogl').then(({ Renderer, Camera, Transform, Plane, Program, Mesh }) => {
       if (isUnmounted) return;
 
-      renderer = new Renderer({ alpha: true, dpr: window.devicePixelRatio || 1 });
+      renderer = new Renderer({ alpha: true, dpr: Math.min(window.devicePixelRatio || 1, 1.5) });
       gl = renderer.gl;
       if (containerRef.current) {
         containerRef.current.appendChild(gl.canvas);
@@ -109,6 +109,21 @@ export default function SilkOverlay({ isAnimating, pendingTab, onHalfway, onComp
       window.addEventListener('resize', resize, false);
       resize();
 
+      function cleanupGl() {
+        window.removeEventListener('resize', resize);
+        if (gl) {
+          if (gl.canvas && gl.canvas.parentNode) {
+            gl.canvas.parentNode.removeChild(gl.canvas);
+          }
+          try {
+            const ext = gl.getExtension('WEBGL_lose_context');
+            if (ext) ext.loseContext();
+          } catch (e) {
+            // ignore context loss failure
+          }
+        }
+      }
+
       function update(t) {
         if (isUnmounted) return;
         reqId = requestAnimationFrame(update);
@@ -134,10 +149,7 @@ export default function SilkOverlay({ isAnimating, pendingTab, onHalfway, onComp
 
         if (progress >= 1.0) {
           cancelAnimationFrame(reqId);
-          window.removeEventListener('resize', resize);
-          if (containerRef.current && gl.canvas.parentNode) {
-            containerRef.current.removeChild(gl.canvas);
-          }
+          cleanupGl();
           if (onComplete) onComplete();
         }
       }
@@ -147,8 +159,14 @@ export default function SilkOverlay({ isAnimating, pendingTab, onHalfway, onComp
     return () => {
       isUnmounted = true;
       if (reqId) cancelAnimationFrame(reqId);
-      if (gl && gl.canvas.parentNode) {
-        gl.canvas.parentNode.removeChild(gl.canvas);
+      if (gl) {
+        if (gl.canvas && gl.canvas.parentNode) {
+          gl.canvas.parentNode.removeChild(gl.canvas);
+        }
+        try {
+          const ext = gl.getExtension('WEBGL_lose_context');
+          if (ext) ext.loseContext();
+        } catch (e) {}
       }
     };
   }, [isAnimating, tier, prefersReducedMotion]);

@@ -50,7 +50,7 @@ export default function OutfitPreview({
         <defs>
           {/* 1. BỘ LỌC SVG SỢI VẢI HỮU CƠ (feTurbulence & feDisplacementMap) */}
           <filter id="organicFabricTexture" x="-10%" y="-10%" width="120%" height="120%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.65 0.5" numOctaves="4" result="noise" />
+            <feTurbulence type="fractalNoise" baseFrequency="0.65 0.5" numOctaves="2" result="noise" />
             <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.2" xChannelSelector="R" yChannelSelector="G" result="displaced" />
             <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.16 0" result="coloredNoise" />
             <feComposite in="displaced" in2="coloredNoise" operator="in" result="textured" />

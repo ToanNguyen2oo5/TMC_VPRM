@@ -247,6 +247,7 @@ export class WeatherFXEngine {
     this.hum = options.humidity ?? (this.tgt.humidity || 55);
 
     this.isRunning = false;
+    this.isPaused = options.isPaused || false;
     this.animId = null;
     this.lastTime = 0;
     this.totalTime = 0;
@@ -264,6 +265,9 @@ export class WeatherFXEngine {
     this.mist = [];
     this.ripples = [];
 
+    // Pre-rendered offscreen sprite đệm để tối ưu GC
+    this.fireflySprite = null;
+
     // Sao băng & Sấm sét
     this.shootingStar = null;
     this.flash = 0;
@@ -275,9 +279,21 @@ export class WeatherFXEngine {
     this.gw = 0;
     this.gh = 0;
 
+    // Tự động tạm dừng animation loop khi tab trình duyệt bị ẩn/thu nhỏ để tiết kiệm GPU & Pin
+    this.handleVisibilityChange = () => {
+      if (document.hidden) {
+        this.stop();
+      } else if (!this.isPaused) {
+        this.start();
+      }
+    };
+    document.addEventListener('visibilitychange', this.handleVisibilityChange);
+
     this.initParticles();
     this.resize();
-    this.start();
+    if (!this.isPaused) {
+      this.start();
+    }
   }
 
   initParticles() {
@@ -381,6 +397,24 @@ export class WeatherFXEngine {
         v: 0.01 + R() * 0.02
       });
     }
+
+    // Khởi tạo sprite đom đóm 1 lần duy nhất (Offscreen Canvas), loại bỏ 28 lệnh createRadialGradient mỗi frame
+    if (!this.fireflySprite) {
+      const sp = document.createElement('canvas');
+      sp.width = 24;
+      sp.height = 24;
+      const sc = sp.getContext('2d');
+      if (sc) {
+        const sg = sc.createRadialGradient(12, 12, 0, 12, 12, 12);
+        sg.addColorStop(0, 'rgba(215, 255, 160, 0.95)');
+        sg.addColorStop(1, 'rgba(215, 255, 160, 0)');
+        sc.fillStyle = sg;
+        sc.beginPath();
+        sc.arc(12, 12, 12, 0, Math.PI * 2);
+        sc.fill();
+        this.fireflySprite = sp;
+      }
+    }
   }
 
   resize() {
@@ -389,7 +423,8 @@ export class WeatherFXEngine {
     const w = this.isFullScreen ? window.innerWidth : (parent ? parent.clientWidth : this.cv.clientWidth) || 800;
     const h = this.isFullScreen ? window.innerHeight : (parent ? parent.clientHeight : this.cv.clientHeight) || 400;
 
-    const dpr = Math.min(window.devicePixelRatio || 1, this.isFullScreen ? 1.5 : 2);
+    // Giới hạn DPR tối đa 1.15x cho canvas toàn màn hình giúp giảm 50% tải tính toán GPU mà mắt thường không phân biệt được
+    const dpr = Math.min(window.devicePixelRatio || 1, this.isFullScreen ? 1.15 : 1.5);
     this.w = w;
     this.h = h;
     this.dpr = dpr;
@@ -907,20 +942,24 @@ export class WeatherFXEngine {
       }
     }
 
-    // 9. Đom đóm lập lòe ban đêm
+    // 9. Đom đóm lập lòe ban đêm (Tối ưu bằng sprite đệm, không cấp phát gradient mới)
     if (cur.fly > 0.02) {
+      const sprite = this.fireflySprite;
       this.flies.forEach(f => {
         const X = f.x * W + Math.sin(t * f.sx + f.p) * 40;
         const Y = f.y * H + Math.cos(t * f.sy + f.p) * 26;
         const pl = Math.pow(0.5 + 0.5 * Math.sin(t * 2 + f.p), 2) * cur.fly;
-        const fg = cx.createRadialGradient(X, Y, 0, X, Y, 10);
-        fg.addColorStop(0, `rgba(215, 255, 160, ${pl})`);
-        fg.addColorStop(1, 'rgba(215, 255, 160, 0)');
-        cx.fillStyle = fg;
-        cx.beginPath();
-        cx.arc(X, Y, 10, 0, Math.PI * 2);
-        cx.fill();
+        if (sprite) {
+          cx.globalAlpha = pl;
+          cx.drawImage(sprite, X - 12, Y - 12);
+        } else {
+          cx.fillStyle = `rgba(215, 255, 160, ${pl})`;
+          cx.beginPath();
+          cx.arc(X, Y, 2, 0, Math.PI * 2);
+          cx.fill();
+        }
       });
+      cx.globalAlpha = 1;
     }
 
     // 10. Mưa 2 tầng sâu + Gợn sóng elip + Khóm lá sen
@@ -1037,13 +1076,27 @@ export class WeatherFXEngine {
     this.drawGlass(dt);
   }
 
+  setPaused(paused) {
+    this.isPaused = Boolean(paused);
+    if (this.isPaused) {
+      this.stop();
+      if (this.ctx && this.cv) {
+        this.ctx.clearRect(0, 0, this.cv.width, this.cv.height);
+      }
+    } else {
+      if (!document.hidden) {
+        this.start();
+      }
+    }
+  }
+
   start() {
-    if (this.isRunning) return;
+    if (this.isRunning || this.isPaused) return;
     this.isRunning = true;
     this.lastTime = performance.now();
 
     const loop = (now) => {
-      if (!this.isRunning) return;
+      if (!this.isRunning || this.isPaused) return;
       const dt = Math.min((now - this.lastTime) / 1000 || 0, 0.05);
       this.lastTime = now;
       this.totalTime += dt;
@@ -1073,6 +1126,10 @@ export class WeatherFXEngine {
 
   destroy() {
     this.stop();
+    if (this.handleVisibilityChange) {
+      document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+    }
+    this.fireflySprite = null;
     this.clouds = [];
     this.swirls = [];
     this.stars = [];
