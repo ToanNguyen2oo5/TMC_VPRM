@@ -145,6 +145,28 @@ export default function App() {
     window.scrollTo({ top: 0 });
   }, []);
 
+  // Keyboard navigation shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ignore if user is typing in an input
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+      if (e.altKey) {
+        switch(e.key.toLowerCase()) {
+          case '1': setActiveTab('home'); break;
+          case '2': setActiveTab('mixer'); break;
+          case '3': setActiveTab('webar'); break;
+          case '4': setActiveTab('explore'); break;
+          case '5': setActiveTab('lookbook'); break;
+          case '6': setActiveTab('culture'); break;
+          default: break;
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [setActiveTab]);
+
   // Logo Variant: 'emblem' | 'crest'
   const [logoVariant] = useState(() => {
     return localStorage.getItem('vp_logo_variant') || 'emblem';

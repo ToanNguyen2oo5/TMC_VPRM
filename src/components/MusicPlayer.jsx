@@ -17,35 +17,28 @@ export default function MusicPlayer() {
     return () => unsubscribe();
   }, []);
 
-  // Autoplay on website load with seamless fallback on first user gesture
+  // Play only on explicit user interaction
   useEffect(() => {
     let unmounted = false;
 
-    const attemptAutoplay = () => {
-      const playPromise = musicEngine.play();
-      if (playPromise && typeof playPromise.then === 'function') {
-        playPromise.catch(() => {
-          // Autoplay blocked by browser policy without prior interaction
-          const onFirstInteraction = () => {
-            if (!unmounted && !musicEngine.hasExplicitlyPaused) {
-              musicEngine.play().catch(() => {});
-            }
-            ['pointerdown', 'click', 'keydown', 'touchstart', 'scroll'].forEach((evt) => {
-              window.removeEventListener(evt, onFirstInteraction, true);
-            });
-          };
-
-          ['pointerdown', 'click', 'keydown', 'touchstart', 'scroll'].forEach((evt) => {
-            window.addEventListener(evt, onFirstInteraction, { once: true, passive: true, capture: true });
-          });
-        });
+    const onFirstInteraction = () => {
+      if (!unmounted && !musicEngine.hasExplicitlyPaused) {
+        musicEngine.play().catch(() => {});
       }
+      ['pointerdown', 'click', 'keydown', 'touchstart', 'scroll'].forEach((evt) => {
+        window.removeEventListener(evt, onFirstInteraction, true);
+      });
     };
 
-    attemptAutoplay();
+    ['pointerdown', 'click', 'keydown', 'touchstart', 'scroll'].forEach((evt) => {
+      window.addEventListener(evt, onFirstInteraction, { once: true, passive: true, capture: true });
+    });
 
     return () => {
       unmounted = true;
+      ['pointerdown', 'click', 'keydown', 'touchstart', 'scroll'].forEach((evt) => {
+        window.removeEventListener(evt, onFirstInteraction, true);
+      });
     };
   }, []);
 
