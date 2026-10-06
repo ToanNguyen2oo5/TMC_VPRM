@@ -1,20 +1,21 @@
-import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo, lazy, Suspense } from 'react';
 import html2canvas from 'html2canvas';
 import SceneSelector from './components/SceneSelector';
 import OutfitSuggestions from './components/OutfitSuggestions';
 import OutfitCustomizer from './components/OutfitCustomizer';
-import TurntableViewer from './components/TurntableViewer';
 import CultureCard from './components/CultureCard';
 import MismatchWarning from './components/MismatchWarning';
 import LookbookExport from './components/LookbookExport';
-import ExploreCostumes from './components/ExploreCostumes';
-import OutfitComparison from './components/OutfitComparison';
-import LookbookGallery from './components/LookbookGallery';
-import CultureHub from './components/CultureHub';
 import { filterOutfits, getAllOutfits } from './services/cultureData';
 import { generateOutfitImage } from './services/geminiImageService';
 import { evaluateCulturalWarnings } from './services/culturalWarningService';
-import VietnamMap from './components/VietnamMap';
+
+const TurntableViewer = lazy(() => import('./components/TurntableViewer'));
+const ExploreCostumes = lazy(() => import('./components/ExploreCostumes'));
+const OutfitComparison = lazy(() => import('./components/OutfitComparison'));
+const LookbookGallery = lazy(() => import('./components/LookbookGallery'));
+const CultureHub = lazy(() => import('./components/CultureHub'));
+const VietnamMap = lazy(() => import('./components/VietnamMap'));
 import ChatBot from './components/ChatBot';
 import LotusPetals from './components/LotusPetals';
 import LottieIcon from './components/LottieIcon';
@@ -25,12 +26,13 @@ import RentalModal from './components/RentalModal';
 import StickyStepper from './components/StickyStepper';
 import MobileBottomNav from './components/MobileBottomNav';
 import { lanternAnimation } from './assets/lottieAnimations';
+import aiAvatar from './assets/images/ai_stylist_avatar_1791041447024.jpg';
 import { useTheme } from './hooks/useTheme';
 import { useTranslation } from './services/i18n.jsx';
 import HeroCarousel from './components/HeroCarousel';
 import WeatherCanvas from './components/weather/WeatherCanvas';
 import { getRegionWeather } from './services/weatherService';
-import WebARPage from './components/webar/WebARPage';
+const WebARPage = lazy(() => import('./components/webar/WebARPage'));
 import LiquidNavbar from './motion/LiquidNavbar';
 import SilkOverlay from './components/transitions/SilkOverlay';
 import { useSmoothScroll } from './motion/useSmoothScroll';
@@ -829,7 +831,9 @@ export default function App() {
 
           {/* Bản đồ di sản 3 miền Bắc - Trung - Nam */}
           <div className="container" style={{ margin: '2.5rem auto 1.5rem' }}>
-            <VietnamMap onSelectOutfitForMixer={handleSelectFromOtherViews} />
+            <Suspense fallback={<div style={{height: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>Đang tải bản đồ...</div>}>
+              <VietnamMap onSelectOutfitForMixer={handleSelectFromOtherViews} />
+            </Suspense>
           </div>
 
           {/* Highlights Section */}
@@ -875,7 +879,7 @@ export default function App() {
             <div className="home-banner-hub glass-panel animate-fade-in-up" style={{ marginTop: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
                 <img
-                  src="/src/assets/images/ai_stylist_avatar_1791041447024.jpg"
+                  src={aiAvatar}
                   alt="Cố Vấn AI"
                   style={{
                     width: '64px',
@@ -1047,17 +1051,19 @@ export default function App() {
               <div className="result-container animate-fade-in">
                 <div className="result-split-layout">
                   <div className="result-viewer">
-                    <TurntableViewer
-                      images={turntableImages}
-                      isLoading={isGenerating}
-                      progress={generateProgress}
-                      angleMode={angleMode}
-                      isGeneratingRemaining={isGeneratingRemaining}
-                      remainingProgress={remainingProgress}
-                      onGenerateRemaining={handleGenerateRemainingAngles}
-                      selectedOutfit={selectedOutfit}
-                      customizationData={customizationData}
-                    />
+                    <Suspense fallback={<div className="glass-panel" style={{height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>Đang tải viewer...</div>}>
+                      <TurntableViewer
+                        images={turntableImages}
+                        isLoading={isGenerating}
+                        progress={generateProgress}
+                        angleMode={angleMode}
+                        isGeneratingRemaining={isGeneratingRemaining}
+                        remainingProgress={remainingProgress}
+                        onGenerateRemaining={handleGenerateRemainingAngles}
+                        selectedOutfit={selectedOutfit}
+                        customizationData={customizationData}
+                      />
+                    </Suspense>
 
                     {/* Thanh công cụ hành động nhanh chuyển sang dưới ảnh (cột trái) */}
                     {turntableImages && selectedOutfit && (
@@ -1144,50 +1150,60 @@ export default function App() {
       {/* VIEW: WEBAR ACCESSORY TRY-ON */}
       {activeTab === 'webar' && (
         <div className="container" style={{ position: 'relative', zIndex: 10 }}>
-          <WebARPage
-            onExit={() => {
-              setActiveTab('home');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            onToast={showToast}
-          />
+          <Suspense fallback={<div className="glass-panel text-center" style={{padding: '3rem'}}>Đang khởi động Camera...</div>}>
+            <WebARPage
+              onExit={() => {
+                setActiveTab('home');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              onToast={showToast}
+            />
+          </Suspense>
         </div>
       )}
 
       {/* VIEW 3: EXPLORE COSTUMES */}
       {activeTab === 'explore' && (
         <div className="container">
-          <ExploreCostumes onSelectForMixer={handleSelectFromOtherViews} />
+          <Suspense fallback={<div className="glass-panel text-center" style={{padding: '3rem'}}>Đang tải Bảo tàng số...</div>}>
+            <ExploreCostumes onSelectForMixer={handleSelectFromOtherViews} />
+          </Suspense>
         </div>
       )}
 
       {/* VIEW 4: COMPARE OUTFITS */}
       {activeTab === 'compare' && (
         <div className="container">
-          <OutfitComparison
-            comparedOutfits={comparedOutfits}
-            onRemoveOutfit={(id) => setComparedOutfits(prev => prev.filter((_, idx) => idx !== id && _.id !== id))}
-            onSelectOutfit={handleSelectFromOtherViews}
-            onLoadSampleOutfits={handleLoadSampleOutfits}
-          />
+          <Suspense fallback={<div className="glass-panel text-center" style={{padding: '3rem'}}>Đang tải So sánh...</div>}>
+            <OutfitComparison
+              comparedOutfits={comparedOutfits}
+              onRemoveOutfit={(id) => setComparedOutfits(prev => prev.filter((_, idx) => idx !== id && _.id !== id))}
+              onSelectOutfit={handleSelectFromOtherViews}
+              onLoadSampleOutfits={handleLoadSampleOutfits}
+            />
+          </Suspense>
         </div>
       )}
 
       {/* VIEW 5: LOOKBOOK GALLERY */}
       {activeTab === 'lookbook' && (
         <div className="container">
-          <LookbookGallery
-            savedOutfits={savedLookbooks}
-            onRemoveFromLookbook={(id) => setSavedLookbooks(prev => prev.filter(item => item.id !== id))}
-            onSelectOutfit={handleSelectFromOtherViews}
-          />
+          <Suspense fallback={<div className="glass-panel text-center" style={{padding: '3rem'}}>Đang tải Lookbook...</div>}>
+            <LookbookGallery
+              savedOutfits={savedLookbooks}
+              onRemoveFromLookbook={(id) => setSavedLookbooks(prev => prev.filter(item => item.id !== id))}
+              onSelectOutfit={handleSelectFromOtherViews}
+            />
+          </Suspense>
         </div>
       )}
 
       {/* VIEW 6: CULTURE HUB */}
       {activeTab === 'culture' && (
         <div className="container">
-          <CultureHub />
+          <Suspense fallback={<div className="glass-panel text-center" style={{padding: '3rem'}}>Đang tải Văn hoá...</div>}>
+            <CultureHub />
+          </Suspense>
         </div>
       )}
 

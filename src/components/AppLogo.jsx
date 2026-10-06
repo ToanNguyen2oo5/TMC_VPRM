@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import emblemLogo from '../assets/images/vietphuc_remix_logo_1791040969620.jpg';
+import crestLogo from '../assets/images/vietphuc_logo_crest_1791040981262.jpg';
 import './AppLogo.css';
 
 export const LOGO_VARIANTS = {
@@ -6,14 +8,14 @@ export const LOGO_VARIANTS = {
     id: 'emblem',
     name: 'Biểu Tượng Sen Vàng & Giao Lĩnh Tân Thời',
     shortName: 'Emblem Tân Thời',
-    src: '/src/assets/images/vietphuc_remix_logo_1791040969620.jpg',
+    src: emblemLogo,
     description: 'Sự hòa quyện giữa đài sen vàng cung đình và nếp gấp vạt chéo Áo Giao Lĩnh / Nhật Bình, kết hợp hình khối hiện đại đại diện cho tinh thần Remix của thế hệ trẻ.',
   },
   crest: {
     id: 'crest',
     name: 'Ấn Triện Hoàng Gia Triều Nguyễn',
     shortName: 'Ấn Triện Cung Đình',
-    src: '/src/assets/images/vietphuc_logo_crest_1791040981262.jpg',
+    src: crestLogo,
     description: 'Ấn triện tròn phong cách hoàng cung Huế với nền sơn mài chu sa thắm, vân mây triều đình dát vàng và họa tiết sen hoàng triều trang trọng, uy nghi.',
   },
 };

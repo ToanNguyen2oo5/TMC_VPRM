@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import aiAvatar from '../assets/images/ai_stylist_avatar_1791041447024.jpg';
 import './MismatchWarning.css';
 
 export default function MismatchWarning({ warnings, onDismiss, onSwitchOutfit, onContinue }) {
@@ -27,7 +28,7 @@ export default function MismatchWarning({ warnings, onDismiss, onSwitchOutfit, o
         <div className="mismatch-warning__header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <img
-              src="/src/assets/images/ai_stylist_avatar_1791041447024.jpg"
+              src={aiAvatar}
               alt="Cố Vấn AI"
               style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover', border: '1.5px solid var(--color-gold)' }}
               referrerPolicy="no-referrer"

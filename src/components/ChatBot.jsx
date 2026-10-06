@@ -2,7 +2,9 @@ import { useState, useRef, useEffect } from 'react';
 import { sendChatMessage } from '../services/chatService';
 import './ChatBot.css';
 
-const AI_AVATAR_SRC = '/src/assets/images/ai_stylist_avatar_1791041447024.jpg';
+import aiAvatar from '../assets/images/ai_stylist_avatar_1791041447024.jpg';
+
+const AI_AVATAR_SRC = aiAvatar;
 
 const QUICK_PROMPTS = [
   'Đám cưới nên mặc cổ phục gì?',

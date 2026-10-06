@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import './HeritageCinematicBackground.css';
 
-const MOUNTAINS_BG = '/src/assets/images/vietnam_mountains_bg_1791042196691.jpg';
-const BOAT_ROWER_IMG = '/src/assets/images/boat_rower_silhouette_1791042210691.jpg';
+import MOUNTAINS_BG from '../assets/images/vietnam_mountains_bg_1791042196691.jpg';
+import BOAT_ROWER_IMG from '../assets/images/boat_rower_silhouette_1791042210691.jpg';
 
 export default function HeritageCinematicBackground({ enabled = true }) {
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
