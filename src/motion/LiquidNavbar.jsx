@@ -46,7 +46,7 @@ export default function LiquidNavbar({
   const tabs = [
     { id: 'home', label: t('nav_home') },
     { id: 'mixer', label: t('nav_mixer') },
-    { id: 'webar', label: '✨ Thử AR' },
+    { id: 'webar', label: t('nav_webar') },
     { id: 'explore', label: t('nav_explore') },
     { id: 'compare', label: t('nav_compare'), count: comparedOutfits?.length || 0 },
     { id: 'lookbook', label: t('nav_lookbook'), count: savedLookbooks?.length || 0 },

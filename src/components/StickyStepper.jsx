@@ -9,10 +9,11 @@ export default function StickyStepper({ currentStep = 1, stepTitle = '' }) {
   const [isScrolled, setIsScrolled] = useState(false);
 
   const steps = [
-    { step: 1, label: t('stepper_step1'), percent: 25 },
-    { step: 2, label: t('stepper_step2'), percent: 50 },
-    { step: 3, label: t('stepper_step3'), percent: 75 },
-    { step: 4, label: t('stepper_step4'), percent: 100 }
+    { step: 1, label: t('stepper_step1'), percent: 20 },
+    { step: 2, label: t('stepper_step2'), percent: 40 },
+    { step: 3, label: t('stepper_step3'), percent: 60 },
+    { step: 4, label: t('stepper_step4'), percent: 80 },
+    { step: 5, label: t('stepper_step5'), percent: 100 }
   ];
 
   useEffect(() => {
@@ -28,6 +29,7 @@ export default function StickyStepper({ currentStep = 1, stepTitle = '' }) {
     currentStep === 1 ? t('step_scene') :
     currentStep === 2 ? t('step_outfit') :
     currentStep === 3 ? t('step_custom') :
+    currentStep === 4 ? t('step_warning') :
     t('step_preview')
   );
 
@@ -37,7 +39,7 @@ export default function StickyStepper({ currentStep = 1, stepTitle = '' }) {
         <div className="stepper-expanded animate-fade-in">
           <div className="stepper-header-row">
             <span className="stepper-current-badge">
-              {t('step_prefix')} {currentStep} {t('step_of')} 4 • {displayTitle}
+              {t('step_prefix')} {currentStep} {t('step_of')} 5 • {displayTitle}
             </span>
             <span className="stepper-percent">{current.percent}%</span>
           </div>
@@ -66,7 +68,7 @@ export default function StickyStepper({ currentStep = 1, stepTitle = '' }) {
         <div className="stepper-collapsed-pill animate-fade-in">
           <div className="collapsed-info">
             <span>✨</span>
-            <span>{t('step_prefix')} {currentStep}/4 · {displayTitle}</span>
+            <span>{t('step_prefix')} {currentStep}/5 · {displayTitle}</span>
           </div>
           <div className="collapsed-progress-ring">
             <div

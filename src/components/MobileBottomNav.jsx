@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { springs } from '../motion/tokens';
+import { useTranslation } from '../services/i18n';
 import './MobileBottomNav.css';
 
 export default function MobileBottomNav({
@@ -8,14 +9,16 @@ export default function MobileBottomNav({
   compareCount = 0,
   lookbookCount = 0
 }) {
+  const { t } = useTranslation();
+  
   const navItems = [
-    { id: 'home', label: 'Trang chủ', icon: '🏠' },
-    { id: 'mixer', label: 'Phối đồ', icon: '👘' },
-    { id: 'webar', label: 'Thử AR', icon: '✨' },
-    { id: 'explore', label: 'Khám phá', icon: '🔍' },
-    { id: 'compare', label: 'So sánh', icon: '⚖️', badge: compareCount },
-    { id: 'lookbook', label: 'Lookbook', icon: '📚', badge: lookbookCount },
-    { id: 'culture', label: 'Văn hóa', icon: '🏛️' }
+    { id: 'home', label: t('nav_home'), icon: '🏠' },
+    { id: 'mixer', label: t('nav_mixer'), icon: '👘' },
+    { id: 'webar', label: t('nav_webar').replace('✨ ', ''), icon: '✨' },
+    { id: 'explore', label: t('nav_explore'), icon: '🔍' },
+    { id: 'compare', label: t('nav_compare'), icon: '⚖️', badge: compareCount },
+    { id: 'lookbook', label: t('nav_lookbook'), icon: '📚', badge: lookbookCount },
+    { id: 'culture', label: t('nav_culture'), icon: '🏛️' }
   ];
 
   return (

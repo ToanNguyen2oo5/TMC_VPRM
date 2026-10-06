@@ -8,6 +8,7 @@ const TRANSLATIONS = {
     brand_subtitle: 'Di sản & Đương đại',
     nav_home: 'Trang chủ',
     nav_mixer: 'Phối đồ',
+    nav_webar: '✨ Thử AR',
     nav_explore: 'Bảo tàng số',
     nav_compare: 'So sánh',
     nav_lookbook: 'Lookbook',
@@ -72,6 +73,7 @@ const TRANSLATIONS = {
     step_scene: 'Bối cảnh & sự kiện',
     step_outfit: 'Chọn y phục truyền thống',
     step_custom: 'Phối màu & phụ kiện',
+    step_warning: 'Kiểm duyệt văn hoá',
     step_preview: 'Lookbook & Kết quả',
     step_prefix: 'Bước',
     step_of: '/',
@@ -80,7 +82,8 @@ const TRANSLATIONS = {
     stepper_step1: '1. Bối cảnh',
     stepper_step2: '2. Chọn y phục',
     stepper_step3: '3. Phối đồ',
-    stepper_step4: '4. Lookbook',
+    stepper_step4: '4. Kiểm duyệt',
+    stepper_step5: '5. Lookbook',
 
     // Angle selection
     angle_mode_title: 'Chế độ tạo ảnh',
@@ -130,6 +133,7 @@ const TRANSLATIONS = {
     brand_subtitle: 'Heritage & Modernity',
     nav_home: 'Home',
     nav_mixer: 'Mix & Match',
+    nav_webar: '✨ Try AR',
     nav_explore: 'Digital Museum',
     nav_compare: 'Compare',
     nav_lookbook: 'Lookbook',
@@ -194,6 +198,7 @@ const TRANSLATIONS = {
     step_scene: 'Context & Occasion',
     step_outfit: 'Select Traditional Garment',
     step_custom: 'Color & Accessory Styling',
+    step_warning: 'Cultural Compliance',
     step_preview: 'Lookbook & Results',
     step_prefix: 'Step',
     step_of: '/',
@@ -202,7 +207,8 @@ const TRANSLATIONS = {
     stepper_step1: '1. Context',
     stepper_step2: '2. Garment',
     stepper_step3: '3. Styling',
-    stepper_step4: '4. Lookbook',
+    stepper_step4: '4. Compliance',
+    stepper_step5: '5. Lookbook',
 
     // Angle selection
     angle_mode_title: 'Rendering View Mode',

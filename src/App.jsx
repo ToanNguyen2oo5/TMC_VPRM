@@ -118,15 +118,46 @@ export default function App() {
     });
   };
 
-  // Navigation: 'home' | 'mixer' | 'explore' | 'compare' | 'lookbook' | 'culture'
-  const [activeTab, _setActiveTab] = useState('home');
+  // Navigation: 'home' | 'mixer' | 'explore' | 'webar' | 'lookbook' | 'culture'
+  const getHashTab = () => window.location.hash.replace('#/', '') || 'home';
+  const [activeTab, _setActiveTab] = useState(getHashTab);
   const [pendingTab, setPendingTab] = useState(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Sync state to URL when activeTab changes (for forward navigation)
+  useEffect(() => {
+    const currentHash = getHashTab();
+    if (currentHash !== activeTab) {
+      window.history.pushState(null, '', `#/${activeTab}`);
+      document.title = `Việt Phục Remix - ${activeTab.toUpperCase()}`;
+    }
+  }, [activeTab]);
+
+  // Listen to browser Back/Forward (popstate)
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hashTab = getHashTab();
+      if (hashTab !== activeTab) {
+        // Trigger transition if we are not already transitioning
+        if (!isTransitioning) {
+          if (hashTab === 'webar' || activeTab === 'webar') {
+            _setActiveTab(hashTab);
+          } else {
+            setPendingTab(hashTab);
+            setIsTransitioning(true);
+          }
+        }
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [activeTab, isTransitioning]);
 
   const setActiveTab = useCallback((newTab) => {
     if (newTab === activeTab) return;
     if (newTab === 'webar' || activeTab === 'webar') {
       _setActiveTab(newTab);
+      window.history.pushState(null, '', `#/${newTab}`);
       return;
     }
     setPendingTab(newTab);
@@ -143,6 +174,8 @@ export default function App() {
     setIsTransitioning(false);
     setPendingTab(null);
     window.scrollTo({ top: 0 });
+    // focus management for a11y
+    document.querySelector('main')?.focus();
   }, []);
 
   // Keyboard navigation shortcuts
@@ -326,18 +359,20 @@ export default function App() {
 
   // Compute active mixer step for Sticky Stepper (Priority 4)
   const currentMixerStep = useMemo(() => {
-    if (turntableImages) return 4;
+    if (turntableImages) return 5;
+    if (mismatchWarnings.length > 0 && selectedOutfit) return 4;
     if (selectedOutfit) return 3;
     if (selectedScene) return 2;
     return 1;
-  }, [turntableImages, selectedOutfit, selectedScene]);
+  }, [turntableImages, selectedOutfit, selectedScene, mismatchWarnings.length]);
 
   const mixerStepTitle = useMemo(() => {
     switch (currentMixerStep) {
       case 1: return t('step_scene');
       case 2: return t('step_outfit');
       case 3: return t('step_custom');
-      case 4: return t('step_preview');
+      case 4: return t('step_warning');
+      case 5: return t('step_preview');
       default: return t('nav_mixer');
     }
   }, [currentMixerStep, t]);
