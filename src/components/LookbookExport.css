@@ -770,11 +770,43 @@
   color: #998d82;
 }
 
-/* Global Actions */
-.lookbook-export__actions {
+/* Actions Overlay (Corner) */
+.lookbook-actions-overlay {
+  position: absolute;
+  top: 15px;
+  right: 15px;
   display: flex;
+  gap: 10px;
+  z-index: 100;
+}
+
+.ghost-action-btn {
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(218, 165, 32, 0.4);
+  color: #DAA520;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-top: 1.5rem;
+  font-size: 1.15rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.ghost-action-btn:hover {
+  background: rgba(218, 165, 32, 0.2);
+  transform: translateY(-2px) scale(1.05);
+  border-color: #DAA520;
+  box-shadow: 0 6px 20px rgba(218, 165, 32, 0.3);
+  color: #FFF;
+}
+
+.ghost-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }

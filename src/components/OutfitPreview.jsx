@@ -23,6 +23,7 @@ export default function OutfitPreview({
   const isAnime = false;
   const isVector = true;
   const [hoveredPart, setHoveredPart] = useState(null);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   if (!selectedOutfit) {
     return (
@@ -670,10 +671,17 @@ export default function OutfitPreview({
           </div>
         ) : (
           <div className="heritage-container">
+            {!imageLoaded && (
+              <div className="skeleton-loader-img">
+                <div className="spinner-gold" />
+              </div>
+            )}
             <img 
               src={selectedOutfit.hinh_anh} 
               alt={selectedOutfit.ten} 
-              className="heritage-reference-img"
+              className={`heritage-reference-img ${imageLoaded ? 'loaded' : 'loading'}`}
+              onLoad={() => setImageLoaded(true)}
+              style={{ opacity: imageLoaded ? 1 : 0, transition: 'opacity 0.3s ease' }}
             />
             <div className="heritage-caption">
               <strong>{selectedOutfit.ten}</strong>

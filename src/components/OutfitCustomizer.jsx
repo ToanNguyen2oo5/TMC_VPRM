@@ -10,16 +10,16 @@ import UserPhotoUploadModal from './UserPhotoUploadModal';
 import './OutfitCustomizer.css';
 
 const SAMPLE_AVATARS = [
-  { id: 'female_1', label: 'Nữ mẫu 1', emoji: '👩' },
-  { id: 'male_1', label: 'Nam mẫu 1', emoji: '👨' },
-  { id: 'female_2', label: 'Nữ mẫu 2', emoji: '👩‍🦱' },
+  { id: 'female_1', label: 'Nữ mẫu 1' },
+  { id: 'male_1', label: 'Nam mẫu 1' },
+  { id: 'female_2', label: 'Nữ mẫu 2' },
 ];
 
 const MATERIALS = [
-  { id: 'lua_to_tam', name: 'Lụa tơ tằm Vạn Phúc', icon: '🧵', desc: 'Mềm mại, óng ả, rủ tà tha thướt' },
-  { id: 'gam_cung_dinh', name: 'Gấm hoa chìm Cung đình', icon: '👑', desc: 'Dày dặn, vương giả, uy nghiêm hoàng tộc' },
-  { id: 'vai_dui_tho', name: 'Vải đũi / thô mộc tự nhiên', icon: '🌾', desc: 'Bình dị, thoáng khí, mộc mạc Bắc Bộ' },
-  { id: 'taffeta_ren', name: 'Taffeta / Organza cách tân', icon: '✨', desc: 'Giữ phom hiện đại, trẻ trung Gen Z' }
+  { id: 'lua_to_tam', name: 'Lụa tơ tằm Vạn Phúc', icon: '', desc: 'Mềm mại, óng ả, rủ tà tha thướt' },
+  { id: 'gam_cung_dinh', name: 'Gấm hoa chìm Cung đình', icon: '', desc: 'Dày dặn, vương giả, uy nghiêm hoàng tộc' },
+  { id: 'vai_dui_tho', name: 'Vải đũi / thô mộc tự nhiên', icon: '', desc: 'Bình dị, thoáng khí, mộc mạc Bắc Bộ' },
+  { id: 'taffeta_ren', name: 'Taffeta / Organza cách tân', icon: '', desc: 'Giữ phom hiện đại, trẻ trung Gen Z' }
 ];
 
 export default function OutfitCustomizer({ 
@@ -370,18 +370,17 @@ export default function OutfitCustomizer({
           />
         </div>
         <p className="score-reason-text">
-          💡 {harmonyResult.explanation || 'Tông màu chính và màu phụ có độ tương phản nhã nhặn, tôn vinh ngũ hành truyền thống.'}
+          {harmonyResult.explanation || 'Tông màu chính và màu phụ có độ tương phản nhã nhặn, tôn vinh ngũ hành truyền thống.'}
         </p>
       </div>
 
       {/* 2. Cảnh báo văn hóa thân thiện (Cultural Warnings) */}
       <div className="cultural-warnings-section">
         <label className="pane-section-label">
-          <span>🧭</span> Nhận định văn hóa:
+          Nhận định văn hóa:
         </label>
         {culturalWarnings.length === 0 ? (
           <div className="no-warning-card">
-            <span>✅</span>
             <p>Tuyệt vời! Set đồ phối hợp hài hòa, chuẩn mực và tôn trọng bản sắc di sản.</p>
           </div>
         ) : (
@@ -390,7 +389,7 @@ export default function OutfitCustomizer({
               <div key={idx} className={`warning-item-card warning-item-card--${w.type}`}>
                 <div className="warning-item-header">
                   <span className="warning-type-tag">
-                    {w.type === 'warning' ? '🚫 Lưu ý' : w.type === 'caution' ? '⚠️ Cân nhắc' : 'ℹ️ Thông tin'}
+                    {w.type === 'warning' ? 'Lưu ý' : w.type === 'caution' ? 'Cân nhắc' : 'Thông tin'}
                   </span>
                   <strong>{w.title}</strong>
                 </div>
@@ -404,7 +403,7 @@ export default function OutfitCustomizer({
                         className="btn btn-sm btn-ghost warning-fix-btn"
                         onClick={() => handleApplyWarningFix(w)}
                       >
-                        💡 Áp dụng gợi ý
+                        Áp dụng gợi ý
                       </button>
                     )}
                   </div>
@@ -424,7 +423,7 @@ export default function OutfitCustomizer({
             onClick={() => setIsHeritageExpanded(!isHeritageExpanded)}
             aria-expanded={isHeritageExpanded}
           >
-            <span>📖 {isHeritageExpanded ? 'Thu gọn ý nghĩa di sản' : 'Đọc ý nghĩa & quy chế di sản'}</span>
+            <span>{isHeritageExpanded ? 'Thu gọn ý nghĩa di sản' : 'Đọc ý nghĩa & quy chế di sản'}</span>
             <span className="accordion-arrow">{isHeritageExpanded ? '▲' : '▼'}</span>
           </button>
           {isHeritageExpanded && (
@@ -477,7 +476,7 @@ export default function OutfitCustomizer({
           <div className="mobile-floating-chip">
             <span className="floating-chip-dot" />
             <span className="floating-chip-text">
-              ✨ Hài hòa {harmonyResult.harmonyScore}/100 {culturalWarnings.length > 0 ? `· ⚠️ ${culturalWarnings.length} lưu ý` : '· Chuẩn mực'}
+              Hài hòa {harmonyResult.harmonyScore}/100 {culturalWarnings.length > 0 ? `· ${culturalWarnings.length} lưu ý` : '· Chuẩn mực'}
             </span>
           </div>
 
@@ -515,7 +514,7 @@ export default function OutfitCustomizer({
               className="mobile-photo-guide-btn"
               onClick={() => setIsUploadModalOpen(true)}
             >
-              {preview ? '📸 Đã chọn ảnh' : '👤 Thử ảnh của bạn'}
+              {preview ? 'Đã chọn ảnh' : 'Thử ảnh của bạn'}
             </button>
           </div>
         </div>
@@ -587,7 +586,7 @@ export default function OutfitCustomizer({
               onClick={handleFinishAndGenerate}
               disabled={isGenerating}
             >
-              {isGenerating ? '⏳ Đang khởi tạo...' : '✨ Hoàn tất & Xuất Lookbook'}
+              {isGenerating ? '⏳ Tơ lụa đang dệt...' : preview ? '✨ Tạo ảnh AI (Ghép mặt bạn)' : '✨ Tạo ảnh AI (Dùng mẫu)'}
             </button>
           </div>
         </div>
@@ -648,7 +647,7 @@ export default function OutfitCustomizer({
                 <h4 className="preview-outfit-name">{selectedOutfit?.ten}</h4>
                 <span className="preview-outfit-era">{selectedOutfit?.vung_mien} • {material}</span>
               </div>
-              <div className="angle-mode-toggles" style={{ display: 'none' }}>
+              <div className="angle-mode-toggles">
                 <button
                   type="button"
                   className={`angle-toggle-btn ${angleMode === 'single' ? 'angle-toggle-btn--active' : ''}`}
@@ -676,25 +675,18 @@ export default function OutfitCustomizer({
               </div>
             </div>
 
-            {/* Mannequin Live View */}
-            <div className="mannequin-frame-wrap">
-              <OutfitPreview
-                selectedOutfit={selectedOutfit}
-                primaryColor={primaryColor}
-                secondaryColor={secondaryColor}
-                accentColor={accentColor}
-                selectedAccessories={compatibleAccessories.filter(a => selectedAccessories.includes(a.id))}
-                harmonyScore={harmonyResult.harmonyScore}
-                fit={fit}
-                length={length}
-                fabricTexture={material.includes('Lụa') ? 'silk' : material.includes('Gấm') ? 'brocade' : 'linen'}
-              />
-            </div>
-
-            {/* Avatar & Photo Upload Selector */}
-            <div className="avatar-selector-section" style={{ display: 'none' }}>
-              <span className="avatar-sec-title">Nhân vật thử đồ:</span>
-              <div className="avatar-sample-chips">
+            {/* Upload ảnh cá nhân được đặt trước mannequin để luôn thấy ngay khi mở trang */}
+            <div className="avatar-selector-section avatar-selector-section--prominent">
+              <div className="avatar-upload-heading">Ảnh người mẫu</div>
+              <button
+                type="button"
+                className={`avatar-upload-btn avatar-upload-btn--primary ${preview ? 'avatar-upload-btn--active' : ''}`}
+                onClick={() => setIsUploadModalOpen(true)}
+              >
+                {preview ? 'Đã chọn ảnh cá nhân · Chỉnh lại' : 'Tải ảnh cá nhân lên'}
+              </button>
+              <span className="avatar-upload-help">Kéo, phóng to/thu nhỏ ảnh trong khung rồi tạo ảnh AI.</span>
+              <div className="avatar-sample-chips avatar-sample-chips--compact" aria-label="Nhân vật mẫu">
                 {SAMPLE_AVATARS.map(av => (
                   <button
                     key={av.id}
@@ -706,28 +698,67 @@ export default function OutfitCustomizer({
                       setUserPhoto(null);
                     }}
                   >
-                    <span>{av.emoji}</span>
-                    <span>{av.label}</span>
+                    {av.label}
                   </button>
                 ))}
-                
-                {/* Custom Photo Upload Trigger with guidance modal */}
-                <button
-                  type="button"
-                  className={`avatar-upload-btn ${preview ? 'avatar-upload-btn--active' : ''}`}
-                  onClick={() => setIsUploadModalOpen(true)}
-                >
-                  {preview ? '📸 Đã chọn ảnh của bạn' : '📤 Tải ảnh chân dung của bạn'}
-                </button>
               </div>
             </div>
+
+            {/* Khung ma-nơ-canh và Khung khuôn mặt bên cạnh */}
+            <div className={`preview-dual-stage ${preview ? 'preview-dual-stage--with-face' : ''}`}>
+              {preview && (
+                <div className="face-preview-frame">
+                  <div className="face-frame-header">
+                    <span className="face-frame-title">👤 Mặt của bạn</span>
+                    <button
+                      type="button"
+                      className="face-frame-remove-btn"
+                      onClick={() => {
+                        setPreview(null);
+                        setUserPhoto(null);
+                        setSelectedAvatar('female_1');
+                      }}
+                      title="Gỡ ảnh này"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <div className="face-frame-body">
+                    <img src={preview} alt="Ảnh khuôn mặt của bạn" className="face-frame-img" />
+                    <div className="face-frame-badge">✨ Sẵn sàng ghép mặt</div>
+                  </div>
+                  <button
+                    type="button"
+                    className="face-frame-change-btn"
+                    onClick={() => setIsUploadModalOpen(true)}
+                  >
+                    🔄 Đổi ảnh khác
+                  </button>
+                </div>
+              )}
+
+              <div className="mannequin-frame-wrap">
+                <OutfitPreview
+                  selectedOutfit={selectedOutfit}
+                  primaryColor={primaryColor}
+                  secondaryColor={secondaryColor}
+                  accentColor={accentColor}
+                  selectedAccessories={compatibleAccessories.filter(a => selectedAccessories.includes(a.id))}
+                  harmonyScore={harmonyResult.harmonyScore}
+                  fit={fit}
+                  length={length}
+                  fabricTexture={material.includes('Lụa') ? 'silk' : material.includes('Gấm') ? 'brocade' : 'linen'}
+                />
+              </div>
+            </div>
+
           </div>
         </div>
 
         {/* CỘT 3 (PHẢI): BẢNG TÓM TẮT & CẢNH BÁO */}
         <div className="customizer-col customizer-col--right glass-panel animate-fade-in-up">
           <h3 className="summary-col-title">
-            <span>📋</span> Tóm tắt phối đồ
+            Tóm tắt phối đồ
           </h3>
 
           {renderSummaryPane()}
@@ -740,7 +771,7 @@ export default function OutfitCustomizer({
               onClick={handleFinishAndGenerate}
               disabled={isGenerating}
             >
-              {isGenerating ? '⏳ Đang khởi tạo hình ảnh...' : '✨ Hoàn tất & Xuất Lookbook'}
+              {isGenerating ? '⏳ Tơ lụa đang dệt...' : preview ? '✨ Tạo ảnh AI (Ghép mặt bạn)' : '✨ Tạo ảnh AI (Dùng mẫu)'}
             </button>
             <small className="cta-subtip">
               Poster nghệ thuật & Tùy chọn so sánh phương án sẽ sẵn sàng ở Bước 4

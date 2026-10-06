@@ -168,7 +168,36 @@ export default function LookbookExport({
       </div>
 
       {/* Capturable Poster Area */}
-      <div className="lookbook-card-stage animate-fade-in">
+      <div className="lookbook-card-stage animate-fade-in" style={{ position: 'relative' }}>
+        
+        {/* Ghost Action Buttons Overlay (Top Right Corner) */}
+        <div className="lookbook-actions-overlay">
+          <button
+            className="ghost-action-btn"
+            onClick={handleDownload}
+            disabled={isExporting}
+            title="Tải Poster HD (2x Retina)"
+          >
+            {isExporting ? '⏳' : '📥'}
+          </button>
+          <button
+            className="ghost-action-btn"
+            onClick={handleCopyLink}
+            title="Sao chép link bộ phối"
+          >
+            {copiedLink ? '✓' : '🔗'}
+          </button>
+          {shareSupported && (
+            <button
+              className="ghost-action-btn"
+              onClick={handleShare}
+              disabled={isExporting}
+              title="Sống ảo lên MXH"
+            >
+              📤
+            </button>
+          )}
+        </div>
         {/* TEMPLATE 1: HERITAGE VOGUE */}
         {selectedTemplate === 'vogue' && (
           <div className="poster-frame poster-frame--vogue" ref={cardRef}>
@@ -373,38 +402,6 @@ export default function LookbookExport({
               </div>
             </div>
           </div>
-        )}
-      </div>
-
-      {/* Action Buttons */}
-      <div className="lookbook-export__actions animate-fade-in-up">
-        <button
-          className="btn btn-primary btn-lg"
-          onClick={handleDownload}
-          disabled={isExporting}
-          id="download-lookbook"
-        >
-          {isExporting ? '⏳ Đang kết xuất ảnh 2x Retina...' : '📥 Tải Poster HD (2x Retina)'}
-        </button>
-
-        <button
-          className="btn btn-secondary btn-lg"
-          onClick={handleCopyLink}
-          id="copy-lookbook-link"
-          title="Sao chép đường dẫn bộ phối"
-        >
-          {copiedLink ? '✓ Đã chép link' : '🔗 Sao chép link bộ phối'}
-        </button>
-
-        {shareSupported && (
-          <button
-            className="btn btn-secondary btn-lg"
-            onClick={handleShare}
-            disabled={isExporting}
-            id="share-lookbook"
-          >
-            📤 Sống ảo lên MXH
-          </button>
         )}
       </div>
     </section>

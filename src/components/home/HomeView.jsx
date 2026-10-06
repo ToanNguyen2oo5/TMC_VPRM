@@ -63,8 +63,8 @@ export default function HomeView({ EVENT_SHORTCUTS, handleQuickEventSelect, hand
           borderRadius: '0px',
           ease: 'power2.inOut'
         })
-        .to('.pin-text-1', { opacity: 0, y: -20, duration: 0.5 }, 0)
-        .fromTo('.pin-text-2', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5 }, 0.5);
+        .to('.pin-text-1', { opacity: 0, y: -15, duration: 0.5 }, 0)
+        .fromTo('.pin-text-2', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.5 }, 0.5);
       }
 
       // 4. Sequential Shortcuts
@@ -104,17 +104,48 @@ export default function HomeView({ EVENT_SHORTCUTS, handleQuickEventSelect, hand
       <section className={`story-pin-section ${!isMotionEnabled ? 'static-story-section' : ''}`}>
         <div className="pin-content-wrapper">
            <div className="pin-text-container">
-              <h2 className="pin-text-1 text-gradient">Khám Phá Di Sản</h2>
-              <h2 className="pin-text-2 text-gradient" style={isMotionEnabled ? { position: 'absolute', top: 0 } : {}}>Qua Lăng Kính Thời Đại</h2>
+              <span className="pin-kicker">VIỆT PHỤC REMIX · DI SẢN SỐNG</span>
+              <div className="pin-heading-wrap">
+                <h2 className="pin-text-1">Khám Phá Di Sản</h2>
+                <h2 className="pin-text-2">Qua Lăng Kính Thời Đại</h2>
+              </div>
+              <p className="pin-hero-copy">Từ nét xưa đến chất riêng của bạn.</p>
+              <button
+                type="button"
+                className="pin-hero-cta"
+                onClick={() => document.querySelector('.event-shortcuts-section')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                Khám phá bộ sưu tập <span aria-hidden="true">→</span>
+              </button>
            </div>
            <div className="pin-image-wrapper glass-panel">
-              <img src="/images/hero_costumes_trio.jpg" alt="Việt Phục" className="pin-image" />
+              <div className="landmark-columns" aria-label="Hành trình danh lam Việt Nam">
+                {[
+                  ['/images/bg_thang_long.jpg', 'Hoàng thành', 'Thăng Long'],
+                  ['/images/bg_kinh_bac.jpg', 'Hội Lim', 'Kinh Bắc'],
+                  ['/images/bg_dai_noi_hue.jpg', 'Đại Nội', 'Huế'],
+                  ['/images/bg_nam_bo.jpg', 'Chợ nổi', 'Miền Tây'],
+                  ['/images/bg_duong_dai.jpg', 'Phố cổ', 'Hội An']
+                ].map(([image, title, place], index) => (
+                  <div className={`landmark-column landmark-column--${index + 1}`} key={place} style={{ '--landmark-image': `url(${image})` }}>
+                    <span className="landmark-index">0{index + 1}</span>
+                    <div className="landmark-column-copy">
+                      <span>{title}</span>
+                      <strong>{place}</strong>
+                    </div>
+                    <span className="landmark-line" />
+                  </div>
+                ))}
+              </div>
               <div className="pin-svg-overlay">
                  {/* Trống đồng SVG strokes drawing effect */}
                  <svg viewBox="0 0 100 100" className="trong-dong-svg">
                     <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(201, 161, 90, 0.4)" strokeWidth="1" strokeDasharray="300" strokeDashoffset="300" />
                  </svg>
               </div>
+              <div className="pin-image-vignette" />
+              <div className="pin-floating-tag pin-floating-tag--left">THỦ CÔNG · TINH XẢO</div>
+              <div className="pin-floating-tag pin-floating-tag--right">XƯA GẶP NAY</div>
            </div>
         </div>
       </section>
@@ -145,7 +176,6 @@ export default function HomeView({ EVENT_SHORTCUTS, handleQuickEventSelect, hand
                 onClick={() => handleQuickEventSelect(sc.id)}
               >
                 <div className="liquid-glow-effect" />
-                <span className="shortcut-icon">{sc.icon}</span>
                 <div className="shortcut-text">
                   <h4>{scTitle}</h4>
                   <p>{scDesc}</p>

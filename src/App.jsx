@@ -552,7 +552,7 @@ export default function App() {
       }
     } catch (err) {
       console.error('Lỗi sinh ảnh:', err);
-      setError(err.message || 'Đã xảy ra lỗi khi tạo ảnh. Vui lòng thử lại.');
+      setError(err.message || 'Khung dệt đang bận hoặc kết nối gián đoạn. Vui lòng thử lại để tiếp tục dệt lụa.');
       setIsGenerating(false);
       setIsGeneratingRemaining(false);
     } finally {
@@ -796,7 +796,7 @@ export default function App() {
                       showToast(`📍 ${lang === 'en' ? 'Filtered by region: ' : 'Đã lọc trang phục vùng: '}${regName}`);
                     }}
                   >
-                    <span className="regional-strip-emoji">{reg.emoji}</span>
+                    <span className="regional-strip-emoji" aria-hidden="true" />
                     <div>
                       <span className="regional-strip-title">{regName}</span>
                       <span className="regional-strip-desc">{regDesc}</span>
@@ -811,8 +811,8 @@ export default function App() {
           <section className="container daily-tip-container animate-fade-in-up">
             <div className="daily-tip-card glass-panel">
               <div className="daily-tip-content">
-                <span className="daily-tip-badge">
-                  <span>💡</span> {t('daily_tip_badge')}
+                  <span className="daily-tip-badge">
+                  {t('daily_tip_badge')}
                 </span>
                 <h4 className="daily-tip-title">{DAILY_TIPS[tipIndex].title}</h4>
                 <p className="daily-tip-desc">{DAILY_TIPS[tipIndex].desc}</p>
@@ -858,7 +858,7 @@ export default function App() {
                       className="btn btn-primary btn-sm btn-block"
                       onClick={() => handleSelectFromOtherViews(outfit)}
                     >
-                      ✨ Thử phối bộ này
+                      Thử phối bộ này
                     </button>
                   </div>
                 </div>
@@ -867,7 +867,7 @@ export default function App() {
 
             <div className="home-banner-hub glass-panel animate-fade-in-up">
               <div className="banner-text">
-                <h3>📖 Bạn có biết ý nghĩa của 5 nút cài áo ngũ thân?</h3>
+                <h3>Bạn có biết ý nghĩa của 5 nút cài áo ngũ thân?</h3>
                 <p>Năm hạt nút tượng trưng cho Ngũ thường của Nho giáo: Nhân, Lễ, Nghĩa, Trí, Tín — nền tảng đạo đức của người Việt xưa.</p>
               </div>
               <button className="btn btn-secondary" onClick={() => setActiveTab('culture')}>
@@ -893,7 +893,7 @@ export default function App() {
                   referrerPolicy="no-referrer"
                 />
                 <div className="banner-text">
-                  <h3>💬 Cố Vấn Việt Phục AI: Tư vấn chọn & phối trang phục</h3>
+                  <h3>Cố Vấn Việt Phục AI: Tư vấn chọn & phối trang phục</h3>
                   <p>Hỏi đáp trực tiếp về lễ phục ngày cưới, kỷ yếu, sự kiện, quy tắc phối màu ngũ hành và phụ kiện cung đình truyền thống.</p>
                 </div>
               </div>
@@ -911,9 +911,8 @@ export default function App() {
             {/* Banner Mạng Lưới Thuê Cổ Phục & Đơn Nhóm Kỷ Yếu */}
             <div className="home-banner-hub glass-panel animate-fade-in-up" style={{ marginTop: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-                <span style={{ fontSize: '2.5rem', flexShrink: 0 }}>👘</span>
                 <div className="banner-text">
-                  <h3>👘 Mạng Lưới Thuê Cổ Phục & Ưu Đãi Kỷ Yếu Lớp (-25%)</h3>
+                  <h3>Mạng Lưới Thuê Cổ Phục & Ưu Đãi Kỷ Yếu Lớp (-25%)</h3>
                   <p>Kết nối hơn 6+ tiệm cổ phục đối tác tại Hà Nội, Huế, TP.HCM với quỹ bảo chứng cọc minh bạch và ưu đãi đặc quyền cho học sinh - sinh viên.</p>
                 </div>
               </div>
@@ -922,16 +921,15 @@ export default function App() {
                 style={{ background: 'linear-gradient(135deg, rgba(218, 165, 32, 0.25) 0%, rgba(139, 0, 0, 0.3) 100%)', borderColor: '#daa520' }}
                 onClick={() => setIsRentalModalOpen(true)}
               >
-                🤝 Mở Danh Bạ & Dự Toán
+                Mở Danh Bạ & Dự Toán
               </button>
             </div>
 
             {/* Banner Gương Soi WebAR Thử Phụ Kiện Với Camera */}
             <div className="home-banner-hub glass-panel animate-fade-in-up" style={{ marginTop: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-                <span style={{ fontSize: '2.5rem', flexShrink: 0 }}>🪞</span>
                 <div className="banner-text">
-                  <h3>🪞 Gương Soi WebAR: Thử Khăn Đóng, Nón Lá, Nón Quai Thao</h3>
+                  <h3>Gương Soi WebAR: Thử Khăn Đóng, Nón Lá, Nón Quai Thao</h3>
                   <p>Bật camera để phụ kiện cổ phục bám theo khuôn mặt bạn theo thời gian thực (Real-time Face Tracking) và chụp ảnh lưu lại khoảnh khắc di sản.</p>
                 </div>
               </div>
@@ -1009,9 +1007,9 @@ export default function App() {
           {/* Error message */}
           {error && (
             <div className="error-banner animate-fade-in" id="error-banner">
-              <span className="error-banner__icon">❌</span>
+              <span className="error-banner__icon">🥀</span>
               <div className="error-banner__content">
-                <strong>Đã xảy ra lỗi kết nối hoặc tạo ảnh</strong>
+                <strong>Cố vấn di sản cáo lỗi: Tiến trình dệt lụa gián đoạn</strong>
                 <p>{error}</p>
                 <div style={{ marginTop: '8px', display: 'flex', gap: '8px' }}>
                   {customizationData && (
@@ -1023,7 +1021,7 @@ export default function App() {
                         handleCustomizeAndGenerate(customizationData);
                       }}
                     >
-                      🔄 Thử lại thao tác
+                      🔄 Thử dệt lại tà áo
                     </button>
                   )}
                   <button

@@ -24,9 +24,9 @@ const FOLK_TRIVIA = [
   { quote: 'Vạt áo Hữu Nhậm Đại Việt vắt chéo từ trái sang phải, biểu trưng cho lẽ thuận hòa âm dương đất trời.', author: 'Viện Khảo cổ học Việt Nam' }
 ];
 
-export default function TurntableViewer({ 
-  images, 
-  isLoading, 
+export default function TurntableViewer({
+  images,
+  isLoading,
   progress,
   angleMode = 'single',
   isGeneratingRemaining = false,
@@ -204,8 +204,8 @@ export default function TurntableViewer({
 
           {/* Progress bar */}
           <div className="loader-progress-track">
-            <div 
-              className="loader-progress-fill" 
+            <div
+              className="loader-progress-fill"
               style={{ width: progress ? `${Math.round((progress.current / progress.total) * 100)}%` : `${(currentStageIdx + 1) * 25}%` }}
             />
           </div>
@@ -269,6 +269,17 @@ export default function TurntableViewer({
           <span className="ai-tag-dot" />
           <span>Minh họa AI • {isUsingSampleAvatar ? `Mockup ${avatarName}` : 'Ảnh thử đồ cá nhân'}</span>
         </div>
+
+        {customizationData?.userPhoto && (
+          <div className="turntable__user-ref-card" title="Ảnh khuôn mặt gốc của bạn">
+            <span className="user-ref-label">👤 Mặt gốc</span>
+            <img
+              src={`data:image/png;base64,${customizationData.userPhoto}`}
+              alt="Ảnh chân dung gốc của bạn"
+              className="user-ref-img"
+            />
+          </div>
+        )}
 
         <div className="turntable__image-wrapper" ref={wrapperRef}>
           {imgSrc ? (

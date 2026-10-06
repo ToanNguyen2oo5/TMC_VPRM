@@ -101,7 +101,7 @@ export default function HeroCarousel({ onSelectOutfit }) {
                   <div className={`hero-carousel__left ${idx === activeIndex ? 'animate-fade-in-up' : ''}`}>
                     <div className="hero-carousel__badge-row">
                       <span className="hero-carousel__badge-highlight">
-                        🌸 {era.eraTitle} • {era.place}
+                        {era.eraTitle} • {era.place}
                       </span>
                     </div>
 

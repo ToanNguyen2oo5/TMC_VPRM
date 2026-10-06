@@ -217,7 +217,7 @@ export default function SceneSelector({
       {/* 1. SỰ KIỆN CHÍNH */}
       <div className="selector-group-block animate-fade-in-up">
         <label className="group-block-title">
-          <span>🎯</span> {lang === 'en' ? 'Choose Occasion:' : 'Chọn dịp xuất hiện:'}
+          {lang === 'en' ? 'Choose Occasion:' : 'Chọn dịp xuất hiện:'}
         </label>
         <div className="scene-grid">
           {scenes.map((scene, index) => (
@@ -230,7 +230,6 @@ export default function SceneSelector({
               id={`scene-${scene.id}`}
               type="button"
             >
-              <span className="scene-card__icon">{scene.icon}</span>
               <span className="scene-card__name">{scene.name}</span>
               <span className="scene-card__desc">{scene.desc}</span>
               {selectedScene === scene.id && (

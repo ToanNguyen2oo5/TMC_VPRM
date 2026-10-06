@@ -85,20 +85,19 @@ export default function LookbookGallery({ savedOutfits = [], onRemoveFromLookboo
           className={`lookbook-tab-btn ${activeTab === 'saved' ? 'lookbook-tab-btn--active' : ''}`}
           onClick={() => setActiveTab('saved')}
         >
-          💖 Đã lưu của tôi ({savedOutfits.length})
+          Đã lưu của tôi ({savedOutfits.length})
         </button>
         <button
           className={`lookbook-tab-btn ${activeTab === 'trending' ? 'lookbook-tab-btn--active' : ''}`}
           onClick={() => setActiveTab('trending')}
         >
-          🔥 Bộ phối Trending ({DEFAULT_TRENDING_LOOKS.length})
+          Bộ phối Trending ({DEFAULT_TRENDING_LOOKS.length})
         </button>
       </div>
 
       {/* Empty State */}
       {activeTab === 'saved' && savedOutfits.length === 0 && (
         <div className="lookbook-empty glass-panel text-center animate-fade-in">
-          <span className="empty-icon">📭</span>
           <h3>Lookbook cá nhân đang trống</h3>
           <p>Khi phối đồ tại tab Phối đồ, hãy bấm <strong>"Thêm vào Lookbook"</strong> để lưu lại các set đồ yêu thích của bạn tại đây nhé!</p>
         </div>
@@ -114,7 +113,6 @@ export default function LookbookGallery({ savedOutfits = [], onRemoveFromLookboo
             <article key={item.id || idx} className="lookbook-card glass-card">
               <div className="lookbook-card__media">
                 <div className="lookbook-placeholder">
-                  <span className="lookbook-placeholder-icon">👘</span>
                   <p className="lookbook-placeholder-title">{item.outfitName || item.outfit?.ten}</p>
                   <span className="lookbook-placeholder-sub">{item.region || item.scene || 'Di sản Việt Nam'}</span>
                 </div>
@@ -131,7 +129,7 @@ export default function LookbookGallery({ savedOutfits = [], onRemoveFromLookboo
                 )}
 
                 <div className="lookbook-badge-score">
-                  ⭐ {item.scores?.total || item.evalScores?.totalScore || 90}/100
+                  {item.scores?.total || item.evalScores?.totalScore || 90}/100
                 </div>
 
                 <button 
@@ -139,13 +137,13 @@ export default function LookbookGallery({ savedOutfits = [], onRemoveFromLookboo
                   onClick={(e) => handleLike(item.id, e)}
                   title="Yêu thích"
                 >
-                  ❤️ {currentLikes}
+                  {currentLikes}
                 </button>
               </div>
 
               <div className="lookbook-card__content">
                 <div className="lookbook-tags">
-                  <span className="tag-scene">📍 {item.scene || item.event || 'Tự do'}</span>
+                  <span className="tag-scene">{item.scene || item.event || 'Tự do'}</span>
                   <span className="tag-region">{item.region || item.outfit?.vung_mien}</span>
                 </div>
 
@@ -181,7 +179,7 @@ export default function LookbookGallery({ savedOutfits = [], onRemoveFromLookboo
                       className="btn btn-secondary btn-sm"
                       onClick={() => onSelectOutfit(item)}
                     >
-                      🔄 Thử lại set này
+                      Thử lại set này
                     </button>
                   )}
                   {activeTab === 'saved' && onRemoveFromLookbook && (
@@ -189,7 +187,7 @@ export default function LookbookGallery({ savedOutfits = [], onRemoveFromLookboo
                       className="btn btn-ghost btn-sm text-danger"
                       onClick={() => onRemoveFromLookbook(item.id)}
                     >
-                      🗑️ Xóa
+                      Xóa
                     </button>
                   )}
                 </div>

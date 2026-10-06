@@ -21,7 +21,6 @@ export default function OutfitComparison({
         </div>
 
         <div className="empty-compare glass-panel text-center animate-fade-in">
-          <span className="empty-icon">⚖️</span>
           <h3>Danh sách so sánh đang trống</h3>
           <p>Bạn có thể so sánh tối đa 3 bộ phối đồ cạnh nhau để tìm ra set đồ ưng ý nhất cho sự kiện của mình.</p>
           {onLoadSampleOutfits && (
@@ -32,7 +31,7 @@ export default function OutfitComparison({
               id="load-sample-compare-btn"
               style={{ marginTop: '1rem', boxShadow: '0 4px 15px rgba(218, 165, 32, 0.4)' }}
             >
-              ✨ Nạp 2 phương án mẫu để so sánh ngay
+              Nạp 2 phương án mẫu để so sánh ngay
             </button>
           )}
         </div>
@@ -89,7 +88,6 @@ export default function OutfitComparison({
                     />
                   ) : (
                     <div className="compare-placeholder">
-                      <span>👘</span>
                       <p>{outfit.ten}</p>
                     </div>
                   )}
@@ -125,7 +123,7 @@ export default function OutfitComparison({
                   {/* Điểm số đánh giá */}
                   <div className="scores-box">
                     <div className="score-item">
-                      <span className="score-label">🎨 Hài hòa màu:</span>
+                      <span className="score-label">Hài hòa màu:</span>
                       <span className="score-val">{evalScores.harmonyScore}%</span>
                     </div>
                     <div className="score-bar-bg">
@@ -133,7 +131,7 @@ export default function OutfitComparison({
                     </div>
 
                     <div className="score-item">
-                      <span className="score-label">📖 Phù hợp văn hóa:</span>
+                      <span className="score-label">Phù hợp văn hóa:</span>
                       <span className="score-val">{evalScores.culturalFit || evalScores.culturalScore}%</span>
                     </div>
                     <div className="score-bar-bg">
@@ -141,7 +139,7 @@ export default function OutfitComparison({
                     </div>
 
                     <div className="score-item">
-                      <span className="score-label">⚡ Phong cách Gen Z:</span>
+                      <span className="score-label">Phong cách Gen Z:</span>
                       <span className="score-val">{evalScores.genZScore}%</span>
                     </div>
                     <div className="score-bar-bg">
@@ -172,7 +170,7 @@ export default function OutfitComparison({
                       className="btn btn-primary btn-block"
                       onClick={() => onSelectOutfit && onSelectOutfit(item)}
                     >
-                      🌟 Chọn bộ này
+                      Chọn bộ này
                     </button>
                   </div>
                 </div>

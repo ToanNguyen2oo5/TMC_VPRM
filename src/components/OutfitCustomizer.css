@@ -751,6 +751,42 @@
   border-top: 1px solid var(--color-border);
 }
 
+.avatar-selector-section--prominent {
+  margin: 0 0 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(218, 165, 32, 0.55);
+  border-radius: var(--radius-lg);
+  background: rgba(218, 165, 32, 0.08);
+}
+
+.avatar-upload-heading {
+  margin-bottom: 0.45rem;
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.avatar-upload-btn--primary {
+  width: 100%;
+  justify-content: center;
+  padding: 11px 14px;
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+  font-weight: 700;
+}
+
+.avatar-upload-help {
+  display: block;
+  margin-top: 0.45rem;
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.avatar-sample-chips--compact {
+  margin-top: 0.65rem;
+}
+
 .avatar-sec-title {
   display: block;
   font-size: 0.78rem;
@@ -1099,7 +1135,128 @@
 }
 
 
-/* Fix for column heights */
-.customizer-col { max-height: 85vh; overflow-y: auto; scrollbar-width: thin; }
-.customizer-col::-webkit-scrollbar { width: 4px; }
-.customizer-col::-webkit-scrollbar-thumb { background: rgba(200, 200, 200, 0.2); border-radius: 4px; }
+/* Các cột không tạo scrollbar lồng nhau; upload nằm ở đầu cột giữa. */
+@media (min-width: 992px) {
+  .customizer-col { max-height: none; overflow: visible; }
+}
+
+/* ========================================================
+   Dual Preview Stage: Khung mặt bên cạnh ma-nơ-canh
+   ======================================================== */
+.preview-dual-stage {
+  display: flex;
+  gap: 1rem;
+  align-items: stretch;
+  width: 100%;
+}
+
+.preview-dual-stage .mannequin-frame-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.face-preview-frame {
+  width: 140px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: rgba(28, 25, 23, 0.75);
+  border: 1px solid rgba(201, 161, 90, 0.4);
+  border-radius: var(--radius-lg, 12px);
+  padding: 0.65rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+}
+
+.face-frame-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.face-frame-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-gold, #c9a15a);
+}
+
+.face-frame-remove-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 2px 4px;
+  line-height: 1;
+}
+.face-frame-remove-btn:hover {
+  color: #ff4d4f;
+}
+
+.face-frame-body {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  border-radius: var(--radius-md, 8px);
+  overflow: hidden;
+  border: 1px solid rgba(201, 161, 90, 0.35);
+  background: #000;
+}
+
+.face-frame-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.face-frame-badge {
+  position: absolute;
+  bottom: 0.25rem;
+  left: 0.25rem;
+  right: 0.25rem;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(4px);
+  color: #4ade80;
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 2px 3px;
+  border-radius: 4px;
+  text-align: center;
+  border: 1px solid rgba(74, 222, 128, 0.3);
+}
+
+.face-frame-change-btn {
+  margin-top: 0.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(201, 161, 90, 0.3);
+  border-radius: var(--radius-sm, 6px);
+  color: var(--color-text-primary, #fff);
+  font-size: 0.72rem;
+  padding: 5px 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+.face-frame-change-btn:hover {
+  background: rgba(201, 161, 90, 0.2);
+  border-color: var(--color-gold, #c9a15a);
+}
+
+@media (max-width: 640px) {
+  .preview-dual-stage {
+    flex-direction: column;
+  }
+  .face-preview-frame {
+    width: 100%;
+    max-height: 140px;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .face-frame-body {
+    width: 90px;
+    height: 110px;
+    aspect-ratio: auto;
+  }
+}

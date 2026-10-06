@@ -956,7 +956,7 @@ button {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1079px) {
   body {
     padding-bottom: 72px;
   }
@@ -1193,7 +1193,7 @@ button {
 }
 
 .regional-strip-emoji {
-  font-size: 1.5rem;
+  display: none;
 }
 
 .regional-strip-title {

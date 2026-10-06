@@ -5,6 +5,9 @@ export default function UserPhotoUploadModal({ isOpen, onClose, onConfirmPhoto }
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [zoomLevel, setZoomLevel] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const dragRef = useRef(null);
   const [isDragOver, setIsDragOver] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState(null);
@@ -32,6 +35,7 @@ export default function UserPhotoUploadModal({ isOpen, onClose, onConfirmPhoto }
 
     setSelectedFile(file);
     setZoomLevel(1);
+    setPan({ x: 0, y: 0 });
     setIsLoading(true);
     setLoadError(null);
 
@@ -153,14 +157,51 @@ export default function UserPhotoUploadModal({ isOpen, onClose, onConfirmPhoto }
     }
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (selectedFile && previewUrl) {
-      const base64Only = previewUrl.startsWith('data:') 
-        ? previewUrl.split(',')[1] 
-        : null;
-      onConfirmPhoto(selectedFile, zoomLevel, previewUrl, base64Only);
-      onClose();
+      // Xuất đúng phần ảnh đã căn trong khung; không chỉ truyền zoom metadata.
+      const image = new Image();
+      image.onload = () => {
+        const outputWidth = 768;
+        const outputHeight = 1024;
+        const canvas = document.createElement('canvas');
+        canvas.width = outputWidth;
+        canvas.height = outputHeight;
+        const ctx = canvas.getContext('2d');
+        const coverScale = Math.max(outputWidth / image.naturalWidth, outputHeight / image.naturalHeight) * zoomLevel;
+        const drawnWidth = image.naturalWidth * coverScale;
+        const drawnHeight = image.naturalHeight * coverScale;
+        const panScaleX = outputWidth / 360;
+        const panScaleY = outputHeight / 430;
+        const x = (outputWidth - drawnWidth) / 2 + pan.x * panScaleX;
+        const y = (outputHeight - drawnHeight) / 2 + pan.y * panScaleY;
+        ctx.drawImage(image, x, y, drawnWidth, drawnHeight);
+        const croppedUrl = canvas.toDataURL('image/jpeg', 0.92);
+        onConfirmPhoto(selectedFile, zoomLevel, croppedUrl, croppedUrl.split(',')[1]);
+        onClose();
+      };
+      image.onerror = () => setLoadError('Không thể tạo ảnh đã căn khung. Vui lòng thử lại.');
+      image.src = previewUrl;
     }
+  };
+
+  const handlePointerDown = (event) => {
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    dragRef.current = { startX: event.clientX, startY: event.clientY, panX: pan.x, panY: pan.y };
+    setIsDragging(true);
+  };
+
+  const handlePointerMove = (event) => {
+    if (!dragRef.current) return;
+    setPan({
+      x: dragRef.current.panX + event.clientX - dragRef.current.startX,
+      y: dragRef.current.panY + event.clientY - dragRef.current.startY
+    });
+  };
+
+  const handlePointerUp = () => {
+    dragRef.current = null;
+    setIsDragging(false);
   };
 
   return (
@@ -218,7 +259,13 @@ export default function UserPhotoUploadModal({ isOpen, onClose, onConfirmPhoto }
           </div>
         ) : (
           <div className="upload-preview-area">
-            <div className="preview-img-container">
+            <div
+              className={`preview-img-container ${isDragging ? 'preview-img-container--dragging' : ''}`}
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerUp}
+            >
               {loadError ? (
                 <div className="preview-error-box">
                   <span style={{ fontSize: '2rem' }}>⚠️</span>
@@ -230,7 +277,7 @@ export default function UserPhotoUploadModal({ isOpen, onClose, onConfirmPhoto }
                     src={previewUrl}
                     alt="Xem trước ảnh của bạn"
                     className="preview-img"
-                    style={{ transform: `scale(${zoomLevel})` }}
+                    style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoomLevel})` }}
                     onError={(e) => {
                       console.error('Image element render error:', e);
                       setLoadError('Trình duyệt gặp lỗi khi giải mã ảnh này. Vui lòng bấm "Chọn ảnh khác".');
@@ -268,6 +315,7 @@ export default function UserPhotoUploadModal({ isOpen, onClose, onConfirmPhoto }
               />
               <span>Phóng to</span>
             </div>
+            <p className="face-guide-hint">Kéo ảnh để căn mặt và vai vào khung, sau đó chỉnh thanh phóng to.</p>
 
             <div className="preview-action-controls">
               <button

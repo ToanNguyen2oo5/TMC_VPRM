@@ -164,6 +164,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  touch-action: none;
+  cursor: grab;
+}
+
+.preview-img-container--dragging {
+  cursor: grabbing;
 }
 
 .preview-error-box {

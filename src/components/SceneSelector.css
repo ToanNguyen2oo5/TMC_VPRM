@@ -123,8 +123,7 @@
 }
 
 .scene-card__icon {
-  font-size: 2rem;
-  line-height: 1;
+  display: none;
 }
 
 .scene-card__name {

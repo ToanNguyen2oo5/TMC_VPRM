@@ -3,7 +3,7 @@
   display: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1079px) {
   .mobile-bottom-nav {
     display: block;
     position: fixed;
