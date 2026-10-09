@@ -54,6 +54,28 @@ export default function CameraView({
   const animFrameIdRef = useRef(null);
   const fpsCounterRef = useRef({ frames: 0, lastTime: performance.now(), fps: 0 });
 
+  // Refs giữ giá trị mới nhất của props để renderLoop chạy ổn định 60fps không bị teardown/recreate
+  const selectedAccessoryRef = useRef(selectedAccessory);
+  selectedAccessoryRef.current = selectedAccessory;
+
+  const selectedOutfitRef = useRef(selectedOutfit);
+  selectedOutfitRef.current = selectedOutfit;
+
+  const isMirroredRef = useRef(isMirrored);
+  isMirroredRef.current = isMirrored;
+
+  const isDebugRef = useRef(isDebug);
+  isDebugRef.current = isDebug;
+
+  const onStateChangeRef = useRef(onStateChange);
+  onStateChangeRef.current = onStateChange;
+
+  const onFpsUpdateRef = useRef(onFpsUpdate);
+  onFpsUpdateRef.current = onFpsUpdate;
+
+  const onOutfitTrackingChangeRef = useRef(onOutfitTrackingChange);
+  onOutfitTrackingChangeRef.current = onOutfitTrackingChange;
+
   // 1. Khởi tạo Tracker, Smoother và Renderer
   useEffect(() => {
     trackerRef.current = new FaceTracker();
@@ -321,8 +343,8 @@ export default function CameraView({
         
         let bodyPose = currentBodyPoseRef.current;
         // detectForVideo chạy đồng bộ. Giới hạn ở 15 FPS bằng thời gian thực;
-        // timestamp % 3 gần như không bao giờ đúng với requestAnimationFrame.
-        const shouldTrackBody = selectedOutfit?.image && bodyPoseTrackerRef.current &&
+        const currentOutfit = selectedOutfitRef.current;
+        const shouldTrackBody = currentOutfit?.image && bodyPoseTrackerRef.current &&
           timestamp - lastPoseInferenceAtRef.current >= 66;
         if (shouldTrackBody) {
             lastPoseInferenceAtRef.current = timestamp;
@@ -336,6 +358,7 @@ export default function CameraView({
         }
 
         let rawPose = null;
+        const mirrored = isMirroredRef.current;
         if (rawLandmarks) {
           // Ánh xạ tọa độ landmark từ không gian video sang không gian canvas hiển thị
           const mappedLandmarks = rawLandmarks.map(pt => ({
@@ -344,7 +367,7 @@ export default function CameraView({
             z: pt.z
           }));
 
-          rawPose = estimateHeadPose(mappedLandmarks, canvas.width, canvas.height, isMirrored);
+          rawPose = estimateHeadPose(mappedLandmarks, canvas.width, canvas.height, mirrored);
         }
 
         let mappedBodyPose = null;
@@ -352,7 +375,7 @@ export default function CameraView({
             // Video được lật bằng CSS trong chế độ gương, canvas thì không.
             // Mọi landmark cơ thể phải được lật trước khi đổi sang tọa độ canvas.
             const mapBodyPoint = (point) => ({
-              x: ((((isMirrored ? 1 - point.x : point.x) * videoW * scale) + offsetX) / canvas.width),
+              x: ((((mirrored ? 1 - point.x : point.x) * videoW * scale) + offsetX) / canvas.width),
               y: ((point.y * videoH * scale) + offsetY) / canvas.height
             });
             mappedBodyPose = {
@@ -370,7 +393,7 @@ export default function CameraView({
                 shoulderWidth: (bodyPose.shoulderWidth * videoW * scale) / canvas.width,
                 torsoHeight: (bodyPose.torsoHeight * videoH * scale) / canvas.height,
                 // Phép phản chiếu theo trục dọc cũng đảo dấu góc nghiêng.
-                shoulderRollRad: isMirrored ? -bodyPose.shoulderRollRad : bodyPose.shoulderRollRad
+                shoulderRollRad: mirrored ? -bodyPose.shoulderRollRad : bodyPose.shoulderRollRad
             };
         }
 
@@ -384,41 +407,44 @@ export default function CameraView({
 
         // Fallback sang BodyPose nếu mất FaceLandmarker quá ngưỡng (hysteresis = 5 frames) hoặc chưa từng có face
         if ((!rawPose || faceLostFramesRef.current > 5) && mappedBodyPose) {
-          const bodyHeadPose = estimateHeadPoseFromBody(mappedBodyPose, canvas.width, canvas.height, isMirrored);
+          const bodyHeadPose = estimateHeadPoseFromBody(mappedBodyPose, canvas.width, canvas.height, mirrored);
           if (bodyHeadPose) {
             rawPose = bodyHeadPose;
             activeHeadSourceRef.current = 'BODY';
           }
         }
 
+        const currentAccessory = selectedAccessoryRef.current;
+        const debugMode = isDebugRef.current;
+
         if (rawPose) {
           const smoothedPose = smootherRef.current?.update(rawPose);
           if (smoothedPose) {
-            if (onStateChange) onStateChange('tracking');
+            if (onStateChangeRef.current) onStateChangeRef.current('tracking');
             // Gắn nhãn source để debug
             smoothedPose.source = activeHeadSourceRef.current;
             // Render phụ kiện ôm theo tư thế đầu
-            rendererRef.current?.render(ctx, smoothedPose, selectedAccessory, timestamp, isDebug);
+            rendererRef.current?.render(ctx, smoothedPose, currentAccessory, timestamp, debugMode);
           }
         } else {
           // Mất mặt trong frame hiện tại -> kích hoạt hiệu ứng fade-out mượt mà
-          if (onStateChange) onStateChange(isAiReady ? 'noFace' : 'starting');
-          rendererRef.current?.render(ctx, null, selectedAccessory, timestamp, isDebug);
+          if (onStateChangeRef.current) onStateChangeRef.current(isAiReady ? 'noFace' : 'starting');
+          rendererRef.current?.render(ctx, null, currentAccessory, timestamp, debugMode);
         }
         
         // C. Render trang phục lên người
-        const nextOutfitTrackingState = !selectedOutfit?.image || selectedOutfit.id === 'none'
+        const nextOutfitTrackingState = !currentOutfit?.image || currentOutfit.id === 'none'
           ? 'off'
           : mappedBodyPose?.hasReliableTorso
             ? 'ready'
             : 'stepBack';
         if (nextOutfitTrackingState !== outfitTrackingStateRef.current) {
           outfitTrackingStateRef.current = nextOutfitTrackingState;
-          onOutfitTrackingChange?.(nextOutfitTrackingState);
+          onOutfitTrackingChangeRef.current?.(nextOutfitTrackingState);
         }
 
         if (nextOutfitTrackingState === 'ready') {
-            costumeRendererRef.current?.render(ctx, mappedBodyPose, selectedOutfit, timestamp);
+            costumeRendererRef.current?.render(ctx, mappedBodyPose, currentOutfit, timestamp);
         }
 
         // D. Đo và cập nhật FPS
@@ -428,7 +454,7 @@ export default function CameraView({
           counter.fps = Math.round((counter.frames * 1000) / (timestamp - counter.lastTime));
           counter.frames = 0;
           counter.lastTime = timestamp;
-          if (onFpsUpdate) onFpsUpdate(counter.fps);
+          if (onFpsUpdateRef.current) onFpsUpdateRef.current(counter.fps);
         }
       }
 
@@ -443,7 +469,7 @@ export default function CameraView({
         cancelAnimationFrame(animFrameIdRef.current);
       }
     };
-  }, [selectedAccessory, selectedOutfit, isMirrored, isDebug, isInitializing, isAiReady, needUserGesture, onStateChange, onFpsUpdate, onOutfitTrackingChange]);
+  }, [isInitializing, isAiReady, needUserGesture]);
 
   // 5. Chụp ảnh kết hợp (Frame camera + Phụ kiện đúng chiều)
   const capturePhoto = useCallback(() => {

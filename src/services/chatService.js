@@ -12,7 +12,11 @@ function getAI() {
   return ai;
 }
 
-const CHAT_MODEL = 'gemini-3.8-flash';
+const CHAT_MODELS = [
+  'gemini-3.5-flash-lite',
+  'gemini-3.5-flash',
+  'gemini-3.8-flash'
+];
 
 const SYSTEM_INSTRUCTION = `Bạn là "Cố Vấn Việt Phục" — chuyên gia am hiểu sâu sắc về trang phục truyền thống Việt Nam (Việt Phục), bao gồm:
 - Áo dài truyền thống (Huế, Hà Nội) & Áo dài cách tân đương đại
@@ -62,19 +66,26 @@ export async function sendChatMessage(chatHistory, userMessage) {
       parts: [{ text: userMessage }]
     });
 
-    const response = await genAI.models.generateContent({
-      model: CHAT_MODEL,
-      contents: contents,
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 0.7,
-        maxOutputTokens: 600
-      }
-    });
+    for (const model of CHAT_MODELS) {
+      try {
+        const response = await genAI.models.generateContent({
+          model: model,
+          contents: contents,
+          config: {
+            systemInstruction: SYSTEM_INSTRUCTION,
+            temperature: 0.7,
+            maxOutputTokens: 600
+          }
+        });
 
-    const reply = response.text || response.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!reply) throw new Error('Không nhận được phản hồi từ model');
-    return reply;
+        const reply = response.text || response.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (reply) return reply;
+      } catch (modelErr) {
+        console.warn(`⚠️ Chat model ${model} bận (${modelErr.message}), thử model tiếp theo...`);
+      }
+    }
+
+    throw new Error('Tất cả model chat đều đang bận');
   } catch (error) {
     console.warn('Chatbot Gemini API error:', error.message);
 

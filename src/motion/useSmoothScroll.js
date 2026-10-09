@@ -33,16 +33,17 @@ export function useSmoothScroll(isActive = true) {
 
     lenis.on('scroll', ScrollTrigger.update);
 
-    gsap.ticker.add((time) => {
+    const tickerHandler = (time) => {
       lenis.raf(time * 1000);
-    });
+    };
 
-    gsap.ticker.lagSmoothing(0);
+    gsap.ticker.add(tickerHandler);
+    gsap.ticker.lagSmoothing(500, 33);
 
     return () => {
       lenis.destroy();
       window.lenis = null;
-      gsap.ticker.remove(lenis.raf);
+      gsap.ticker.remove(tickerHandler);
     };
   }, [isActive]);
 }

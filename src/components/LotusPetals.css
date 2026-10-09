@@ -36,7 +36,7 @@
     rgba(194, 24, 91, 0.9) 100%
   );
   border-radius: 60% 10% 60% 10%;
-  filter: drop-shadow(0 2px 4px rgba(233, 30, 99, 0.25));
+  box-shadow: 0 2px 4px rgba(233, 30, 99, 0.25);
   animation: petalFlutter 3.5s ease-in-out infinite alternate;
   will-change: transform;
 }
@@ -48,7 +48,7 @@
     rgba(216, 27, 96, 0.8) 60%,
     rgba(173, 20, 87, 0.95) 100%
   );
-  filter: drop-shadow(0 2px 4px rgba(216, 27, 96, 0.2));
+  box-shadow: 0 2px 4px rgba(216, 27, 96, 0.2);
 }
 
 @keyframes petalFall {

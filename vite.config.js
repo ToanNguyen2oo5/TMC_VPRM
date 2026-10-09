@@ -25,6 +25,40 @@ export default defineConfig(({ mode }) => {
           target: 'https://api.cloudflare.com',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/cloudflare-ai/, '')
+        },
+        '/pollinations-ai': {
+          target: 'https://image.pollinations.ai',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/pollinations-ai/, '')
+        }
+      }
+    },
+    build: {
+      chunkSizeWarningLimit: 600,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              if (id.includes('/react/') || id.includes('/react-dom/') || id.includes('/scheduler/')) {
+                return 'vendor-react';
+              }
+              if (id.includes('@mediapipe')) {
+                return 'vendor-mediapipe';
+              }
+              if (id.includes('@google/genai') || id.includes('@gradio')) {
+                return 'vendor-ai';
+              }
+              if (id.includes('lottie-web')) {
+                return 'vendor-lottie';
+              }
+              if (id.includes('framer-motion') || id.includes('motion') || id.includes('gsap') || id.includes('lenis')) {
+                return 'vendor-motion';
+              }
+              if (id.includes('ogl') || id.includes('html2canvas')) {
+                return 'vendor-graphics';
+              }
+            }
+          }
         }
       }
     }

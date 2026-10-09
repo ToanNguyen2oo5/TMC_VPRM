@@ -25,7 +25,7 @@ export async function generateOutfitWithCloudflare(outfitData, angle = 0, custom
 
   // Tinh chỉnh prompt với các từ khóa kích thích chất lượng ảnh đỉnh cao
   let enhancedPrompt = `${cleanPrompt}, 8k portrait, cinematic natural lighting, award-winning photography, ultra-detailed fabric textures, traditional Vietnamese costume masterpiece, photorealistic`;
-  
+
   if (userPhotoBase64) {
     enhancedPrompt += ', preserving Vietnamese youthful facial features, natural Asian skin tone and elegant posture';
   }
@@ -70,7 +70,7 @@ export async function generateOutfitWithCloudflare(outfitData, angle = 0, custom
       try {
         const errJson = JSON.parse(errText);
         errDetail = errJson.errors?.[0]?.message || errText;
-      } catch (_) {}
+      } catch (_) { }
       throw new Error(`Cloudflare AI error (${response.status}): ${errDetail}`);
     }
 

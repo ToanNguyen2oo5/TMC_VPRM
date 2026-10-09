@@ -93,6 +93,16 @@ export default function WebARPage({ onExit, onToast }) {
     return ACCESSORIES_CONFIG[selectedId] || ACCESSORIES_CONFIG[DEFAULT_ACCESSORY_ID];
   }, [selectedId]);
 
+  const selectedOutfit = useMemo(() => {
+    return OUTFITS.find(o => o.id === selectedOutfitId);
+  }, [OUTFITS, selectedOutfitId]);
+
+  const handleFpsUpdate = useCallback((newFps) => {
+    if (isDebug) {
+      setFps(newFps);
+    }
+  }, [isDebug]);
+
   // Cập nhật thông điệp trạng thái dựa trên state machine
   const handleTrackingStateChange = useCallback((newState, customMsg) => {
     setTrackingState(newState);
@@ -231,13 +241,13 @@ export default function WebARPage({ onExit, onToast }) {
             selectedAccessory={selectedAccessory}
             onStateChange={handleTrackingStateChange}
             isDebug={isDebug}
-            onFpsUpdate={setFps}
+            onFpsUpdate={handleFpsUpdate}
             isMirrored={isMirrored}
             selectedDeviceId={selectedDeviceId}
             onDeviceListAvailable={setAvailableDevices}
             onCaptureReady={handleCaptureReady}
             externalCaptureTrigger={captureTrigger}
-            selectedOutfit={OUTFITS.find(o => o.id === selectedOutfitId)}
+            selectedOutfit={selectedOutfit}
             onOutfitTrackingChange={setOutfitTrackingState}
           />
         ) : (

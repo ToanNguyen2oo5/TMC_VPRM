@@ -3,9 +3,9 @@ import { generateOutfitImageWithFaceHF } from './hfImageService';
 import { generateOutfitWithCloudflare } from './cloudflareImageService';
 import { swapFaceOnImage } from './faceSwapService';
 import { enhanceFaceOnImage } from './faceEnhanceService';
-import { 
-  getGarmentContext, 
-  translateCustomizations, 
+import {
+  getGarmentContext,
+  translateCustomizations,
   PHOTOREALISTIC_PROMPT_CONFIG,
   describeCustomColors,
   describeSelectedAccessories,
@@ -29,8 +29,9 @@ function getAI() {
 
 // Danh sách các model sinh ảnh của Google Gemini theo thứ tự ưu tiên
 const GEMINI_IMAGE_MODELS = [
-  'imagen-3.0-generate-001',
-  'imagen-3.0-fast-generate-001'
+  'gemini-2.5-flash-image',
+  'gemini-3.1-flash-image',
+  'gemini-3.1-flash-lite-image'
 ];
 
 /**
@@ -201,10 +202,10 @@ export async function generateOutfitImage(userPhotoBase64, outfitData, angle = 0
     try {
       console.info('🎭 [GIAI ĐOẠN 2] Đang ghép chính xác khuôn mặt bạn vào bộ Việt Phục qua InsightFace Swap...');
       let finalImage = await swapFaceOnImage(userPhotoBase64, baseCostumeImage);
-      
+
       console.info('✨ [GIAI ĐOẠN 3] Đang làm đẹp khuôn mặt (tăng thiện cảm) bằng CodeFormer...');
       finalImage = await enhanceFaceOnImage(finalImage);
-      
+
       if (finalImage) {
         return finalImage;
       }
@@ -233,8 +234,10 @@ async function generateFallbackImage(outfitData, angle = 0, customizations = {})
 
   const seed = Math.floor(Math.random() * 1000000);
   const encodedPrompt = encodeURIComponent(fullPrompt);
+  const isDev = import.meta.env.DEV;
+  const baseUrl = isDev ? '/pollinations-ai' : 'https://image.pollinations.ai';
 
-  return `https://image.pollinations.ai/prompt/${encodedPrompt}?width=896&height=1152&nologo=true&model=flux&enhance=true&seed=${seed}`;
+  return `${baseUrl}/prompt/${encodedPrompt}?width=896&height=1152&nologo=true&model=flux&enhance=true&seed=${seed}`;
 }
 
 

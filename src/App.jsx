@@ -19,8 +19,6 @@ const VietnamMap = lazy(() => import('./components/VietnamMap'));
 import ChatBot from './components/ChatBot';
 import LotusPetals from './components/LotusPetals';
 import LottieIcon from './components/LottieIcon';
-import AppLogo from './components/AppLogo';
-import MusicPlayer from './components/MusicPlayer';
 import OnboardingModal from './components/OnboardingModal';
 import RentalModal from './components/RentalModal';
 import StickyStepper from './components/StickyStepper';
@@ -29,7 +27,6 @@ import { lanternAnimation } from './assets/lottieAnimations';
 import aiAvatar from './assets/images/ai_stylist_avatar_1791041447024.jpg';
 import { useTheme } from './hooks/useTheme';
 import { useTranslation } from './services/i18n.jsx';
-import HeroCarousel from './components/HeroCarousel';
 import WeatherCanvas from './components/weather/WeatherCanvas';
 import { getRegionWeather } from './services/weatherService';
 const WebARPage = lazy(() => import('./components/webar/WebARPage'));
@@ -735,6 +732,7 @@ export default function App() {
         scene={activeWeatherScene}
         isReducedMotion={isReducedMotion}
         isFullScreen={true}
+        paused={activeTab === 'webar' || isReducedMotion}
         wind={realtimeWeather?.windSpeed}
         humidity={realtimeWeather?.humidity}
       />
