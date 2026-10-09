@@ -23,7 +23,7 @@ export class FaceTracker {
   }
 
   /**
-   * Khởi tạo FaceLandmarker
+   * Khởi tạo FaceLandmarker với cơ chế fallback đa tầng
    */
   async init() {
     if (this.landmarker) return this.landmarker;
@@ -31,18 +31,8 @@ export class FaceTracker {
 
     this.isLoading = true;
 
-    // 1. Tải WASM files
-    let vision = null;
-    try {
-      vision = await FilesetResolver.forVisionTasks(LOCAL_WASM_PATH);
-    } catch (e) {
-      console.warn('⚠️ Không thể tải WASM local, chuyển sang CDN:', e.message);
-      vision = await FilesetResolver.forVisionTasks(CDN_WASM_PATH);
-    }
-
-    // 2. Thử khởi tạo với GPU delegate
-    const createWithDelegate = async (delegate, modelPath) => {
-      return await FaceLandmarker.createFromOptions(vision, {
+    const createLandmarker = async (visionResolver, delegate, modelPath) => {
+      return await FaceLandmarker.createFromOptions(visionResolver, {
         baseOptions: {
           modelAssetPath: modelPath,
           delegate: delegate
@@ -53,31 +43,41 @@ export class FaceTracker {
       });
     };
 
-    let modelPath = LOCAL_MODEL_PATH;
     try {
-      this.landmarker = await createWithDelegate('GPU', modelPath);
-      this.activeDelegate = 'GPU';
-      console.info('🚀 MediaPipe FaceLandmarker khởi tạo thành công với [GPU]');
-    } catch (gpuError) {
-      console.warn('⚠️ Lỗi khởi tạo GPU delegate, đang thử lại với [CPU]:', gpuError.message);
+      // 1. Thử tải với local WASM & local model
       try {
-        this.landmarker = await createWithDelegate('CPU', modelPath);
-        this.activeDelegate = 'CPU';
-        console.info('✅ MediaPipe FaceLandmarker khởi tạo thành công với [CPU]');
-      } catch (cpuError) {
-        console.warn('⚠️ Lỗi model local, chuyển sang CDN fallback:', cpuError.message);
-        modelPath = CDN_MODEL_PATH;
+        const localVision = await FilesetResolver.forVisionTasks(LOCAL_WASM_PATH);
         try {
-          this.landmarker = await createWithDelegate('GPU', modelPath);
+          this.landmarker = await createLandmarker(localVision, 'GPU', LOCAL_MODEL_PATH);
           this.activeDelegate = 'GPU';
-        } catch {
-          this.landmarker = await createWithDelegate('CPU', modelPath);
+          console.info('🚀 MediaPipe FaceLandmarker khởi tạo thành công với [GPU]');
+        } catch (gpuErr) {
+          console.warn('⚠️ FaceLandmarker GPU local không thành công, thử [CPU]:', gpuErr?.message || gpuErr);
+          this.landmarker = await createLandmarker(localVision, 'CPU', LOCAL_MODEL_PATH);
           this.activeDelegate = 'CPU';
+          console.info('✅ MediaPipe FaceLandmarker khởi tạo thành công với [CPU]');
+        }
+      } catch (localErr) {
+        console.warn('⚠️ Thử FaceLandmarker local thất bại, chuyển sang CDN:', localErr?.message || localErr);
+        // 2. Fallback hoàn toàn sang CDN (cả WASM lẫn model)
+        const cdnVision = await FilesetResolver.forVisionTasks(CDN_WASM_PATH);
+        try {
+          this.landmarker = await createLandmarker(cdnVision, 'GPU', CDN_MODEL_PATH);
+          this.activeDelegate = 'GPU (CDN)';
+          console.info('🚀 MediaPipe FaceLandmarker khởi tạo thành công với [GPU (CDN)]');
+        } catch (cdnGpuErr) {
+          console.warn('⚠️ FaceLandmarker CDN GPU thất bại, thử [CPU (CDN)]:', cdnGpuErr?.message || cdnGpuErr);
+          this.landmarker = await createLandmarker(cdnVision, 'CPU', CDN_MODEL_PATH);
+          this.activeDelegate = 'CPU (CDN)';
+          console.info('✅ MediaPipe FaceLandmarker khởi tạo thành công với [CPU (CDN)]');
         }
       }
+    } catch (finalErr) {
+      console.error('❌ Không thể khởi tạo MediaPipe FaceLandmarker:', finalErr?.message || finalErr);
+    } finally {
+      this.isLoading = false;
     }
 
-    this.isLoading = false;
     return this.landmarker;
   }
 

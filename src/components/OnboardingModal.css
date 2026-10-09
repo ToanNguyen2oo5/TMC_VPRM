@@ -100,6 +100,39 @@
   background: var(--color-gold);
 }
 
+/* Close button top-right */
+.onboarding-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1.1rem;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(218, 165, 32, 0.3);
+  color: var(--color-text-secondary, #b3a69a);
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  z-index: 10;
+}
+
+.onboarding-close-btn:hover {
+  background: rgba(218, 165, 32, 0.2);
+  border-color: var(--color-gold, #c8a15a);
+  color: #fff;
+  transform: scale(1.08) rotate(90deg);
+}
+
+[data-theme="light"] .onboarding-close-btn {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(184, 134, 11, 0.3);
+  color: #5c440b;
+}
+
 /* Actions */
 .onboarding-actions {
   display: flex;
@@ -108,17 +141,47 @@
   gap: 1rem;
 }
 
-.onboarding-skip-btn {
-  background: transparent;
-  border: none;
-  color: var(--color-text-muted);
-  font-size: 0.88rem;
-  cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 8px;
-  transition: color 0.2s ease;
+.onboarding-back-spacer {
+  width: 90px;
+  visibility: hidden;
+  pointer-events: none;
 }
 
-.onboarding-skip-btn:hover {
-  color: var(--color-text-primary);
+.onboarding-back-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(218, 165, 32, 0.35);
+  color: var(--color-gold, #c8a15a);
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 9px 20px;
+  border-radius: var(--radius-full, 999px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.onboarding-back-btn:hover {
+  background: rgba(218, 165, 32, 0.16);
+  border-color: var(--color-gold, #c8a15a);
+  color: #fff;
+  transform: translateX(-2px);
+}
+
+[data-theme="light"] .onboarding-back-btn {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(184, 134, 11, 0.35);
+  color: #8b6914;
+}
+
+[data-theme="light"] .onboarding-back-btn:hover {
+  background: rgba(218, 165, 32, 0.14);
+  color: #5c440b;
+}
+
+.onboarding-next-btn {
+  border-radius: var(--radius-full, 999px);
+  padding: 9px 22px;
+  font-size: 0.9rem;
 }

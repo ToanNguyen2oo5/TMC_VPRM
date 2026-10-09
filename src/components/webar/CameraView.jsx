@@ -72,14 +72,20 @@ export default function CameraView({
       if (isMounted) currentBodyPoseRef.current = pose;
     });
 
-    Promise.all([
+    Promise.allSettled([
       trackerRef.current.init(),
       bodyPoseTrackerRef.current.init()
     ])
-      .then(() => {
+      .then((results) => {
         if (isMounted) {
-          setIsAiReady(true);
-          console.info('✅ AI Face & Body Trackers đã sẵn sàng!');
+          const faceReady = results[0]?.status === 'fulfilled' && !!results[0]?.value;
+          const bodyReady = results[1]?.status === 'fulfilled' && !!results[1]?.value;
+          if (faceReady || bodyReady) {
+            setIsAiReady(true);
+            console.info('✅ AI Trackers đã sẵn sàng!', { faceReady, bodyReady });
+          } else {
+            console.warn('⚠️ Cả 2 AI Trackers đều không khởi tạo được.');
+          }
         }
       })
       .catch((err) => {

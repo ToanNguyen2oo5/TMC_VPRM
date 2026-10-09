@@ -41,9 +41,8 @@ export async function generateOutfitWithCloudflare(outfitData, angle = 0, custom
   console.log('📝 PROMPT:\n', enhancedPrompt);
   console.groupEnd();
 
-  // Dùng proxy /cloudflare-ai khi ở môi trường dev để tránh lỗi CORS
-  const isDev = import.meta.env.DEV;
-  const baseUrl = isDev ? '/cloudflare-ai' : 'https://api.cloudflare.com';
+  // Dùng proxy /cloudflare-ai (hỗ trợ bởi Vite dev proxy ở local và Pages Function trên Cloudflare)
+  const baseUrl = '/cloudflare-ai';
   const endpoint = `${baseUrl}/client/v4/accounts/${accountId}/ai/run/@cf/black-forest-labs/flux-1-schnell`;
 
   const bodyData = {

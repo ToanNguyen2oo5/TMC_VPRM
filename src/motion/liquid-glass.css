@@ -15,46 +15,43 @@
   align-items: center;
   justify-content: space-between;
   width: calc(100% - 24px);
-  max-width: 1280px;
-  background: rgba(28, 25, 23, 0.65);
-  backdrop-filter: blur(16px) saturate(1.2);
-  -webkit-backdrop-filter: blur(16px) saturate(1.2);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  max-width: 1360px;
+  background: rgba(22, 18, 16, 0.85);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid rgba(218, 165, 32, 0.26);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   border-radius: 999px;
   padding: 6px 16px;
   transition: all 0.3s ease;
 }
 
-/* Fallback for Chromium to use refraction SVG filter */
-@supports (backdrop-filter: blur(1px)) {
-  .liquid-glass-navbar {
-    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
-  }
-}
-
 [data-theme="light"] .liquid-glass-navbar {
-  background: rgba(249, 246, 240, 0.75);
-  border: 1px solid rgba(218, 165, 32, 0.25);
-  box-shadow: 0 4px 20px rgba(70, 50, 40, 0.08);
+  background: rgba(249, 246, 240, 0.85);
+  border: 1px solid rgba(218, 165, 32, 0.35);
+  box-shadow: 0 8px 24px rgba(70, 50, 40, 0.12);
 }
 
 .liquid-nav-links {
   display: flex;
-  gap: 4px;
+  align-items: center;
+  gap: 3px;
   position: relative;
+  flex-shrink: 0;
 }
 
 .liquid-nav-btn {
   position: relative;
   background: transparent;
   border: none;
-  padding: 8px 16px;
+  padding: 6px 13px;
   color: var(--color-text-secondary);
   font-weight: 500;
   cursor: pointer;
   border-radius: 999px;
-  font-size: 0.9rem;
+  font-size: 0.86rem;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition: color 0.2s ease;
   z-index: 1;
 }
@@ -72,14 +69,16 @@
   z-index: 2;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
+  white-space: nowrap;
 }
 
 .nav-btn-droplet {
   position: absolute;
   inset: 0;
-  background: rgba(218, 165, 32, 0.15);
-  border: 1px solid rgba(218, 165, 32, 0.4);
+  background: linear-gradient(135deg, rgba(218, 165, 32, 0.2) 0%, rgba(184, 134, 11, 0.12) 100%);
+  border: 1px solid rgba(218, 165, 32, 0.45);
+  box-shadow: 0 2px 8px rgba(218, 165, 32, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   border-radius: 999px;
   z-index: 0;
 }
@@ -116,4 +115,14 @@
 .liquid-more-menu .control-btn {
   width: 100%;
   justify-content: flex-start;
+}
+
+@media (max-width: 1260px) {
+  .liquid-nav-btn {
+    padding: 5px 10px;
+    font-size: 0.82rem;
+  }
+  .liquid-nav-links {
+    gap: 1px;
+  }
 }

@@ -34,11 +34,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(circle at 50% 28%, rgba(8, 10, 16, 0.18) 0%, rgba(8, 10, 16, 0.64) 100%);
-}
-
-[data-theme="light"] .weather-canvas-vignette {
-  background: radial-gradient(circle at 50% 30%, rgba(249, 246, 240, 0.38) 0%, rgba(249, 246, 240, 0.82) 100%);
+  background: radial-gradient(circle at 50% 28%, rgba(8, 10, 16, 0.15) 0%, rgba(8, 10, 16, 0.45) 100%);
 }
 
 @media (prefers-reduced-motion: reduce) {

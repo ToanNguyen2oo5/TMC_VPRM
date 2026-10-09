@@ -28,18 +28,8 @@ export class BodyPoseTracker {
 
     this.isLoading = true;
 
-    // 1. Tải WASM files
-    let vision = null;
-    try {
-      vision = await FilesetResolver.forVisionTasks(LOCAL_WASM_PATH);
-    } catch (e) {
-      console.warn('⚠️ Không thể tải WASM local, chuyển sang CDN:', e.message);
-      vision = await FilesetResolver.forVisionTasks(CDN_WASM_PATH);
-    }
-
-    // 2. Thử khởi tạo với GPU delegate
-    const createWithDelegate = async (delegate, modelPath) => {
-      return await PoseLandmarker.createFromOptions(vision, {
+    const createLandmarker = async (visionResolver, delegate, modelPath) => {
+      return await PoseLandmarker.createFromOptions(visionResolver, {
         baseOptions: {
           modelAssetPath: modelPath,
           delegate: delegate
@@ -52,31 +42,41 @@ export class BodyPoseTracker {
       });
     };
 
-    let modelPath = LOCAL_MODEL_PATH;
     try {
-      this.landmarker = await createWithDelegate('GPU', modelPath);
-      this.activeDelegate = 'GPU';
-      console.info('🚀 MediaPipe PoseLandmarker khởi tạo thành công với [GPU]');
-    } catch (e) {
-      console.warn('⚠️ Lỗi GPU Delegate PoseLandmarker, thử lại bằng CPU:', e.message);
+      // 1. Thử tải với local WASM & local model
       try {
-        this.landmarker = await createWithDelegate('CPU', modelPath);
-        this.activeDelegate = 'CPU';
-        console.info('✅ MediaPipe PoseLandmarker khởi tạo thành công với [CPU]');
-      } catch (cpuError) {
-        console.warn('⚠️ Không tải được model Pose local, thử tải từ CDN...');
-        modelPath = CDN_MODEL_PATH;
+        const localVision = await FilesetResolver.forVisionTasks(LOCAL_WASM_PATH);
         try {
-          this.landmarker = await createWithDelegate('GPU', modelPath);
+          this.landmarker = await createLandmarker(localVision, 'GPU', LOCAL_MODEL_PATH);
+          this.activeDelegate = 'GPU';
+          console.info('🚀 MediaPipe PoseLandmarker khởi tạo thành công với [GPU]');
+        } catch (gpuErr) {
+          console.warn('⚠️ PoseLandmarker GPU local không thành công, thử [CPU]:', gpuErr?.message || gpuErr);
+          this.landmarker = await createLandmarker(localVision, 'CPU', LOCAL_MODEL_PATH);
+          this.activeDelegate = 'CPU';
+          console.info('✅ MediaPipe PoseLandmarker khởi tạo thành công với [CPU]');
+        }
+      } catch (localErr) {
+        console.warn('⚠️ Thử PoseLandmarker local thất bại, chuyển sang CDN:', localErr?.message || localErr);
+        // 2. Fallback hoàn toàn sang CDN (cả WASM lẫn model)
+        const cdnVision = await FilesetResolver.forVisionTasks(CDN_WASM_PATH);
+        try {
+          this.landmarker = await createLandmarker(cdnVision, 'GPU', CDN_MODEL_PATH);
           this.activeDelegate = 'GPU (CDN)';
-        } catch (cdnGpuError) {
-          this.landmarker = await createWithDelegate('CPU', modelPath);
+          console.info('🚀 MediaPipe PoseLandmarker khởi tạo thành công với [GPU (CDN)]');
+        } catch (cdnGpuErr) {
+          console.warn('⚠️ PoseLandmarker CDN GPU thất bại, thử [CPU (CDN)]:', cdnGpuErr?.message || cdnGpuErr);
+          this.landmarker = await createLandmarker(cdnVision, 'CPU', CDN_MODEL_PATH);
           this.activeDelegate = 'CPU (CDN)';
+          console.info('✅ MediaPipe PoseLandmarker khởi tạo thành công với [CPU (CDN)]');
         }
       }
+    } catch (finalErr) {
+      console.error('❌ Không thể khởi tạo MediaPipe PoseLandmarker:', finalErr?.message || finalErr);
+    } finally {
+      this.isLoading = false;
     }
 
-    this.isLoading = false;
     return this.landmarker;
   }
 

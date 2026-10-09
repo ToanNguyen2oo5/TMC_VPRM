@@ -29,16 +29,10 @@ export default function OnboardingModal({ isOpen, onClose }) {
   const [currentStep, setCurrentStep] = useState(0);
 
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
-    };
     if (isOpen) {
-      window.addEventListener('keydown', handleKeyDown);
-      return () => window.removeEventListener('keydown', handleKeyDown);
+      setCurrentStep(0);
     }
-  }, [isOpen, onClose]);
-
-  if (!isOpen) return null;
+  }, [isOpen]);
 
   const current = STEPS[currentStep];
   const isLast = currentStep === STEPS.length - 1;
@@ -51,9 +45,40 @@ export default function OnboardingModal({ isOpen, onClose }) {
     }
   };
 
+  const handlePrev = () => {
+    if (currentStep > 0) {
+      setCurrentStep(prev => prev - 1);
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowRight') handleNext();
+      if (e.key === 'ArrowLeft') handlePrev();
+    };
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isOpen, currentStep]);
+
+  if (!isOpen) return null;
+
   return (
     <div className="onboarding-overlay animate-fade-in" role="dialog" aria-modal="true">
       <div className="onboarding-card animate-scale-up">
+        {/* Nút đóng góc trên bên phải */}
+        <button
+          type="button"
+          className="onboarding-close-btn"
+          onClick={onClose}
+          aria-label="Đóng hướng dẫn"
+          title="Đóng hướng dẫn"
+        >
+          ✕
+        </button>
+
         <span className="onboarding-badge">{current.badge}</span>
         
         <div className="onboarding-icon-wrap">
@@ -76,18 +101,23 @@ export default function OnboardingModal({ isOpen, onClose }) {
           ))}
         </div>
 
-        {/* Actions */}
+        {/* Actions đối xứng 2 bên */}
         <div className="onboarding-actions">
+          {currentStep > 0 ? (
+            <button
+              type="button"
+              className="onboarding-back-btn"
+              onClick={handlePrev}
+            >
+              ← Quay lại
+            </button>
+          ) : (
+            <div className="onboarding-back-spacer" aria-hidden="true" />
+          )}
+
           <button
             type="button"
-            className="onboarding-skip-btn"
-            onClick={onClose}
-          >
-            Bỏ qua hướng dẫn
-          </button>
-          <button
-            type="button"
-            className="btn btn-primary"
+            className="btn btn-primary onboarding-next-btn"
             onClick={handleNext}
           >
             {isLast ? '✨ Bắt đầu phối đồ ngay' : 'Tiếp tục ➔'}

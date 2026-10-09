@@ -56,23 +56,16 @@ export default function LiquidNavbar({
   const toggleMoreMenu = () => setShowMoreMenu(!showMoreMenu);
 
   return (
-    <>
-      <svg style={{ position: 'absolute', width: 0, height: 0, pointerEvents: 'none' }}>
-        <filter id="liquid-refraction">
-          <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" result="noise" />
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G" />
-        </filter>
-      </svg>
-      <motion.nav 
-        className="liquid-navbar-wrapper"
-        variants={{
-          visible: { y: 0 },
-          hidden: { y: '-120%' }
-        }}
-        animate={hidden ? "hidden" : "visible"}
-        transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
-      >
-        <div className="liquid-glass-navbar" style={{ filter: 'url(#liquid-refraction)' }}>
+    <motion.nav 
+      className="liquid-navbar-wrapper"
+      variants={{
+        visible: { y: 0 },
+        hidden: { y: '-120%' }
+      }}
+      animate={hidden ? "hidden" : "visible"}
+      transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
+    >
+      <div className="liquid-glass-navbar">
           <div className="nav-brand" onClick={() => setActiveTab('home')} title="Việt Phục Remix" style={{ cursor: 'pointer' }}>
             <AppLogo size="sm" variant={logoVariant} />
             <span className="brand-name">Việt Phục <span className="text-gradient">Remix</span></span>
@@ -148,13 +141,6 @@ export default function LiquidNavbar({
                   >
                     <span>{lang === 'vi' ? '🇻🇳' : '🇬🇧'}</span>
                   </button>
-                  <button
-                    type="button"
-                    className="control-btn"
-                    onClick={toggleTheme}
-                  >
-                    <span>{theme === 'dark' ? '🌙' : '☀️'}</span>
-                  </button>
                </div>
             )}
             
@@ -170,13 +156,11 @@ export default function LiquidNavbar({
                   <MusicPlayer />
                   <button className="control-btn" onClick={handleTogglePetals}>🌸 Cánh sen</button>
                   <button className="control-btn" onClick={toggleLang}>{lang === 'vi' ? '🇻🇳 Tiếng Việt' : '🇬🇧 English'}</button>
-                  <button className="control-btn" onClick={toggleTheme}>{theme === 'dark' ? '🌙 Tối' : '☀️ Sáng'}</button>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
         </div>
       </motion.nav>
-    </>
   );
 }

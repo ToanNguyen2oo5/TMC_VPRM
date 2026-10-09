@@ -8,7 +8,9 @@
     "dev:https": "vite --mode https --host 0.0.0.0 --port 3000",
     "build": "vite build",
     "lint": "oxlint src",
-    "preview": "vite preview --host 0.0.0.0 --port 3000"
+    "preview": "vite preview --host 0.0.0.0 --port 3000",
+    "pages:dev": "npx wrangler pages dev dist",
+    "deploy": "npm run build && npx wrangler pages deploy dist --project-name=viet-phuc-remix --commit-dirty=true"
   },
   "dependencies": {
     "@google/genai": "^2.23.0",
@@ -36,6 +38,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "lighthouse": "^13.5.0",
     "oxlint": "^1.86.0",
-    "vite": "^5.4.11"
+    "vite": "^5.4.11",
+    "wrangler": "^4.86.0"
   }
 }

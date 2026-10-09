@@ -474,6 +474,11 @@ export default function App() {
     const isSingle = chosenAngleMode === 'single';
     setGenerateProgress({ current: 0, total: isSingle ? 1 : 4 });
 
+    // Tự động cuộn mượt xuống khu vực đang tạo ảnh ngay khi ấn nút Tạo ảnh
+    setTimeout(() => {
+      resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+
     // Check cultural warnings with selected colors & accessories
     const warnings = evaluateCulturalWarnings({
       outfit: selectedOutfit,
@@ -771,10 +776,10 @@ export default function App() {
 
           {/* 2. DẢI KHÁM PHÁ THEO VÙNG MIỀN */}
           <section className="container regional-explore-strip animate-fade-in-up">
-            <div className="section-header text-center" style={{ marginBottom: '0.75rem' }}>
-              <span className="section-badge">{t('regional_badge')}</span>
-              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.35rem', margin: '0.2rem 0' }}>
-                {t('regional_title')}<span className="text-gradient">{t('regional_title_highlight')}</span>
+            <div className="section-header regional-section-header" style={{ marginBottom: '0.85rem', textAlign: 'left' }}>
+              <span className="regional-subtitle">{t('regional_badge')}</span>
+              <h3 className="regional-main-title">
+                {t('regional_title')}<span className="text-gold-highlight">{t('regional_title_highlight')}</span>
               </h3>
             </div>
             <div className="regional-strip-grid">
@@ -1046,7 +1051,7 @@ export default function App() {
           )}
 
           {/* Step 5: Results Section — Viewer + Culture Card + Multi-actions */}
-          <div ref={resultRef}>
+          <div ref={resultRef} id="generation-result-section" style={{ scrollMarginTop: '80px' }}>
             {(isGenerating || turntableImages) && (
               <div className="result-container animate-fade-in">
                 <div className="result-split-layout">

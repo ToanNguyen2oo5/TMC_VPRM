@@ -5,9 +5,9 @@
   /* --- Color Palette --- */
   --color-bg-primary: #0a0a12;
   --color-bg-secondary: #12121e;
-  --color-bg-card: rgba(255, 255, 255, 0.04);
-  --color-bg-glass: rgba(255, 255, 255, 0.06);
-  --color-bg-glass-hover: rgba(255, 255, 255, 0.1);
+  --color-bg-card: rgba(14, 38, 76, 0.85);
+  --color-bg-glass: rgba(14, 38, 76, 0.85);
+  --color-bg-glass-hover: rgba(20, 50, 100, 0.94);
 
   /* Vietnamese-inspired accents */
   --color-crimson: #c0392b;
@@ -20,13 +20,13 @@
   --color-jade-glow: rgba(26, 138, 110, 0.3);
 
   /* Text */
-  --color-text-primary: #f0ece4;
-  --color-text-secondary: rgba(240, 236, 228, 0.65);
-  --color-text-muted: rgba(240, 236, 228, 0.4);
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: rgba(225, 238, 255, 0.88);
+  --color-text-muted: rgba(200, 220, 250, 0.78);
 
   /* Borders */
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-border-hover: rgba(255, 255, 255, 0.15);
+  --color-border: rgba(80, 140, 220, 0.3);
+  --color-border-hover: rgba(130, 190, 255, 0.65);
 
   /* Gradients */
   --gradient-hero: linear-gradient(135deg, #0a0a12 0%, #1a0a1e 40%, #12121e 100%);

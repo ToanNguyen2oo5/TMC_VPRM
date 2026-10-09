@@ -1,0 +1,15 @@
+# Assets tĩnh đã băm hash - cache dài hạn 1 năm
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# WASM files cho MediaPipe Vision
+/wasm/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Machine learning models (.task)
+/models/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# File index.html chính - revalidate để luôn nhận code mới nhất
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate

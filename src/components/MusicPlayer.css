@@ -41,15 +41,22 @@
 .music-toggle-btn {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 6px 11px;
+  gap: 6px;
+  padding: 5px 10px;
   background: transparent;
   border: none;
   color: var(--color-text-primary, #fff);
   font-size: var(--font-size-xs, 0.78rem);
   font-weight: 600;
   cursor: pointer;
+  white-space: nowrap;
   transition: all var(--transition-base, 0.2s ease);
+}
+
+.music-btn-label {
+  white-space: nowrap;
+  display: inline-block;
+  line-height: 1.2;
 }
 
 [data-theme="light"] .music-toggle-btn {
