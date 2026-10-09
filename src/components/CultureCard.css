@@ -17,8 +17,8 @@
 .culture-card:hover,
 .culture-card--expanded {
   border-color: var(--color-border-hover);
-  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.38);
-  background: rgba(30, 26, 24, 0.75);
+  box-shadow: 0 16px 44px rgba(3, 12, 28, 0.6);
+  background: rgba(18, 48, 96, 0.94);
 }
 
 [data-theme="light"] .culture-card {

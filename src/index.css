@@ -3,17 +3,17 @@
 /* ===== DESIGN SYSTEM ===== */
 :root {
   /* --- Color Palette --- */
-  --color-bg-primary: #0a0a12;
-  --color-bg-secondary: #12121e;
-  --color-bg-card: rgba(14, 38, 76, 0.85);
-  --color-bg-glass: rgba(14, 38, 76, 0.85);
-  --color-bg-glass-hover: rgba(20, 50, 100, 0.94);
+  --color-bg-primary: #0D1B2A;
+  --color-bg-secondary: rgba(14, 38, 76, 0.86);
+  --color-bg-card: rgba(14, 38, 76, 0.86);
+  --color-bg-glass: rgba(14, 38, 76, 0.86);
+  --color-bg-glass-hover: rgba(22, 54, 110, 0.94);
 
   /* Vietnamese-inspired accents */
   --color-crimson: #c0392b;
   --color-crimson-glow: rgba(192, 57, 43, 0.3);
-  --color-gold: #d4a017;
-  --color-gold-glow: rgba(212, 160, 23, 0.3);
+  --color-gold: #F7D070;
+  --color-gold-glow: rgba(247, 208, 112, 0.4);
   --color-purple-hue: #7b2d8e;
   --color-purple-glow: rgba(123, 45, 142, 0.3);
   --color-jade: #1a8a6e;
@@ -25,14 +25,14 @@
   --color-text-muted: rgba(200, 220, 250, 0.78);
 
   /* Borders */
-  --color-border: rgba(80, 140, 220, 0.3);
+  --color-border: rgba(80, 140, 220, 0.32);
   --color-border-hover: rgba(130, 190, 255, 0.65);
 
   /* Gradients */
   --gradient-hero: linear-gradient(135deg, #0a0a12 0%, #1a0a1e 40%, #12121e 100%);
   --gradient-accent: linear-gradient(135deg, var(--color-crimson), var(--color-gold));
   --gradient-purple: linear-gradient(135deg, var(--color-purple-hue), #4a1a5e);
-  --gradient-card: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+  --gradient-card: linear-gradient(145deg, rgba(14, 38, 76, 0.88), rgba(10, 28, 58, 0.92));
 
   /* Shadows */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);

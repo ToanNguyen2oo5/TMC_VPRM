@@ -180,25 +180,31 @@ button {
 }
 
 .btn-primary {
-  background: var(--color-text-primary);
-  color: var(--color-bg-primary);
+  background: linear-gradient(135deg, #1b4b8a 0%, #0e2d58 100%);
+  color: #FFFFFF;
+  border: 1px solid rgba(130, 190, 255, 0.45);
+  box-shadow: 0 4px 14px rgba(4, 14, 34, 0.4);
 }
 
 .btn-primary:hover {
-  background: var(--color-gold);
-  color: var(--color-bg-primary);
+  background: linear-gradient(135deg, #255ea8 0%, #163d74 100%);
+  color: #F7D070;
+  border-color: rgba(180, 220, 255, 0.75);
   transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(4, 14, 34, 0.55);
 }
 
 .btn-secondary {
-  background: transparent;
-  color: var(--color-text-primary);
-  border: 1px solid var(--color-border);
+  background: rgba(14, 38, 76, 0.75);
+  color: #FFFFFF;
+  border: 1px solid rgba(80, 140, 220, 0.35);
+  backdrop-filter: blur(12px);
 }
 
 .btn-secondary:hover {
-  border-color: var(--color-gold);
-  color: var(--color-gold);
+  background: rgba(24, 60, 120, 0.9);
+  border-color: rgba(140, 200, 255, 0.7);
+  color: #F7D070;
 }
 
 /* ==========================================================================
@@ -1136,14 +1142,20 @@ button {
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  border: 1px solid rgba(218, 165, 32, 0.2);
-  transition: transform 0.25s, box-shadow 0.25s;
+  background: rgba(14, 38, 76, 0.86);
+  border: 1px solid rgba(80, 140, 220, 0.32);
+  border-radius: 18px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 10px 28px rgba(3, 12, 28, 0.45);
+  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s, background 0.25s;
 }
 
 .highlight-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(218, 165, 32, 0.5);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  border-color: rgba(130, 190, 255, 0.65);
+  box-shadow: 0 16px 36px rgba(3, 12, 28, 0.6);
+  background: rgba(18, 48, 96, 0.94);
 }
 
 .highlight-card__header {
@@ -1153,28 +1165,59 @@ button {
   margin-bottom: 0.75rem;
 }
 
+.highlight-card .costume-tag.tag-region {
+  background: rgba(80, 140, 220, 0.22);
+  color: #90cdf4;
+  border: 1px solid rgba(130, 190, 255, 0.35);
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
 .highlight-era {
   font-size: 0.75rem;
-  color: #a0aec0;
+  color: rgba(200, 225, 255, 0.8);
   font-style: italic;
 }
 
 .highlight-title {
   font-size: 1.25rem;
-  font-family: 'Playfair Display', Georgia, serif;
-  color: #DAA520;
+  font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
+  color: #FFFFFF;
   margin-bottom: 0.5rem;
+  line-height: 1.35;
 }
 
 .highlight-desc {
   font-size: 0.9rem;
-  color: #cbd5e0;
-  line-height: 1.5;
+  color: rgba(225, 238, 255, 0.88);
+  line-height: 1.55;
   margin-bottom: 1.25rem;
 }
 
 .highlight-actions {
   margin-top: auto;
+}
+
+.highlight-actions .btn {
+  background: linear-gradient(135deg, #1b4b8a 0%, #0e2d58 100%);
+  color: #FFFFFF;
+  border: 1px solid rgba(130, 190, 255, 0.45);
+  border-radius: 999px;
+  font-weight: 600;
+  padding: 0.65rem 1.25rem;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 14px rgba(4, 14, 34, 0.4);
+}
+
+.highlight-actions .btn:hover {
+  background: linear-gradient(135deg, #255ea8 0%, #163d74 100%);
+  border-color: rgba(180, 220, 255, 0.75);
+  color: #F7D070;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(4, 14, 34, 0.55);
 }
 
 .home-banner-hub {
@@ -1183,22 +1226,48 @@ button {
   justify-content: space-between;
   align-items: center;
   gap: 1.5rem;
-  border-left: 4px solid #DAA520;
+  background: rgba(14, 38, 76, 0.86);
+  border: 1px solid rgba(80, 140, 220, 0.32);
+  border-left: 4px solid #F7D070;
+  border-radius: 18px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 10px 28px rgba(3, 12, 28, 0.45);
   flex-wrap: wrap;
 }
 
 .banner-text h3 {
   font-size: 1.3rem;
-  font-family: 'Playfair Display', Georgia, serif;
-  color: #DAA520;
+  font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
+  color: #FFFFFF;
   margin-bottom: 0.35rem;
 }
 
 .banner-text p {
   font-size: 0.95rem;
-  color: #cbd5e0;
+  color: rgba(225, 238, 255, 0.88);
+  line-height: 1.55;
   margin: 0;
 }
+
+.home-banner-hub .btn {
+  background: rgba(20, 50, 95, 0.9);
+  color: #FFFFFF;
+  border: 1px solid rgba(90, 150, 235, 0.4);
+  border-radius: 999px;
+  font-weight: 600;
+  padding: 0.65rem 1.4rem;
+  transition: all 0.25s ease;
+}
+
+.home-banner-hub .btn:hover {
+  background: rgba(30, 75, 140, 1);
+  border-color: rgba(140, 200, 255, 0.8);
+  color: #F7D070;
+  transform: translateY(-2px);
+}
+
 
 /* Result Actions Panel */
 .result-actions-panel {

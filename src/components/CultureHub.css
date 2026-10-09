@@ -5,33 +5,41 @@
 .hub-tabs {
   display: flex;
   justify-content: center;
-  gap: 1rem;
-  padding: 0.75rem;
+  gap: 0.75rem;
+  padding: 0.6rem;
   margin-bottom: 2.5rem;
+  background: rgba(14, 38, 76, 0.86);
+  border: 1px solid rgba(80, 140, 220, 0.32);
+  border-radius: 999px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 8px 24px rgba(3, 12, 28, 0.4);
+  flex-wrap: wrap;
 }
 
 .hub-tab-btn {
-  padding: 0.75rem 1.5rem;
+  padding: 0.65rem 1.4rem;
   background: transparent;
   border: 1px solid transparent;
   border-radius: 999px;
-  color: #cbd5e0;
+  color: rgba(225, 238, 255, 0.88);
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.25s ease;
+  font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .hub-tab-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
+  background: rgba(30, 75, 140, 0.5);
+  color: #FFFFFF;
 }
 
 .hub-tab-btn--active {
-  background: #B22222 !important;
-  color: #fff !important;
-  border-color: #DAA520 !important;
-  box-shadow: 0 4px 12px rgba(178, 34, 34, 0.4);
+  background: linear-gradient(135deg, #1b4b8a 0%, #0e2d58 100%) !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(130, 190, 255, 0.65) !important;
+  box-shadow: 0 4px 16px rgba(4, 14, 34, 0.5) !important;
 }
 
 /* Timeline */
@@ -59,8 +67,8 @@
 
 .marker-icon {
   font-size: 1.6rem;
-  background: rgba(26, 22, 34, 0.9);
-  border: 2px solid #DAA520;
+  background: rgba(14, 38, 76, 0.95);
+  border: 2px solid #F7D070;
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -68,14 +76,14 @@
   align-items: center;
   justify-content: center;
   z-index: 2;
-  box-shadow: 0 0 15px rgba(218, 165, 32, 0.3);
+  box-shadow: 0 0 16px rgba(247, 208, 112, 0.35);
 }
 
 .marker-line {
   width: 2px;
   flex: 1;
   min-height: 100px;
-  background: linear-gradient(to bottom, #DAA520, rgba(218, 165, 32, 0.1));
+  background: linear-gradient(to bottom, #F7D070, rgba(80, 140, 220, 0.2));
   margin-top: 0.5rem;
 }
 
@@ -86,30 +94,45 @@
 .timeline-card {
   flex: 1;
   padding: 1.5rem;
-  border: 1px solid rgba(218, 165, 32, 0.2);
+  background: rgba(14, 38, 76, 0.86);
+  border: 1px solid rgba(80, 140, 220, 0.32);
+  border-radius: 18px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 10px 28px rgba(3, 12, 28, 0.45);
+  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+}
+
+.timeline-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(130, 190, 255, 0.65);
+  box-shadow: 0 16px 36px rgba(3, 12, 28, 0.6);
 }
 
 .timeline-era {
   display: inline-block;
   font-size: 0.8rem;
-  padding: 0.2rem 0.6rem;
-  background: rgba(218, 165, 32, 0.15);
-  color: #DAA520;
-  border-radius: 4px;
+  padding: 0.25rem 0.65rem;
+  background: rgba(80, 140, 220, 0.25);
+  color: #90cdf4;
+  border: 1px solid rgba(130, 190, 255, 0.35);
+  border-radius: 999px;
   font-weight: 600;
   margin-bottom: 0.5rem;
 }
 
 .timeline-title {
-  font-size: 1.3rem;
-  font-family: 'Playfair Display', Georgia, serif;
-  color: #fff;
+  font-size: 1.25rem;
+  font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
+  color: #FFFFFF;
   margin-bottom: 0.75rem;
+  line-height: 1.35;
 }
 
 .timeline-desc {
   font-size: 0.95rem;
-  color: #cbd5e0;
+  color: rgba(225, 238, 255, 0.88);
   line-height: 1.6;
   margin-bottom: 1rem;
 }
@@ -122,13 +145,15 @@
 
 .costume-pill {
   font-size: 0.8rem;
-  padding: 0.25rem 0.6rem;
-  background: rgba(255, 255, 255, 0.08);
+  padding: 0.25rem 0.7rem;
+  background: rgba(20, 50, 95, 0.8);
+  border: 1px solid rgba(90, 150, 235, 0.4);
   border-radius: 999px;
-  color: #DAA520;
+  color: #F7D070;
+  font-weight: 600;
 }
 
-/* Guide Dos and Don'ts */
+/* Guide Dos and Don'ts (Tips Lên Đồ) */
 .guide-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
@@ -139,21 +164,34 @@
 
 .guide-col {
   padding: 1.75rem;
+  border-radius: 18px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 10px 28px rgba(3, 12, 28, 0.45);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.guide-col:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 36px rgba(3, 12, 28, 0.6);
 }
 
 .dos-col {
-  border: 1px solid rgba(72, 187, 120, 0.3);
-  background: rgba(72, 187, 120, 0.04);
+  border: 1px solid rgba(72, 210, 140, 0.45);
+  background: linear-gradient(145deg, rgba(14, 38, 76, 0.92) 0%, rgba(10, 48, 64, 0.92) 100%);
+  border-left: 4px solid #48bb78;
 }
 
 .donts-col {
-  border: 1px solid rgba(229, 62, 62, 0.3);
-  background: rgba(229, 62, 62, 0.04);
+  border: 1px solid rgba(245, 100, 100, 0.45);
+  background: linear-gradient(145deg, rgba(14, 38, 76, 0.92) 0%, rgba(56, 20, 40, 0.92) 100%);
+  border-left: 4px solid #f56565;
 }
 
 .guide-title {
   font-size: 1.25rem;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
   margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
@@ -171,19 +209,30 @@
 .guide-items {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
+}
+
+.guide-item {
+  padding: 0.85rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.guide-item:last-child {
+  border-bottom: none;
 }
 
 .guide-item h4 {
-  font-size: 0.95rem;
-  color: #fff;
-  margin-bottom: 0.3rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 0.35rem;
 }
 
 .guide-item p {
-  font-size: 0.9rem;
-  color: #cbd5e0;
-  line-height: 1.5;
+  font-size: 0.92rem;
+  color: rgba(225, 238, 255, 0.88);
+  line-height: 1.55;
+  margin: 0;
 }
 
 /* References */
@@ -197,7 +246,20 @@
 
 .reference-card {
   padding: 1.5rem;
-  border: 1px solid rgba(218, 165, 32, 0.2);
+  background: rgba(14, 38, 76, 0.86);
+  border: 1px solid rgba(80, 140, 220, 0.32);
+  border-radius: 18px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 10px 28px rgba(3, 12, 28, 0.45);
+  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s, background 0.25s;
+}
+
+.reference-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(130, 190, 255, 0.65);
+  box-shadow: 0 16px 36px rgba(3, 12, 28, 0.6);
+  background: rgba(18, 48, 96, 0.94);
 }
 
 .book-icon {
@@ -208,20 +270,21 @@
 
 .book-title {
   font-size: 1.2rem;
-  font-family: 'Playfair Display', Georgia, serif;
-  color: #DAA520;
+  font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
+  color: #FFFFFF;
   margin-bottom: 0.3rem;
 }
 
 .book-author {
   font-size: 0.85rem;
-  color: #a0aec0;
+  color: #90cdf4;
   margin-bottom: 0.75rem;
   font-style: italic;
 }
 
 .book-desc {
-  font-size: 0.9rem;
-  color: #cbd5e0;
-  line-height: 1.5;
+  font-size: 0.92rem;
+  color: rgba(225, 238, 255, 0.88);
+  line-height: 1.55;
 }

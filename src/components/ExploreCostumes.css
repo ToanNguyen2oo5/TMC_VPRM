@@ -9,15 +9,18 @@
 .section-badge {
   display: inline-block;
   padding: 0.35rem 1rem;
-  background: rgba(178, 34, 34, 0.15);
-  border: 1px solid rgba(218, 165, 32, 0.3);
-  color: #DAA520;
+  background: rgba(14, 38, 76, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(80, 140, 220, 0.35);
+  color: #F7D070;
   border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 0.8rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   margin-bottom: 0.75rem;
+  box-shadow: 0 4px 14px rgba(4, 14, 34, 0.4);
 }
 
 .section-title {

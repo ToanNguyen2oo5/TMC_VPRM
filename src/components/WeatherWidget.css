@@ -198,16 +198,17 @@
 .weather-field-tips {
   margin-top: 0.6rem;
   padding: 0.5rem 0.75rem;
-  background: rgba(218, 165, 32, 0.08);
-  border-left: 2px solid #daa520;
-  border-radius: 0 6px 6px 0;
+  background: rgba(20, 50, 95, 0.6);
+  border: 1px solid rgba(80, 140, 220, 0.25);
+  border-left: 3px solid #F7D070;
+  border-radius: 0 8px 8px 0;
 }
 
 .field-tips-label {
   display: block;
   font-size: 0.72rem;
   font-weight: 700;
-  color: #ffd700;
+  color: #F7D070;
   margin-bottom: 0.35rem;
 }
 
