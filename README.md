@@ -436,7 +436,7 @@ Nhằm đảm bảo sự tôn trọng tối cao đối với di sản văn hóa 
 ## 👥 Đội Ngũ Phát Triển & Bản Quyền
 
 - **Tên dự án**: Việt Phục Remix (TMC_VPRM)
-- **Đơn vị**: Dự án phát triển bởi sinh viên Đại học Công Nghệ - ĐHQGHN (UET - VNU)
+- **Đơn vị**: Dự án phát triển bởi sinh viên Đại học Công nghiệp Hà Nội (HaUI)
 - **Bản quyền**: Phát hành theo giấy phép tự do nguồn mở [MIT License](LICENSE).
 
 ---
