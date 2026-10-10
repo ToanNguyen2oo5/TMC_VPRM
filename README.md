@@ -437,6 +437,10 @@ Nhằm đảm bảo sự tôn trọng tối cao đối với di sản văn hóa 
 
 - **Tên dự án**: Việt Phục Remix (TMC_VPRM)
 - **Đơn vị**: Dự án phát triển bởi sinh viên Đại học Công nghiệp Hà Nội (HaUI)
+- **Thành viên phát triển**:
+  - Nguyễn Văn Toàn
+  - Phạm Hùng Minh
+  - Lê Đức Cường
 - **Bản quyền**: Phát hành theo giấy phép tự do nguồn mở [MIT License](LICENSE).
 
 ---
